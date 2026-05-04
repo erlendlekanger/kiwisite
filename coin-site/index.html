@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <title>Kiwi — Golden nuggets</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --gold: #fbbf24;
+      --gold-deep: #d97706;
+      --gold-soft: #fef3c7;
+      --kiwi-dark: #4d7c0f;
+      --ink: #1c1917;
+      --cream: #fffbeb;
+      --paper: #fffef8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100%;
+      font-family: "Nunito", system-ui, sans-serif;
+      background: var(--paper);
+      color: var(--ink);
+      overflow-x: hidden;
+    }
+
+    /* First screen: full-viewport hero with video */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      min-height: 100dvh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .video-stage {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 45%, #3d2914 0%, #1a1208 65%);
+    }
+
+    #bgvideo {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      pointer-events: none;
+      user-select: none;
+      -webkit-user-select: none;
+      z-index: 0;
+      background: #000;
+    }
+
+    .hero-inner {
+      position: relative;
+      z-index: 2;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: clamp(1rem, 3vw, 2rem);
+      pointer-events: none;
+    }
+
+    .title-row {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+    }
+
+    .x-community-icon {
+      width: clamp(2.2rem, 5vw, 2.8rem);
+      height: clamp(2.2rem, 5vw, 2.8rem);
+      border-radius: 0.55rem;
+      border: none;
+      background: transparent;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: none;
+      transform: rotate(6deg);
+      transition: transform 0.12s ease, filter 0.12s ease;
+      pointer-events: auto;
+      overflow: hidden;
+    }
+
+    .x-community-icon img {
+      width: 86%;
+      height: 86%;
+      object-fit: contain;
+      display: block;
+    }
+
+    .x-community-icon:hover {
+      transform: rotate(0deg) scale(1.03);
+      filter: brightness(1.03);
+    }
+
+    .hero-inner button,
+    .hero-inner .ca-theme-box {
+      pointer-events: auto;
+    }
+
+    .top {
+      text-align: center;
+      width: 100%;
+      max-width: 34rem;
+      padding: clamp(0.75rem, 2vh, 1.25rem) clamp(0.75rem, 2vw, 1.25rem) 1rem;
+      border-radius: 1.25rem;
+      background: linear-gradient(180deg, rgba(0, 0, 0, 0.42) 0%, rgba(0, 0, 0, 0.12) 55%, transparent 100%);
+    }
+
+    .top h1 {
+      font-family: "Fredoka", sans-serif;
+      font-weight: 700;
+      font-size: clamp(1.85rem, 5.2vw, 3.25rem);
+      line-height: 1.1;
+    }
+
+    .title-kiwi {
+      color: var(--gold);
+      text-shadow:
+        0 2px 0 rgba(180, 83, 9, 0.35),
+        0 4px 20px rgba(251, 191, 36, 0.45),
+        0 6px 28px rgba(0, 0, 0, 0.45);
+    }
+
+    .title-sub {
+      color: #ffffff;
+      text-shadow: 0 3px 18px rgba(0, 0, 0, 0.55);
+    }
+
+    .tagline {
+      margin-top: 0.45rem;
+      font-size: clamp(0.9rem, 2.2vw, 1.05rem);
+      font-weight: 600;
+      color: #fff;
+      text-shadow: 0 2px 12px rgba(0, 0, 0, 0.85);
+    }
+
+    .ca-theme-box {
+      margin-top: 1.1rem;
+      text-align: left;
+      border-radius: 1rem;
+      padding: 0.85rem 1rem;
+      background: linear-gradient(145deg, rgba(254, 243, 199, 0.96) 0%, rgba(251, 191, 36, 0.9) 45%, rgba(217, 119, 6, 0.93) 100%);
+      border: 3px solid rgba(28, 25, 23, 0.85);
+      box-shadow:
+        0 0 0 2px rgba(132, 204, 22, 0.45),
+        0 12px 32px rgba(0, 0, 0, 0.35),
+        inset 0 1px 0 rgba(255, 255, 255, 0.35);
+    }
+
+    .ca-theme-box .ca-label {
+      display: block;
+      font-family: "Fredoka", sans-serif;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--kiwi-dark);
+      margin-bottom: 0.4rem;
+    }
+
+    .ca-row {
+      display: flex;
+      align-items: stretch;
+      gap: 0.5rem;
+      border-radius: 0.55rem;
+      overflow: hidden;
+      background: rgba(28, 25, 23, 0.08);
+      border: 2px solid rgba(28, 25, 23, 0.2);
+    }
+
+    .ca-text {
+      flex: 1;
+      padding: 0.5rem 0.65rem;
+      font-family: ui-monospace, "Cascadia Mono", monospace;
+      font-size: clamp(0.62rem, 1.9vw, 0.78rem);
+      font-weight: 700;
+      word-break: break-all;
+      color: var(--ink);
+      line-height: 1.35;
+      display: flex;
+      align-items: center;
+    }
+
+    .copy-ca-btn {
+      flex-shrink: 0;
+      font-family: "Fredoka", sans-serif;
+      font-weight: 700;
+      font-size: 0.82rem;
+      padding: 0 1rem;
+      border: none;
+      border-left: 2px solid rgba(28, 25, 23, 0.25);
+      background: rgba(28, 25, 23, 0.88);
+      color: var(--gold);
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .copy-ca-btn:hover {
+      background: var(--ink);
+      color: #fef3c7;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      margin-top: 0.95rem;
+    }
+
+    .sound-icon-btn {
+      width: 2.4rem;
+      height: 2.4rem;
+      border-radius: 999px;
+      border: 2px solid rgba(255, 251, 235, 0.42);
+      background: rgba(28, 25, 23, 0.72);
+      color: #fff;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.3);
+      transition: transform 0.12s ease, background 0.12s ease;
+      backdrop-filter: blur(8px);
+      font-size: 1.02rem;
+      line-height: 1;
+    }
+
+    .sound-icon-btn:hover {
+      transform: translateY(-1px);
+      background: rgba(251, 191, 36, 0.25);
+    }
+
+    .sound-icon-btn:active {
+      transform: scale(0.98);
+    }
+
+    .scroll-hint {
+      margin-top: auto;
+      padding: 1rem 0 0.5rem;
+      text-align: center;
+      font-family: "Fredoka", sans-serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.85);
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+      pointer-events: none;
+    }
+
+    .scroll-hint span {
+      display: inline-block;
+      animation: bounce 1.4s ease-in-out infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(5px); }
+    }
+
+    /* Scroll section: cartoon / nugget theme */
+    .facts {
+      position: relative;
+      z-index: 3;
+      padding: clamp(2rem, 5vw, 3.5rem) clamp(1.25rem, 4vw, 2rem) 4rem;
+      background:
+        radial-gradient(1200px 400px at 50% -10%, rgba(251, 191, 36, 0.2), transparent 55%),
+        linear-gradient(180deg, #fffef8 0%, #fff7ed 40%, #fef9c3 100%);
+      border-top: 5px solid var(--gold-deep);
+      box-shadow: 0 -12px 40px rgba(180, 83, 9, 0.12);
+    }
+
+    .facts-inner {
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    .facts h2 {
+      font-family: "Fredoka", sans-serif;
+      font-weight: 700;
+      font-size: clamp(1.5rem, 4vw, 2.1rem);
+      text-align: center;
+      color: var(--ink);
+      margin-bottom: 0.35rem;
+    }
+
+    .facts h2 span {
+      color: var(--gold-deep);
+    }
+
+    .facts-lead {
+      text-align: center;
+      font-weight: 600;
+      color: #57534e;
+      margin-bottom: 2rem;
+      font-size: 1rem;
+    }
+
+    .fact-card {
+      background: #fff;
+      border: 4px solid var(--gold);
+      border-radius: 1.25rem;
+      padding: 1.15rem 1.35rem;
+      margin-bottom: 1rem;
+      box-shadow:
+        4px 4px 0 rgba(28, 25, 23, 0.12),
+        0 10px 28px rgba(251, 191, 36, 0.15);
+    }
+
+    .fact-card h3 {
+      font-family: "Fredoka", sans-serif;
+      font-size: 1.05rem;
+      color: var(--gold-deep);
+      margin-bottom: 0.45rem;
+    }
+
+    .fact-card p {
+      color: #44403c;
+      line-height: 1.55;
+      font-size: 0.98rem;
+    }
+
+    .bottom-x-link {
+      margin-top: 1.2rem;
+      display: flex;
+      justify-content: center;
+    }
+
+    .video-error {
+      display: none;
+      position: absolute;
+      inset: 0;
+      z-index: 4;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      text-align: center;
+      color: #fff;
+      font-weight: 700;
+      background: rgba(0, 0, 0, 0.65);
+    }
+
+    .video-error.show { display: flex; }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="video-stage">
+      <video
+        id="bgvideo"
+        autoplay
+        muted
+        loop
+        playsinline
+        webkit-playsinline
+        preload="auto"
+        tabindex="-1"
+        disablepictureinpicture
+        disableremoteplayback
+      >
+        <source src="media/nuggets.mp4" type="video/mp4" />
+      </video>
+    </div>
+    <div class="video-error" id="video-error" role="alert">
+      Could not load video. Put <code>nuggets.mp4</code> in <code>coin-site/media/</code> and run from the local server.
+    </div>
+
+    <div class="hero-inner">
+      <div class="top">
+        <h1 class="title-row">
+          <span class="title-kiwi">Kiwi</span>
+          <a class="x-community-icon" href="https://x.com/i/communities/2033613362458656981" target="_blank" rel="noopener noreferrer" aria-label="Kiwi X Community">
+            <img src="media/x-logo.svg" alt="" />
+          </a>
+        </h1>
+        <p class="tagline">Addicted to the taste of golden nuggets.</p>
+
+        <div class="ca-theme-box">
+          <span class="ca-label">Contract address</span>
+          <div class="ca-row">
+            <span class="ca-text" id="contract-address">kiwidW62G5Ljxe4pzdhTBPuGcWpq2cng9MFV6Mbp4kP</span>
+            <button type="button" class="copy-ca-btn" id="copy-ca">Copy</button>
+          </div>
+        </div>
+
+        <div class="controls">
+          <button type="button" class="sound-icon-btn" id="sound-toggle" aria-label="Toggle sound" title="Sound off">
+            🔇
+          </button>
+        </div>
+      </div>
+      <p class="scroll-hint"><span>Scroll down</span> for quick facts</p>
+    </div>
+  </header>
+
+  <main class="facts" id="facts">
+    <div class="facts-inner">
+      <h2><span>Addiction</span> and Kiwi</h2>
+
+      <article class="fact-card">
+        <h3>Kiwi mascot energy</h3>
+        <p>Kiwi birds are curious foragers with long beaks built for probing the ground. That obsession vibe fits the mascot story: always searching, always sniffing, always chasing the next nugget.</p>
+      </article>
+
+      <article class="fact-card">
+        <h3>Why loops feel powerful</h3>
+        <p>Addiction often runs in a cue → action → reward loop. The brain learns fast from repeated rewards, so cravings can kick in automatically before you even realize it.</p>
+      </article>
+
+      <article class="fact-card">
+        <h3>Night mode parallels</h3>
+        <p>Real kiwi are nocturnal and rely heavily on smell and sound in the dark. In mascot terms, that maps perfectly to “hunting” behavior: low visibility, sharp senses, locked focus.</p>
+      </article>
+
+      <article class="fact-card">
+        <h3>Not about weak will</h3>
+        <p>Compulsive behavior is not just about discipline. Stress, environment, biology, and routines all shape how hard it is to pause, reset, and break an old pattern.</p>
+      </article>
+
+      <article class="fact-card">
+        <h3>How people break loops</h3>
+        <p>Small structure changes help: reduce triggers, replace routines, sleep better, and ask for support. When substance use is serious, professional help is the strongest move.</p>
+      </article>
+
+      <div class="bottom-x-link">
+        <a class="x-community-icon" href="https://x.com/i/communities/2033613362458656981" target="_blank" rel="noopener noreferrer" aria-label="Kiwi X Community">
+          <img src="media/x-logo.svg" alt="" />
+        </a>
+      </div>
+
+    </div>
+  </main>
+
+  <script>
+    (function () {
+      var v = document.getElementById("bgvideo");
+      var errEl = document.getElementById("video-error");
+
+      function ensurePlaying() {
+        if (!v || v.error) return;
+        v.play().catch(function () {});
+      }
+
+      if (v) {
+        v.addEventListener("error", function () {
+          if (errEl) errEl.classList.add("show");
+        });
+
+        v.addEventListener("contextmenu", function (e) {
+          e.preventDefault();
+        });
+
+        v.addEventListener("canplay", function onCanPlay() {
+          v.removeEventListener("canplay", onCanPlay);
+          ensurePlaying();
+        });
+
+        ensurePlaying();
+      }
+
+      var soundToggle = document.getElementById("sound-toggle");
+      function renderSoundState() {
+        if (!soundToggle || !v) return;
+        if (v.muted) {
+          soundToggle.textContent = "🔇";
+          soundToggle.setAttribute("title", "Sound off");
+          soundToggle.setAttribute("aria-label", "Turn sound on");
+        } else {
+          soundToggle.textContent = "🔊";
+          soundToggle.setAttribute("title", "Sound on");
+          soundToggle.setAttribute("aria-label", "Turn sound off");
+        }
+      }
+
+      soundToggle.addEventListener("click", function () {
+        v.muted = !v.muted;
+        if (!v.muted) {
+          try {
+            v.volume = 1;
+          } catch (e) {}
+        }
+        v.play().catch(function () {});
+        renderSoundState();
+      });
+      renderSoundState();
+
+      var caEl = document.getElementById("contract-address");
+      var copyBtn = document.getElementById("copy-ca");
+      copyBtn.addEventListener("click", function () {
+        var t = caEl.textContent.trim();
+        function done() {
+          var prev = copyBtn.textContent;
+          copyBtn.textContent = "Copied!";
+          setTimeout(function () {
+            copyBtn.textContent = prev;
+          }, 1400);
+        }
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(t).then(done).catch(done);
+        } else {
+          var a = document.createElement("textarea");
+          a.value = t;
+          document.body.appendChild(a);
+          a.select();
+          try {
+            document.execCommand("copy");
+          } catch (e) {}
+          document.body.removeChild(a);
+          done();
+        }
+      });
+
+      document.addEventListener("visibilitychange", function () {
+        if (!document.hidden && v && !v.error) {
+          v.play().catch(function () {});
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
