@@ -1,0 +1,31 @@
+.env
+
+# Playwright / browser profiles (tens of thousands of files)
+.extract_profile/
+.axiom_profile/
+.axiom_j7_profile/
+.j7_profile/
+.j7ogcoins_axiom_profile/
+.customdev_profile/
+.j7tracker_storage_state.json
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+finetune-venv/
+unsloth_compiled_cache/
+
+# Finetune artifacts
+finetune/raw.jsonl
+finetune/dataset.jsonl
+finetune/output/
+finetune/output_*/
+customdev_generated/
+
+# Generated / bulky local data
+bwa_extract_screenshots/
+*.zip
+
+# Optional: large local notes (remove this line if you want notes in git)
+# bwa_extract_notes.txt

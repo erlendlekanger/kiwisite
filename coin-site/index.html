@@ -4,196 +4,266 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-  <title>Kiwi — Golden nuggets</title>
+  <title>OG MEMES — The faces that built the internet</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --gold: #fbbf24;
-      --gold-deep: #d97706;
-      --gold-soft: #fef3c7;
-      --kiwi-dark: #4d7c0f;
-      --ink: #1c1917;
-      --cream: #fffbeb;
-      --paper: #fffef8;
+      --ink: #0a0a0a;
+      --paper: #faf8f3;
+      --paper2: #f0ebe3;
+      --accent: #ff6b35;
+      --accent2: #7c3aed;
+      --border: #1a1a1a;
+      --shadow: 4px 4px 0 var(--border);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
-    html {
-      scroll-behavior: smooth;
-    }
+    html { scroll-behavior: smooth; }
 
     body {
-      min-height: 100%;
-      font-family: "Nunito", system-ui, sans-serif;
+      font-family: "Comic Neue", "Comic Sans MS", cursive, system-ui, sans-serif;
       background: var(--paper);
       color: var(--ink);
       overflow-x: hidden;
+      line-height: 1.45;
     }
 
-    /* First screen: full-viewport hero with video */
+    .noise {
+      pointer-events: none;
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      opacity: 0.04;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+
+    /* floating meme doodles */
+    .doodle {
+      position: absolute;
+      opacity: 0.14;
+      z-index: 0;
+      pointer-events: none;
+    }
+    .doodle svg { display: block; width: 100%; height: auto; }
+
+    .top-nav {
+      position: relative;
+      z-index: 5;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.75rem clamp(1rem, 3vw, 1.5rem);
+      border-bottom: 3px solid var(--border);
+      background: rgba(250, 248, 243, 0.92);
+      backdrop-filter: blur(6px);
+    }
+
+    .brand-mini {
+      font-family: "Bangers", cursive;
+      font-size: clamp(1.15rem, 3vw, 1.5rem);
+      letter-spacing: 0.06em;
+      text-shadow: 2px 2px 0 #fff;
+    }
+
+    .x-community-icon {
+      width: clamp(2.5rem, 6vw, 3rem);
+      height: clamp(2.5rem, 6vw, 3rem);
+      border-radius: 0.5rem;
+      border: 3px solid var(--border);
+      background: #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow);
+      transition: transform 0.12s ease;
+    }
+    .x-community-icon:hover { transform: rotate(-4deg) scale(1.05); }
+    .x-community-icon img { width: 72%; height: 72%; object-fit: contain; }
+
     .hero {
       position: relative;
-      min-height: 100vh;
-      min-height: 100dvh;
-      overflow: hidden;
+      min-height: 92vh;
+      min-height: 92dvh;
       display: flex;
       flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(1rem, 4vw, 2.5rem);
+      border-bottom: 5px solid var(--border);
+      overflow-x: hidden;
+      overflow-y: visible;
     }
 
-    .video-stage {
+    .hero-bg {
       position: absolute;
       inset: 0;
       z-index: 0;
       background:
-        radial-gradient(ellipse 80% 60% at 50% 45%, #3d2914 0%, #1a1208 65%);
+        radial-gradient(ellipse 90% 70% at 50% 20%, rgba(255, 107, 53, 0.15), transparent 55%),
+        linear-gradient(165deg, #fff 0%, var(--paper2) 45%, #e8e0d5 100%);
     }
 
-    #bgvideo {
+    .hero-collage {
       position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      pointer-events: none;
-      user-select: none;
-      -webkit-user-select: none;
-      z-index: 0;
-      background: #000;
+      inset: -5%;
+      z-index: 1;
+      background: url("media/og-collage.png") center / cover no-repeat;
+      opacity: 0.22;
+      filter: contrast(1.05) grayscale(0.15);
+      mix-blend-mode: multiply;
     }
 
-    .hero-inner {
+    /* Meme faces flank the card; scrolls away with the hero (not position: fixed). */
+    .hero-row {
       position: relative;
-      z-index: 2;
-      flex: 1;
+      z-index: 3;
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(0.35rem, 2vw, 1.25rem);
+      width: 100%;
+      max-width: 100%;
+    }
+
+    .hero-side {
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: flex-start;
-      padding: clamp(1rem, 3vw, 2rem);
-      pointer-events: none;
-    }
-
-    .title-row {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.55rem;
-    }
-
-    .x-community-icon {
-      width: clamp(2.2rem, 5vw, 2.8rem);
-      height: clamp(2.2rem, 5vw, 2.8rem);
-      border-radius: 0.55rem;
-      border: none;
-      background: transparent;
-      display: inline-flex;
-      align-items: center;
       justify-content: center;
-      box-shadow: none;
-      transform: rotate(6deg);
-      transition: transform 0.12s ease, filter 0.12s ease;
-      pointer-events: auto;
-      overflow: hidden;
+      gap: clamp(1rem, 4vh, 2.75rem);
+      flex: 0 0 auto;
     }
 
-    .x-community-icon img {
-      width: 86%;
-      height: 86%;
-      object-fit: contain;
-      display: block;
-    }
-
-    .x-community-icon:hover {
-      transform: rotate(0deg) scale(1.03);
-      filter: brightness(1.03);
-    }
-
-    .hero-inner button,
-    .hero-inner .ca-theme-box {
-      pointer-events: auto;
-    }
-
-    .top {
-      text-align: center;
+    .hero-frame {
+      position: relative;
+      z-index: 2;
+      flex: 1 1 18rem;
+      max-width: 38rem;
       width: 100%;
-      max-width: 34rem;
-      padding: clamp(0.75rem, 2vh, 1.25rem) clamp(0.75rem, 2vw, 1.25rem) 1rem;
+      min-width: 0;
+      text-align: center;
+      padding: clamp(1.25rem, 3vw, 2rem);
+      background: rgba(255, 255, 255, 0.88);
+      border: 4px solid var(--border);
       border-radius: 1.25rem;
-      background: linear-gradient(180deg, rgba(0, 0, 0, 0.42) 0%, rgba(0, 0, 0, 0.12) 55%, transparent 100%);
+      box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.12), var(--shadow);
     }
 
-    .top h1 {
-      font-family: "Fredoka", sans-serif;
-      font-weight: 700;
-      font-size: clamp(1.85rem, 5.2vw, 3.25rem);
-      line-height: 1.1;
-    }
-
-    .title-kiwi {
-      color: var(--gold);
+    h1.og-title {
+      font-family: "Bangers", cursive;
+      font-size: clamp(2.8rem, 10vw, 4.5rem);
+      letter-spacing: 0.04em;
+      line-height: 1;
+      margin-bottom: 0.35rem;
+      color: var(--ink);
       text-shadow:
-        0 2px 0 rgba(180, 83, 9, 0.35),
-        0 4px 20px rgba(251, 191, 36, 0.45),
-        0 6px 28px rgba(0, 0, 0, 0.45);
+        3px 3px 0 #fff,
+        5px 5px 0 var(--accent);
     }
 
-    .title-sub {
-      color: #ffffff;
-      text-shadow: 0 3px 18px rgba(0, 0, 0, 0.55);
+    /* Plain meme art only — ~3× previous size (was max ~130px wide). */
+    .float-meme {
+      display: block;
+      border: none;
+      background: none;
+      padding: 0;
+      margin: 0;
+      box-shadow: none;
+      text-decoration: none;
+      line-height: 0;
     }
 
-    .tagline {
-      margin-top: 0.45rem;
-      font-size: clamp(0.9rem, 2.2vw, 1.05rem);
-      font-weight: 600;
-      color: #fff;
-      text-shadow: 0 2px 12px rgba(0, 0, 0, 0.85);
+    .float-meme:hover .float-meme-bob img {
+      transform: scale(1.03);
+    }
+
+    .float-meme-bob {
+      display: block;
+      animation: meme-drift 5s ease-in-out infinite;
+    }
+
+    .float-meme img {
+      display: block;
+      width: clamp(216px, 28vw, 390px);
+      max-width: 100%;
+      height: auto;
+      vertical-align: middle;
+      transition: transform 0.15s ease;
+    }
+
+    .float-meme--troll { transform: rotate(-6deg); }
+    .float-meme--troll .float-meme-bob { animation-delay: 0s; }
+    .float-meme--alone { transform: rotate(5deg); }
+    .float-meme--alone .float-meme-bob { animation-delay: -1.2s; }
+    .float-meme--rage { transform: rotate(7deg); }
+    .float-meme--rage .float-meme-bob { animation-delay: -2.4s; }
+    .float-meme--lol { transform: rotate(-5deg); }
+    .float-meme--lol .float-meme-bob { animation-delay: -3.1s; }
+
+    @keyframes meme-drift {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    @media (max-width: 960px) {
+      .hero-row {
+        flex-direction: column;
+      }
+      .hero-frame {
+        order: -1;
+      }
+      .hero-side {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: clamp(0.75rem, 4vw, 1.5rem);
+        width: 100%;
+      }
+      .float-meme img {
+        width: clamp(160px, 42vw, 280px);
+      }
     }
 
     .ca-theme-box {
-      margin-top: 1.1rem;
+      margin-top: 1rem;
       text-align: left;
-      border-radius: 1rem;
-      padding: 0.85rem 1rem;
-      background: linear-gradient(145deg, rgba(254, 243, 199, 0.96) 0%, rgba(251, 191, 36, 0.9) 45%, rgba(217, 119, 6, 0.93) 100%);
-      border: 3px solid rgba(28, 25, 23, 0.85);
-      box-shadow:
-        0 0 0 2px rgba(132, 204, 22, 0.45),
-        0 12px 32px rgba(0, 0, 0, 0.35),
-        inset 0 1px 0 rgba(255, 255, 255, 0.35);
+      border-radius: 0.75rem;
+      padding: 0.9rem 1rem;
+      background: #fff;
+      border: 3px solid var(--border);
+      box-shadow: var(--shadow);
     }
 
     .ca-theme-box .ca-label {
       display: block;
-      font-family: "Fredoka", sans-serif;
-      font-size: 0.7rem;
-      font-weight: 700;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--kiwi-dark);
-      margin-bottom: 0.4rem;
+      font-family: "Bangers", cursive;
+      font-size: 0.95rem;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.45rem;
     }
 
     .ca-row {
       display: flex;
       align-items: stretch;
-      gap: 0.5rem;
-      border-radius: 0.55rem;
+      gap: 0.45rem;
+      border-radius: 0.45rem;
       overflow: hidden;
-      background: rgba(28, 25, 23, 0.08);
-      border: 2px solid rgba(28, 25, 23, 0.2);
+      border: 2px solid var(--border);
+      background: var(--paper2);
     }
 
     .ca-text {
       flex: 1;
-      padding: 0.5rem 0.65rem;
-      font-family: ui-monospace, "Cascadia Mono", monospace;
-      font-size: clamp(0.62rem, 1.9vw, 0.78rem);
+      padding: 0.55rem 0.65rem;
+      font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
+      font-size: clamp(0.58rem, 1.85vw, 0.72rem);
       font-weight: 700;
       word-break: break-all;
-      color: var(--ink);
       line-height: 1.35;
       display: flex;
       align-items: center;
@@ -201,314 +271,357 @@
 
     .copy-ca-btn {
       flex-shrink: 0;
-      font-family: "Fredoka", sans-serif;
-      font-weight: 700;
-      font-size: 0.82rem;
+      font-family: "Bangers", cursive;
+      font-size: 1rem;
+      letter-spacing: 0.05em;
       padding: 0 1rem;
       border: none;
-      border-left: 2px solid rgba(28, 25, 23, 0.25);
-      background: rgba(28, 25, 23, 0.88);
-      color: var(--gold);
-      cursor: pointer;
-      transition: background 0.15s, color 0.15s;
-    }
-
-    .copy-ca-btn:hover {
-      background: var(--ink);
-      color: #fef3c7;
-    }
-
-    .controls {
-      display: flex;
-      justify-content: center;
-      margin-top: 0.95rem;
-    }
-
-    .sound-icon-btn {
-      width: 2.4rem;
-      height: 2.4rem;
-      border-radius: 999px;
-      border: 2px solid rgba(255, 251, 235, 0.42);
-      background: rgba(28, 25, 23, 0.72);
+      border-left: 2px solid var(--border);
+      background: var(--accent);
       color: #fff;
       cursor: pointer;
-      display: inline-flex;
-      align-items: center;
+      text-shadow: 1px 1px 0 var(--border);
+      transition: background 0.15s, transform 0.1s;
+    }
+    .copy-ca-btn:hover { background: #e85a2a; }
+    .copy-ca-btn:active { transform: scale(0.98); }
+
+    .cta-row {
+      margin-top: 1.1rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.65rem;
       justify-content: center;
-      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.3);
-      transition: transform 0.12s ease, background 0.12s ease;
-      backdrop-filter: blur(8px);
-      font-size: 1.02rem;
-      line-height: 1;
     }
 
-    .sound-icon-btn:hover {
-      transform: translateY(-1px);
-      background: rgba(251, 191, 36, 0.25);
+    .btn-cartoon {
+      font-family: "Bangers", cursive;
+      font-size: 1.15rem;
+      letter-spacing: 0.04em;
+      padding: 0.55rem 1.35rem;
+      border: 3px solid var(--border);
+      border-radius: 0.5rem;
+      background: var(--accent2);
+      color: #fff;
+      text-decoration: none;
+      box-shadow: var(--shadow);
+      transition: transform 0.1s;
     }
+    .btn-cartoon:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--border); }
+    .btn-cartoon.secondary { background: #22c55e; color: var(--ink); text-shadow: none; }
 
-    .sound-icon-btn:active {
-      transform: scale(0.98);
-    }
-
-    .scroll-hint {
-      margin-top: auto;
-      padding: 1rem 0 0.5rem;
-      text-align: center;
-      font-family: "Fredoka", sans-serif;
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: rgba(255, 255, 255, 0.85);
-      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-      pointer-events: none;
-    }
-
-    .scroll-hint span {
-      display: inline-block;
-      animation: bounce 1.4s ease-in-out infinite;
-    }
-
-    @keyframes bounce {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(5px); }
-    }
-
-    /* Scroll section: cartoon / nugget theme */
-    .facts {
+    section {
       position: relative;
-      z-index: 3;
-      padding: clamp(2rem, 5vw, 3.5rem) clamp(1.25rem, 4vw, 2rem) 4rem;
-      background:
-        radial-gradient(1200px 400px at 50% -10%, rgba(251, 191, 36, 0.2), transparent 55%),
-        linear-gradient(180deg, #fffef8 0%, #fff7ed 40%, #fef9c3 100%);
-      border-top: 5px solid var(--gold-deep);
-      box-shadow: 0 -12px 40px rgba(180, 83, 9, 0.12);
+      padding: clamp(2rem, 5vw, 3.5rem) clamp(1.1rem, 4vw, 2rem);
     }
 
-    .facts-inner {
-      max-width: 720px;
+    .section-inner {
+      max-width: 900px;
       margin: 0 auto;
+      position: relative;
+      z-index: 1;
     }
 
-    .facts h2 {
-      font-family: "Fredoka", sans-serif;
-      font-weight: 700;
-      font-size: clamp(1.5rem, 4vw, 2.1rem);
+    .section-deco {
+      position: absolute;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.12;
+    }
+    .section-deco svg { display: block; width: 100%; height: auto; }
+
+    h2 {
+      font-family: "Bangers", cursive;
+      font-size: clamp(1.85rem, 5vw, 2.6rem);
+      letter-spacing: 0.03em;
+      margin-bottom: 0.75rem;
       text-align: center;
-      color: var(--ink);
+      text-shadow: 2px 2px 0 #fff, 3px 3px 0 var(--border);
+    }
+
+    .lead {
+      text-align: center;
+      font-weight: 700;
+      max-width: 36rem;
+      margin: 0 auto 1.75rem;
+      font-size: 1.05rem;
+      color: #44403c;
+    }
+
+    .band-about {
+      background: linear-gradient(180deg, #fef9c3 0%, var(--paper) 100%);
+      border-top: 4px dashed var(--border);
+      border-bottom: 4px dashed var(--border);
+    }
+
+    .band-tokens {
+      background: #e0f2fe;
+      border-bottom: 4px solid var(--border);
+    }
+
+    .band-culture {
+      background: #fce7f3;
+      border-bottom: 4px solid var(--border);
+    }
+
+    .band-buy {
+      background: #dcfce7;
+      border-bottom: 4px solid var(--border);
+    }
+
+    .band-community {
+      background: #fef3c7;
+    }
+
+    .token-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+
+    .token-card {
+      background: #fff;
+      border: 3px solid var(--border);
+      border-radius: 0.75rem;
+      padding: 1rem 1.1rem;
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
+    .token-card strong {
+      font-family: "Bangers", cursive;
+      font-size: 1.15rem;
+      display: block;
       margin-bottom: 0.35rem;
     }
 
-    .facts h2 span {
-      color: var(--gold-deep);
+    .culture-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1rem;
     }
 
-    .facts-lead {
-      text-align: center;
-      font-weight: 600;
-      color: #57534e;
-      margin-bottom: 2rem;
-      font-size: 1rem;
-    }
-
-    .fact-card {
+    .culture-card {
       background: #fff;
-      border: 4px solid var(--gold);
-      border-radius: 1.25rem;
-      padding: 1.15rem 1.35rem;
-      margin-bottom: 1rem;
-      box-shadow:
-        4px 4px 0 rgba(28, 25, 23, 0.12),
-        0 10px 28px rgba(251, 191, 36, 0.15);
+      border: 3px solid var(--border);
+      border-radius: 0.85rem;
+      padding: 1rem 1.15rem;
+      box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.08);
     }
-
-    .fact-card h3 {
-      font-family: "Fredoka", sans-serif;
-      font-size: 1.05rem;
-      color: var(--gold-deep);
+    .culture-card h3 {
+      font-family: "Bangers", cursive;
+      font-size: 1.35rem;
       margin-bottom: 0.45rem;
+      color: var(--accent2);
     }
-
-    .fact-card p {
+    .culture-card p {
+      font-size: 0.95rem;
       color: #44403c;
-      line-height: 1.55;
-      font-size: 0.98rem;
     }
 
-    .bottom-x-link {
-      margin-top: 1.2rem;
-      display: flex;
-      justify-content: center;
-    }
-
-    .video-error {
-      display: none;
-      position: absolute;
-      inset: 0;
-      z-index: 4;
-      align-items: center;
-      justify-content: center;
-      padding: 2rem;
+    .buy-cooked-only {
+      max-width: 36rem;
+      margin: 0 auto 1.5rem;
       text-align: center;
-      color: #fff;
-      font-weight: 700;
-      background: rgba(0, 0, 0, 0.65);
+      font-family: "Bangers", cursive;
+      font-size: clamp(1.35rem, 4vw, 1.95rem);
+      letter-spacing: 0.03em;
+      line-height: 1.25;
+      padding: 1.35rem 1.25rem;
+      background: #fff;
+      border: 3px solid var(--border);
+      border-radius: 0.85rem;
+      box-shadow: var(--shadow);
+    }
+    .buy-cooked-only p {
+      margin: 0;
+      color: var(--ink);
     }
 
-    .video-error.show { display: flex; }
+    footer {
+      text-align: center;
+      padding: 1.5rem 1rem 2rem;
+      font-size: 0.88rem;
+      color: #57534e;
+      border-top: 3px solid var(--border);
+      background: var(--paper2);
+    }
+    footer a { color: var(--accent2); font-weight: 700; }
+
+    .ca-again { max-width: 520px; margin: 1.5rem auto 0; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .x-community-icon:hover, .btn-cartoon:hover { transform: none; }
+      .float-meme-bob { animation: none; }
+    }
   </style>
 </head>
 <body>
-  <header class="hero">
-    <div class="video-stage">
-      <video
-        id="bgvideo"
-        autoplay
-        muted
-        loop
-        playsinline
-        webkit-playsinline
-        preload="auto"
-        tabindex="-1"
-        disablepictureinpicture
-        disableremoteplayback
-      >
-        <source src="media/nuggets.mp4" type="video/mp4" />
-      </video>
-    </div>
-    <div class="video-error" id="video-error" role="alert">
-      Could not load video. Put <code>nuggets.mp4</code> in <code>coin-site/media/</code> and run from the local server.
-    </div>
+  <div class="noise" aria-hidden="true"></div>
 
-    <div class="hero-inner">
-      <div class="top">
-        <h1 class="title-row">
-          <span class="title-kiwi">Kiwi</span>
-          <a class="x-community-icon" href="https://x.com/i/communities/2033613362458656981" target="_blank" rel="noopener noreferrer" aria-label="Kiwi X Community">
-            <img src="media/x-logo.svg" alt="" />
-          </a>
-        </h1>
-        <p class="tagline">Addicted to the taste of golden nuggets.</p>
+  <!-- Edit OG_X_COMMUNITY and OG_CONTRACT in the script at the bottom of the page. -->
+  <nav class="top-nav">
+    <span class="brand-mini">OG MEMES</span>
+    <a class="x-community-icon" id="x-link-nav" href="https://x.com" target="_blank" rel="noopener noreferrer" aria-label="OG MEMES on X">
+      <img src="media/x-logo.svg" alt="" />
+    </a>
+  </nav>
+
+  <header class="hero">
+    <div class="hero-bg" aria-hidden="true"></div>
+    <div class="hero-collage" aria-hidden="true"></div>
+
+    <div class="doodle" style="top:8%;left:3%;width:min(18vw,120px);transform:rotate(-12deg)"><svg viewBox="0 0 100 80" xmlns="http://www.w3.org/2000/svg"><ellipse cx="50" cy="42" rx="38" ry="32" fill="none" stroke="#000" stroke-width="3"/><path d="M28 38 Q50 55 72 38" fill="none" stroke="#000" stroke-width="3"/><circle cx="35" cy="32" r="4" fill="#000"/><circle cx="65" cy="32" r="4" fill="#000"/></svg></div>
+    <div class="doodle" style="bottom:12%;right:4%;width:min(16vw,100px);transform:rotate(8deg)"><svg viewBox="0 0 100 90" xmlns="http://www.w3.org/2000/svg"><path d="M50 15 L85 75 L15 75 Z" fill="none" stroke="#000" stroke-width="3"/><circle cx="50" cy="48" r="6" fill="#000"/></svg></div>
+    <div class="doodle" style="top:22%;right:8%;width:min(14vw,90px);transform:rotate(18deg)"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect x="20" y="25" width="60" height="55" rx="8" fill="none" stroke="#000" stroke-width="3"/><path d="M35 45 L45 55 L65 35" fill="none" stroke="#000" stroke-width="4"/></svg></div>
+    <div class="doodle" style="bottom:28%;left:6%;width:min(20vw,130px);transform:rotate(-6deg)"><svg viewBox="0 0 120 100" xmlns="http://www.w3.org/2000/svg"><circle cx="60" cy="45" r="35" fill="none" stroke="#000" stroke-width="3"/><ellipse cx="48" cy="40" rx="8" ry="12" fill="none" stroke="#000" stroke-width="2"/><ellipse cx="72" cy="40" rx="8" ry="12" fill="none" stroke="#000" stroke-width="2"/><path d="M45 58 Q60 48 75 58" fill="none" stroke="#000" stroke-width="2"/></svg></div>
+
+    <div class="hero-row">
+      <div class="hero-side hero-side--left">
+        <a class="float-meme float-meme--troll" href="https://knowyourmeme.com/memes/trollface" target="_blank" rel="noopener noreferrer" title="Trollface — Know Your Meme">
+          <span class="float-meme-bob"><img src="media/float-trollface.png" width="600" height="600" alt="Trollface" decoding="async" /></span>
+        </a>
+        <a class="float-meme float-meme--alone" href="https://knowyourmeme.com/memes/forever-alone" target="_blank" rel="noopener noreferrer" title="Forever Alone — Know Your Meme">
+          <span class="float-meme-bob"><img src="media/float-forever-alone.png" width="600" height="600" alt="Forever Alone" decoding="async" /></span>
+        </a>
+      </div>
+      <div class="hero-frame">
+        <h1 class="og-title">OG MEMES</h1>
 
         <div class="ca-theme-box">
           <span class="ca-label">Contract address</span>
           <div class="ca-row">
-            <span class="ca-text" id="contract-address">kiwidW62G5Ljxe4pzdhTBPuGcWpq2cng9MFV6Mbp4kP</span>
-            <button type="button" class="copy-ca-btn" id="copy-ca">Copy</button>
+            <span class="ca-text" id="contract-address"></span>
+            <button type="button" class="copy-ca-btn" data-copy-target="contract-address">Copy</button>
           </div>
         </div>
 
-        <div class="controls">
-          <button type="button" class="sound-icon-btn" id="sound-toggle" aria-label="Toggle sound" title="Sound off">
-            🔇
-          </button>
+        <div class="cta-row">
+          <a class="btn-cartoon secondary" href="#how-to-buy">How to buy</a>
+          <a class="btn-cartoon" id="x-link-cta" href="https://x.com" target="_blank" rel="noopener noreferrer">Join the mob</a>
         </div>
       </div>
-      <p class="scroll-hint"><span>Scroll down</span> for quick facts</p>
+      <div class="hero-side hero-side--right">
+        <a class="float-meme float-meme--rage" href="https://knowyourmeme.com/sensitive/memes/rage-guy-fffffuuuuuuuu" target="_blank" rel="noopener noreferrer" title="Rage Guy — Know Your Meme">
+          <span class="float-meme-bob"><img src="media/float-rage-guy.png" width="600" height="600" alt="Rage Guy" decoding="async" /></span>
+        </a>
+        <a class="float-meme float-meme--lol" href="https://knowyourmeme.com/memes/lol-guy" target="_blank" rel="noopener noreferrer" title="LOL Guy — Know Your Meme">
+          <span class="float-meme-bob"><img src="media/float-lol-guy.png" width="600" height="600" alt="LOL Guy" decoding="async" /></span>
+        </a>
+      </div>
     </div>
   </header>
 
-  <main class="facts" id="facts">
-    <div class="facts-inner">
-      <h2><span>Addiction</span> and Kiwi</h2>
+  <section class="band-about">
+    <div class="section-inner">
+      <div class="section-deco" style="top:-1rem;right:-0.5rem;width:min(28vw,160px);transform:rotate(14deg)" aria-hidden="true"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="40" fill="none" stroke="#000" stroke-width="3"/><path d="M30 45 L42 57 L72 32" fill="none" stroke="#000" stroke-width="5"/></svg></div>
+      <h2>About</h2>
+      <p class="lead">Do not overthink it. Trollface, Me Gusta, Forever Alone — the originals hit different. Clean ticker energy: impossible to forget if you were there when the internet was <strong>weird on purpose</strong>.</p>
+    </div>
+  </section>
 
-      <article class="fact-card">
-        <h3>Kiwi mascot energy</h3>
-        <p>Kiwi birds are curious foragers with long beaks built for probing the ground. That obsession vibe fits the mascot story: always searching, always sniffing, always chasing the next nugget.</p>
-      </article>
+  <section class="band-tokens">
+    <div class="section-inner">
+      <h2>Tokenomics</h2>
+      <p class="lead">Same playbook as the legends: simple numbers, loud culture.</p>
+      <div class="token-grid">
+        <div class="token-card"><strong>Total supply</strong>1B</div>
+        <div class="token-card"><strong>Buy / sell tax</strong>0%</div>
+        <div class="token-card"><strong>Liquidity</strong>Burnt</div>
+        <div class="token-card"><strong>Contract</strong>Renounced</div>
+        <div class="token-card"><strong>Ownership</strong>Community</div>
+      </div>
+    </div>
+  </section>
 
-      <article class="fact-card">
-        <h3>Why loops feel powerful</h3>
-        <p>Addiction often runs in a cue → action → reward loop. The brain learns fast from repeated rewards, so cravings can kick in automatically before you even realize it.</p>
-      </article>
+  <section class="band-culture">
+    <div class="section-inner">
+      <div class="section-deco" style="bottom:0;left:-1rem;width:min(32vw,180px);transform:rotate(-8deg)" aria-hidden="true"><svg viewBox="0 0 120 100" xmlns="http://www.w3.org/2000/svg"><path d="M60 15 C90 15 105 40 105 55 C105 80 75 92 60 92 C45 92 15 80 15 55 C15 35 35 15 60 15Z" fill="none" stroke="#000" stroke-width="3"/><path d="M38 48 Q60 38 82 48" fill="none" stroke="#000" stroke-width="2"/></svg></div>
+      <h2>The roster</h2>
+      <p class="lead">Tiny bites of lore — the kind of stuff you would yell across a Skype call in 2011.</p>
+      <div class="culture-grid">
+        <article class="culture-card">
+          <h3>Trollface</h3>
+          <p>Microsoft Paint energy, infinite smugness. The face launched a million “problem?” replies and basically invented modern shitposting.</p>
+        </article>
+        <article class="culture-card">
+          <h3>Forever Alone</h3>
+          <p>Peak early-internet melodrama in one wobbly head. Somehow both a joke and uncomfortably relatable — that was the whole bit.</p>
+        </article>
+        <article class="culture-card">
+          <h3>Me Gusta</h3>
+          <p>Bulging eyes, tiny satisfied mouth — the universal symbol for liking something you are probably not supposed to like.</p>
+        </article>
+        <article class="culture-card">
+          <h3>Rage Guy</h3>
+          <p>Keyboard smash in human form. When the panel turned red and the teeth showed up, you knew the punchline was pure frustration.</p>
+        </article>
+        <article class="culture-card">
+          <h3>Yao Ming face</h3>
+          <p>Basketball photo turned dismissal machine. “Sure, Jan” before people said “Sure, Jan.”</p>
+        </article>
+        <article class="culture-card">
+          <h3>Cereal Guy</h3>
+          <p>Spoon mid-air, deadpan stare — the panel for watching drama unfold while pretending you are just eating breakfast.</p>
+        </article>
+      </div>
+    </div>
+  </section>
 
-      <article class="fact-card">
-        <h3>Night mode parallels</h3>
-        <p>Real kiwi are nocturnal and rely heavily on smell and sound in the dark. In mascot terms, that maps perfectly to “hunting” behavior: low visibility, sharp senses, locked focus.</p>
-      </article>
-
-      <article class="fact-card">
-        <h3>Not about weak will</h3>
-        <p>Compulsive behavior is not just about discipline. Stress, environment, biology, and routines all shape how hard it is to pause, reset, and break an old pattern.</p>
-      </article>
-
-      <article class="fact-card">
-        <h3>How people break loops</h3>
-        <p>Small structure changes help: reduce triggers, replace routines, sleep better, and ask for support. When substance use is serious, professional help is the strongest move.</p>
-      </article>
-
-      <div class="bottom-x-link">
-        <a class="x-community-icon" href="https://x.com/i/communities/2033613362458656981" target="_blank" rel="noopener noreferrer" aria-label="Kiwi X Community">
-          <img src="media/x-logo.svg" alt="" />
-        </a>
+  <section class="band-buy" id="how-to-buy">
+    <div class="section-inner">
+      <h2>How to buy</h2>
+      <div class="buy-cooked-only">
+        <p>if you dont know how to buy you are cooked</p>
       </div>
 
+      <div class="ca-theme-box ca-again">
+        <span class="ca-label">Contract address</span>
+        <div class="ca-row">
+          <span class="ca-text" id="contract-address-2"></span>
+          <button type="button" class="copy-ca-btn" data-copy-target="contract-address-2">Copy</button>
+        </div>
+      </div>
     </div>
-  </main>
+  </section>
+
+  <section class="band-community">
+    <div class="section-inner" style="text-align:center">
+      <h2>Community</h2>
+      <p class="lead">Memes in the streets, memes in the sheets — ship art, post lore, raid politely.</p>
+      <a class="btn-cartoon" id="x-link-bottom" href="https://x.com" target="_blank" rel="noopener noreferrer">Open X community</a>
+      <div class="doodle" style="position:relative;width:min(40vw,200px);margin:1.5rem auto 0;opacity:0.2"><svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="20" width="180" height="90" rx="12" fill="none" stroke="#000" stroke-width="4"/><path d="M40 50 L160 50 M40 70 L130 70 M40 90 L150 90" stroke="#000" stroke-width="3"/></svg></div>
+    </div>
+  </section>
+
+  <footer>
+    <p>OG MEMES — Built for the timeline that remembers when panels were king.</p>
+    <p style="margin-top:0.5rem"><a href="#">Privacy</a> · <a href="#">Terms</a></p>
+  </footer>
 
   <script>
     (function () {
-      var v = document.getElementById("bgvideo");
-      var errEl = document.getElementById("video-error");
+      /** Paste your X Community URL and contract address here */
+      var OG_X_COMMUNITY = "https://x.com/i/communities/2033282287945597012";
+      var OG_CONTRACT = "mememziYuJANZvgNum6hXMRB1FGnQwpqnjE3c9McmXN";
 
-      function ensurePlaying() {
-        if (!v || v.error) return;
-        v.play().catch(function () {});
-      }
-
-      if (v) {
-        v.addEventListener("error", function () {
-          if (errEl) errEl.classList.add("show");
-        });
-
-        v.addEventListener("contextmenu", function (e) {
-          e.preventDefault();
-        });
-
-        v.addEventListener("canplay", function onCanPlay() {
-          v.removeEventListener("canplay", onCanPlay);
-          ensurePlaying();
-        });
-
-        ensurePlaying();
-      }
-
-      var soundToggle = document.getElementById("sound-toggle");
-      function renderSoundState() {
-        if (!soundToggle || !v) return;
-        if (v.muted) {
-          soundToggle.textContent = "🔇";
-          soundToggle.setAttribute("title", "Sound off");
-          soundToggle.setAttribute("aria-label", "Turn sound on");
-        } else {
-          soundToggle.textContent = "🔊";
-          soundToggle.setAttribute("title", "Sound on");
-          soundToggle.setAttribute("aria-label", "Turn sound off");
-        }
-      }
-
-      soundToggle.addEventListener("click", function () {
-        v.muted = !v.muted;
-        if (!v.muted) {
-          try {
-            v.volume = 1;
-          } catch (e) {}
-        }
-        v.play().catch(function () {});
-        renderSoundState();
+      ["x-link-nav", "x-link-cta", "x-link-bottom"].forEach(function (id) {
+        var a = document.getElementById(id);
+        if (a) a.href = OG_X_COMMUNITY;
       });
-      renderSoundState();
 
-      var caEl = document.getElementById("contract-address");
-      var copyBtn = document.getElementById("copy-ca");
-      copyBtn.addEventListener("click", function () {
-        var t = caEl.textContent.trim();
+      var ca1 = document.getElementById("contract-address");
+      var ca2 = document.getElementById("contract-address-2");
+      if (ca1) ca1.textContent = OG_CONTRACT;
+      if (ca2) ca2.textContent = OG_CONTRACT;
+
+      function copyFromId(id, btn) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        var t = el.textContent.trim();
         function done() {
-          var prev = copyBtn.textContent;
-          copyBtn.textContent = "Copied!";
-          setTimeout(function () {
-            copyBtn.textContent = prev;
-          }, 1400);
+          var prev = btn.textContent;
+          btn.textContent = "Copied!";
+          setTimeout(function () { btn.textContent = prev; }, 1400);
         }
         if (navigator.clipboard && navigator.clipboard.writeText) {
           navigator.clipboard.writeText(t).then(done).catch(done);
@@ -517,18 +630,16 @@
           a.value = t;
           document.body.appendChild(a);
           a.select();
-          try {
-            document.execCommand("copy");
-          } catch (e) {}
+          try { document.execCommand("copy"); } catch (e) {}
           document.body.removeChild(a);
           done();
         }
-      });
-
-      document.addEventListener("visibilitychange", function () {
-        if (!document.hidden && v && !v.error) {
-          v.play().catch(function () {});
-        }
+      }
+      document.querySelectorAll(".copy-ca-btn").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          var id = btn.getAttribute("data-copy-target");
+          if (id) copyFromId(id, btn);
+        });
       });
     })();
   </script>

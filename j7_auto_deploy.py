@@ -237,6 +237,96 @@ def generate_name_and_symbol(tweet_text, tweet_url=""):
 
     return name, symbol
 
+
+def symbol_from_name(name: str) -> str:
+    """Fast SYMBOL from user-entered NAME (memecoin ticker rules)."""
+    name = (name or "").strip()
+    if not name:
+        return "TOKEN"
+    name = re.sub(r"'s\b", "", name, flags=re.I)
+    name = re.sub(r"'", " ", name)
+    words = re.findall(r"[A-Za-z]+", name)
+    words = [w for w in words if len(w) > 1]
+    if not words:
+        return "TOKEN"
+    lower = [w.lower() for w in words]
+    connectors = {
+        "the", "and", "for", "with", "this", "that", "you", "your", "from",
+        "into", "what", "when", "where", "they", "them", "their", "there",
+        "will", "would", "could", "should", "is", "are", "was", "were", "it",
+        "a", "an", "of", "my", "new", "to", "in", "on",
+    }
+    banned = {
+        "coin", "token", "crypto", "official", "meme", "viral",
+    }
+    significant = [w for w in words if w.lower() not in connectors]
+    if not significant:
+        significant = words
+
+    # Chief Gyatt Officer → CGO
+    if len(significant) >= 2 and lower[-1] == "officer":
+        acr = "".join(w[0] for w in significant[:5]).upper()
+        acr = re.sub(r"[^A-Z]", "", acr)[:13]
+        if len(acr) >= 2:
+            return acr
+
+    # The Boys → BOYS
+    if lower[0] == "the" and len(significant) == 1:
+        sym = re.sub(r"[^A-Za-z]", "", significant[0]).upper()[:13]
+        if len(sym) >= 2:
+            return sym
+
+    candidates = [w for w in significant if w.lower() not in banned]
+    if not candidates:
+        candidates = significant
+
+    # Prefer punchy longer word (not first word of headline)
+    scored: list[tuple[int, str]] = []
+    for i, w in enumerate(candidates):
+        score = min(len(w), 12)
+        if w[0].isupper() and i > 0:
+            score += 2
+        if i == len(candidates) - 1:
+            score += 1
+        scored.append((score, w))
+    scored.sort(key=lambda t: t[0], reverse=True)
+    sym = re.sub(r"[^A-Za-z]", "", scored[0][1]).upper()[:13]
+    if len(sym) >= 2:
+        return sym
+    joined = re.sub(r"[^A-Za-z]", "", "".join(significant)).upper()[:13]
+    return joined if len(joined) >= 2 else "MEME"
+
+
+def panel_has_token_fields(page) -> bool:
+    try:
+        return page.locator('input[placeholder*="Token name"]').count() > 0
+    except Exception:
+        return False
+
+
+def wait_for_deploy_panel(page, timeout_s: float = 8.0) -> bool:
+    """Vent til Token Deploy-panel er åpent (samme sjekk som run_deploy_on_click_loop)."""
+    deadline = time.time() + timeout_s
+    while time.time() < deadline:
+        if panel_has_token_fields(page):
+            return True
+        time.sleep(0.15)
+    return False
+
+
+def fill_deploy_fields(page, name: str, symbol: str) -> bool:
+    """Fyll NAME + SYMBOL — identisk med smart_fill_deploy."""
+    try:
+        if not panel_has_token_fields(page):
+            return False
+        page.locator('input[placeholder*="Token name"]').first.fill(name)
+        page.locator('input[placeholder*="Symbol"]').first.fill(symbol)
+        return True
+    except Exception as e:
+        print(f"Error: {e}")
+        return False
+
+
 def smart_fill_deploy(page):
     global last_filled_url
     
@@ -258,8 +348,8 @@ def smart_fill_deploy(page):
         print(f"✅ Symbol: {symbol}")
         
         # Ultra-fast fill
-        page.locator('input[placeholder*="Token name"]').first.fill(name)
-        page.locator('input[placeholder*="Symbol"]').first.fill(symbol)
+        if not fill_deploy_fields(page, name, symbol):
+            return
         
         # Cashback + Image
         try:
@@ -277,24 +367,29 @@ def smart_fill_deploy(page):
     except Exception as e:
         print(f"Error: {e}")
 
-# ====================== MAIN ======================
-with sync_playwright() as p:
-    browser = p.chromium.launch(
-        headless=False,
-        args=["--no-sandbox", "--disable-blink-features=AutomationControlled"]
-    )
-    context = browser.new_context()
-    page = context.new_page()
-    
-    page.goto("https://j7tracker.io/")
-    print("✅ J7 is running. Log in and keep this script open.")
+
+def run_deploy_on_click_loop(page) -> None:
+    """Fill NAME/SYMBOL when user opens deploy from a tweet (legacy loop)."""
+    print("J7 is running. Log in and keep this script open.")
     print("Click DEPLOY → should now fill almost instantly.\n")
-    
     while True:
         try:
             if page.locator('input[placeholder*="Token name"]').count() > 0:
                 smart_fill_deploy(page)
                 time.sleep(3)
-        except:
+        except Exception:
             pass
         time.sleep(0.5)
+
+
+if __name__ == "__main__":
+    with sync_playwright() as p:
+        browser = p.chromium.launch(
+            headless=False,
+            args=["--no-sandbox", "--disable-blink-features=AutomationControlled"],
+        )
+        context = browser.new_context()
+        page = context.new_page()
+
+        page.goto("https://j7tracker.io/")
+        run_deploy_on_click_loop(page)
