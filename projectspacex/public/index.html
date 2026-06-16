@@ -1,0 +1,1602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<title>Project SpaceX</title>
+<link rel="icon" type="image/png" href="/assets/favicon.png" />
+<link rel="apple-touch-icon" href="/assets/favicon.png" />
+<style>
+  :root{
+    --bg:#10131c; --panel:rgba(16,20,30,.80); --brd:rgba(255,255,255,.10);
+    --accent:#ff7a2f; --accent2:#ffd24a; --good:#4ade80; --bad:#f87171;
+    --txt:#f4f1ea; --muted:#9aa3b2;
+    --font:'Inter',system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;height:100%;background:var(--bg);color:var(--txt);font-family:var(--font);overflow:hidden}
+  #wrap{position:fixed;inset:0}
+  canvas{display:block;width:100%;height:100%;touch-action:none;image-rendering:pixelated}
+
+  .topbar{position:absolute;top:0;left:0;right:0;display:flex;gap:10px;align-items:center;
+    padding:10px 14px;z-index:20;pointer-events:none;flex-wrap:wrap}
+  .topbar > *{pointer-events:auto}
+  .brand{display:flex;align-items:center;
+    background:var(--panel);border:1px solid var(--brd);padding:7px 12px;border-radius:12px;backdrop-filter:blur(8px)}
+  .brand .logo-img{height:34px;width:auto;display:block;image-rendering:auto}
+  @media (max-width:560px){.brand .logo-img{height:22px}}
+  .spacer{flex:1}
+  .pill{background:var(--panel);border:1px solid var(--brd);padding:8px 12px;border-radius:12px;
+    font-size:13px;font-weight:600;backdrop-filter:blur(8px);white-space:nowrap;display:flex;gap:8px;align-items:center}
+  .pill .lab{color:var(--muted);font-weight:500}.pill .val{color:var(--accent2)}
+  .btn{cursor:pointer;border:none;border-radius:12px;font-weight:700;font-size:13px;padding:9px 16px;
+    color:#1a1206;background:linear-gradient(180deg,var(--accent2),var(--accent));
+    box-shadow:0 6px 18px rgba(255,122,47,.35);transition:transform .12s,filter .12s}
+  .btn:hover{transform:translateY(-1px);filter:brightness(1.06)}.btn:active{transform:translateY(0)}
+  .btn.ghost{background:var(--panel);color:var(--txt);border:1px solid var(--brd);box-shadow:none;backdrop-filter:blur(8px)}
+
+  /* Coin balance (top-middle) */
+  #coinbar{position:absolute;top:10px;left:50%;transform:translateX(-50%);z-index:23;display:none;
+    flex-direction:column;align-items:center;gap:3px;
+    background:var(--panel);border:1px solid var(--brd);border-radius:14px;padding:8px 24px;backdrop-filter:blur(8px);
+    box-shadow:0 10px 28px rgba(0,0,0,.4);min-width:210px;pointer-events:none}
+  #coinbar.show{display:flex}
+  #coinbar .coin-main{display:flex;align-items:center;gap:9px;font-weight:900;font-size:23px;color:var(--accent2);line-height:1}
+  #coinbar .coin-ic{font-size:19px;filter:drop-shadow(0 2px 4px rgba(255,160,60,.45))}
+  #coinbar .coin-sub{display:flex;gap:10px;align-items:center;font-size:11px;font-weight:700;letter-spacing:.3px}
+  #coinbar .coin-rate{color:var(--good)}
+  #coinbar .coin-hold{color:var(--muted)}
+  #coinbar .coin-hold b{color:var(--accent2)}
+  #coinbar .dot{color:var(--brd)}
+  @media (max-width:560px){#coinbar{min-width:0;padding:6px 14px;top:8px}
+    #coinbar .coin-main{font-size:18px}#coinbar .coin-sub{font-size:10px;gap:6px}}
+
+  /* Intro / how-it-works modal */
+  #intro-overlay .card{max-width:520px}
+  #intro-overlay .intro-title{font-size:24px;font-weight:900;margin:0 0 4px;letter-spacing:.4px}
+  #intro-overlay .intro-title .em{color:var(--accent2)}
+  #intro-overlay .intro-body{color:var(--txt);font-size:14px;line-height:1.6;text-align:left;margin:14px 0 8px}
+  #intro-overlay .intro-body p{margin:0 0 12px}
+  #intro-overlay .intro-tip{background:rgba(255,210,74,.10);border:1px solid rgba(255,210,74,.28);border-radius:12px;
+    padding:12px 14px;color:var(--txt);font-size:13px;line-height:1.55;text-align:left;margin:6px 0 10px}
+  #intro-overlay .intro-tip:last-of-type{margin-bottom:18px}
+  #intro-overlay .intro-tip b{color:var(--accent2)}
+
+  /* First-time factory tutorial bubble */
+  #factory-tutorial{position:absolute;inset:0;z-index:26;pointer-events:none;display:none}
+  #factory-tutorial.show{display:block}
+  #factory-tutorial .tut-bubble{position:absolute;pointer-events:auto;transform:translateY(-50%);
+    max-width:min(240px,42vw);padding:14px 16px 12px;border-radius:16px;
+    background:linear-gradient(145deg,rgba(32,24,48,.97),rgba(14,12,22,.98));
+    border:2px solid var(--accent2);box-shadow:0 16px 40px rgba(0,0,0,.55),0 0 28px rgba(255,210,74,.18);
+    animation:tut-pop .45s cubic-bezier(.2,1.4,.3,1), tut-float 2.8s ease-in-out .45s infinite}
+  #factory-tutorial .tut-arrow{position:absolute;left:-11px;top:50%;transform:translateY(-50%);
+    width:0;height:0;border-top:10px solid transparent;border-bottom:10px solid transparent;
+    border-right:11px solid var(--accent2)}
+  #factory-tutorial .tut-arrow::after{content:"";position:absolute;left:3px;top:-8px;
+    border-top:8px solid transparent;border-bottom:8px solid transparent;border-right:9px solid rgba(22,18,32,.98)}
+  #factory-tutorial .tut-step{font-size:10px;font-weight:800;letter-spacing:1.6px;color:var(--accent);
+    text-transform:uppercase;margin-bottom:4px}
+  #factory-tutorial .tut-text{font-size:15px;font-weight:800;line-height:1.35;color:var(--txt)}
+  #factory-tutorial .tut-text b{color:var(--accent2)}
+  #factory-tutorial .tut-sub{font-size:11px;color:var(--muted);margin-top:6px;line-height:1.4}
+  #factory-tutorial .tut-dismiss{margin-top:10px;width:100%;padding:8px 10px;border-radius:10px;cursor:pointer;
+    border:1px solid rgba(255,210,74,.35);background:rgba(255,210,74,.12);color:var(--accent2);
+    font-family:var(--font);font-size:11px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;
+    transition:background .12s,border-color .12s}
+  #factory-tutorial .tut-dismiss:hover{background:rgba(255,210,74,.22);border-color:var(--accent2)}
+  .shop-item.tutorial-pulse{border-color:var(--accent2)!important;
+    box-shadow:0 0 0 0 rgba(255,210,74,.55),0 0 24px rgba(255,210,74,.25)!important;
+    animation:tut-ring 1.6s ease-in-out infinite}
+  @keyframes tut-pop{from{opacity:0;transform:translateY(-50%) translateX(12px) scale(.92)}to{opacity:1;transform:translateY(-50%) translateX(0) scale(1)}}
+  @keyframes tut-float{0%,100%{transform:translateY(-50%) translateX(0)}50%{transform:translateY(calc(-50% - 4px)) translateX(2px)}}
+  @keyframes tut-ring{0%,100%{box-shadow:0 0 0 0 rgba(255,210,74,.5),0 0 20px rgba(255,210,74,.2)}50%{box-shadow:0 0 0 6px rgba(255,210,74,0),0 0 28px rgba(255,210,74,.35)}}
+
+  /* Shop box (middle-left) */
+  #shop{position:absolute;left:14px;top:50%;transform:translateY(-50%);z-index:22;width:150px;
+    background:var(--panel);border:1px solid var(--brd);border-radius:14px;padding:10px;backdrop-filter:blur(8px);display:none}
+  #shop.show{display:block}
+  #shop .shop-h{font-size:10px;letter-spacing:1.4px;color:var(--muted);text-transform:uppercase;margin:0 2px 8px}
+  #shop .shop-item + .shop-item{margin-top:8px}
+  .shop-item{border:1px solid var(--brd);border-radius:12px;padding:10px 8px 8px;background:rgba(255,255,255,.04);
+    cursor:grab;text-align:center;transition:opacity .28s,transform .12s,border-color .12s,background .12s;user-select:none}
+  .shop-item.hidden{display:none}
+  .shop-item.vis-0{opacity:1}
+  .shop-item.vis-1{opacity:.52}
+  .shop-item.vis-2{opacity:.26}
+  .shop-item:hover{transform:translateY(-1px);border-color:var(--accent2);background:rgba(255,210,74,.08)}
+  .shop-item:active{cursor:grabbing}
+  .shop-item img{width:96px;height:72px;object-fit:contain;image-rendering:pixelated;pointer-events:none;display:block;margin:0 auto 4px}
+  .shop-item .nm{font-weight:800;font-size:13px;letter-spacing:.5px}
+  .shop-item .hint{font-size:10px;color:var(--muted);margin-top:1px}
+  .shop-item.placed{cursor:default;border-color:var(--brd);background:rgba(74,222,128,.06)}
+  .shop-item.placed:hover{transform:none}
+  .shop-item.armed{border-color:var(--accent);background:rgba(255,122,47,.14);box-shadow:0 0 0 2px rgba(255,122,47,.25)}
+  .shop-item.locked{cursor:not-allowed;filter:grayscale(.7)}
+  .shop-item.locked:hover{transform:none;border-color:var(--brd);background:rgba(255,255,255,.04)}
+  .shop-item.locked .hint{color:var(--accent2)}
+  .shop-item.cant{border-color:rgba(248,113,113,.5)}
+  .shop-item.cant .hint{color:var(--bad)}
+  .shop-item .cost{font-size:11px;font-weight:800;color:var(--accent2);margin-top:2px}
+  .shop-item.cant .cost{color:var(--bad)}
+  .shop-item.placed .cost,.shop-item.locked .cost{display:none}
+  .shop-item.stage-card{cursor:pointer}
+  .shop-item.stage-card .stage-badge{width:56px;height:56px;margin:4px auto 6px;border-radius:50%;
+    background:linear-gradient(180deg,#c4b5fd,#7c3aed);display:flex;align-items:center;justify-content:center;
+    font-size:26px;font-weight:900;color:#fff;box-shadow:0 4px 16px rgba(124,58,237,.45);pointer-events:none}
+  .shop-item.stage-card.placed .stage-badge{background:linear-gradient(180deg,#86efac,#22c55e);box-shadow:0 4px 16px rgba(34,197,94,.35)}
+  .shop-item.stage-card.armed{border-color:#a78bfa;background:rgba(167,139,250,.12);box-shadow:0 0 0 2px rgba(167,139,250,.28)}
+
+  /* Bottom world-toggle button — glassy space pill with a glowing planet badge */
+  #worldbtn{position:absolute;left:50%;bottom:24px;transform:translateX(-50%);z-index:22;display:none;
+    align-items:center;gap:12px;cursor:pointer;
+    padding:10px 22px;border-radius:999px;font-family:var(--font);
+    font-weight:900;font-size:15px;letter-spacing:1.6px;text-transform:uppercase;color:#fff;
+    background:linear-gradient(180deg,rgba(38,20,52,.92),rgba(12,9,22,.94));
+    border:1px solid rgba(255,255,255,.16);backdrop-filter:blur(10px);
+    box-shadow:0 12px 34px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.14), 0 0 0 0 rgba(255,110,50,.5);
+    transition:transform .14s, box-shadow .3s, filter .14s; animation:wb-pulse 3.2s ease-in-out infinite}
+  #worldbtn.show{display:inline-flex}
+  #worldbtn:hover{transform:translateX(-50%) translateY(-2px);filter:brightness(1.08)}
+  #worldbtn:active{transform:translateX(-50%) translateY(0)}
+  #worldbtn .wb-label{text-shadow:0 1px 2px rgba(0,0,0,.6)}
+  #worldbtn .wb-arrow{font-size:17px;opacity:.85;display:inline-block;transition:transform .18s}
+  #worldbtn:hover .wb-arrow{transform:translateX(3px)}
+  #worldbtn.to-earth:hover .wb-arrow{transform:translateX(-3px)}
+  #worldbtn .planet{width:26px;height:26px;border-radius:50%;flex:0 0 auto;position:relative;
+    box-shadow:inset -5px -4px 8px rgba(0,0,0,.55), inset 4px 3px 6px rgba(255,255,255,.25), 0 0 0 2px rgba(255,255,255,.10);
+    background:radial-gradient(circle at 33% 28%, #ffe2b0 0%, #ff8a3d 38%, #c1440e 66%, #7a2a08 100%)}
+  #worldbtn .planet::after{content:"";position:absolute;inset:-3px;border-radius:50%;
+    box-shadow:0 0 16px 3px rgba(255,110,50,.65);pointer-events:none}
+  /* Going back to Earth: blue/green planet + blue glow */
+  #worldbtn.to-earth{background:linear-gradient(180deg,rgba(16,32,52,.92),rgba(8,12,24,.94));
+    box-shadow:0 12px 34px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.14);animation:wb-pulse-blue 3.2s ease-in-out infinite}
+  #worldbtn.to-earth .planet{
+    background:radial-gradient(circle at 33% 28%, #d6f0ff 0%, #5fb0f0 36%, #2a7fd4 62%, #143f70 100%)}
+  #worldbtn.to-earth .planet::after{box-shadow:0 0 16px 3px rgba(80,170,255,.65)}
+  @keyframes wb-pulse{0%,100%{box-shadow:0 12px 34px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.14), 0 0 0 0 rgba(255,110,50,0)}
+    50%{box-shadow:0 12px 34px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.14), 0 0 22px 1px rgba(255,110,50,.32)}}
+  @keyframes wb-pulse-blue{0%,100%{box-shadow:0 12px 34px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.14), 0 0 0 0 rgba(80,170,255,0)}
+    50%{box-shadow:0 12px 34px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.14), 0 0 22px 1px rgba(80,170,255,.32)}}
+
+  /* Reset button (bottom-right) */
+  #reset-btn{position:absolute;right:14px;bottom:22px;z-index:22;display:none}
+  #reset-btn.show{display:inline-block}
+
+  /* Mars goal banner */
+  #mars-banner{position:absolute;left:50%;top:64px;transform:translateX(-50%);z-index:21;display:none;
+    background:var(--panel);border:1px solid var(--brd);border-radius:999px;padding:10px 22px;backdrop-filter:blur(8px);
+    font-weight:800;font-size:14px;letter-spacing:.6px;text-align:center;color:var(--accent2);white-space:nowrap;
+    box-shadow:0 10px 30px rgba(0,0,0,.4)}
+  #mars-banner.show{display:block}
+
+  /* Land-expansion popup */
+  .expand-pop{position:absolute;inset:0;z-index:35;display:none;align-items:center;justify-content:center;padding:24px;
+    background:radial-gradient(120% 120% at 50% 40%,rgba(10,12,20,.45),rgba(8,10,16,.78))}
+  .expand-pop.show{display:flex}
+  .expand-card{position:relative;width:100%;max-width:360px;text-align:center;
+    background:linear-gradient(180deg,rgba(28,20,44,.96),rgba(14,11,24,.97));
+    border:1px solid rgba(255,255,255,.14);border-radius:20px;padding:30px 26px 26px;
+    box-shadow:0 30px 80px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.12);
+    animation:exp-in .22s cubic-bezier(.2,1.3,.3,1)}
+  @keyframes exp-in{from{transform:translateY(10px) scale(.96);opacity:0}to{transform:none;opacity:1}}
+  .expand-x{position:absolute;top:10px;right:10px;width:30px;height:30px;border-radius:9px;cursor:pointer;
+    border:1px solid var(--brd);background:rgba(255,255,255,.06);color:var(--txt);font-size:14px;line-height:1;
+    display:flex;align-items:center;justify-content:center;transition:background .12s,border-color .12s}
+  .expand-x:hover{background:rgba(248,113,113,.18);border-color:var(--bad)}
+  .expand-icon{font-size:42px;margin-bottom:6px;filter:drop-shadow(0 4px 10px rgba(255,160,80,.4))}
+  .expand-title{font-size:21px;font-weight:900;letter-spacing:1px}
+  .expand-sub{color:var(--muted);font-size:13px;margin:6px 0 14px;line-height:1.5}
+  .expand-price{font-size:14px;font-weight:700;letter-spacing:.6px;color:var(--txt);margin-bottom:18px}
+  .expand-price b{color:var(--accent2);font-size:17px}
+  .expand-card .big-btn{width:100%;font-size:16px;padding:14px 22px;letter-spacing:1px}
+
+  #toast{position:absolute;top:104px;left:50%;transform:translateX(-50%) translateY(-16px);z-index:30;
+    background:linear-gradient(180deg,var(--accent2),var(--accent));color:#1a1206;font-weight:800;font-size:15px;
+    padding:10px 20px;border-radius:999px;box-shadow:0 10px 30px rgba(255,122,47,.45);opacity:0;
+    transition:opacity .35s,transform .35s cubic-bezier(.2,1.4,.3,1);pointer-events:none;white-space:nowrap}
+  #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  #stage2-msg{position:absolute;left:50%;top:42%;transform:translate(-50%,-50%) scale(.94);z-index:31;
+    background:linear-gradient(180deg,rgba(22,18,38,.96),rgba(10,8,18,.98));border:2px solid var(--accent2);
+    color:var(--accent2);font-weight:900;font-size:clamp(13px,2.2vw,19px);letter-spacing:1.2px;text-align:center;
+    padding:20px 30px;border-radius:16px;box-shadow:0 24px 70px rgba(0,0,0,.6),0 0 40px rgba(255,210,74,.12);
+    opacity:0;pointer-events:none;transition:opacity .45s,transform .45s cubic-bezier(.2,1.4,.3,1);max-width:92vw}
+  #stage2-msg.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
+
+  .overlay{position:absolute;inset:0;z-index:40;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px;
+    background:radial-gradient(120% 120% at 50% 20%,rgba(10,12,20,.55),rgba(8,10,16,.92))}
+  .overlay.hidden{display:none}
+  .card{max-width:460px;width:100%;background:var(--panel);border:1px solid var(--brd);border-radius:20px;padding:30px 26px;
+    backdrop-filter:blur(12px);box-shadow:0 30px 80px rgba(0,0,0,.5)}
+  .card h1{margin:0 0 6px;font-size:26px}.card .sub{color:var(--muted);font-size:14px;margin-bottom:20px;line-height:1.5}
+  .card .big-btn{font-size:16px;padding:14px 22px;width:100%}
+  .card .free{margin-top:10px;width:100%;font-size:14px;padding:11px}
+  .card .req{margin-top:16px;font-size:12px;color:var(--muted)}.card .req b{color:var(--accent2)}
+  .status{margin-top:14px;font-size:13px;min-height:18px}.status.err{color:var(--bad)}.status.ok{color:var(--good)}
+  .pause-emoji{font-size:40px;margin-bottom:8px}
+
+  #music-btn{position:absolute;right:14px;bottom:14px;z-index:22;width:38px;height:38px;border-radius:50%;
+    border:1px solid var(--brd);background:rgba(12,14,24,.78);color:var(--txt);font-size:16px;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px);transition:transform .15s,border-color .15s}
+  #music-btn:hover{border-color:var(--accent2);transform:scale(1.06)}
+  #music-btn.muted{opacity:.55}
+
+  @media (max-width:560px){.pill{font-size:11px;padding:6px 9px}.btn{padding:8px 12px;font-size:12px}
+    #shop{width:124px}.shop-item img{width:78px;height:60px}#mars-banner{font-size:11px;padding:8px 14px}}
+</style>
+</head>
+<body>
+<div id="wrap">
+  <canvas id="game"></canvas>
+
+  <div class="topbar">
+    <div class="brand"><img src="/assets/logo.png" alt="PROJECT SPACEX" class="logo-img" /></div>
+    <div class="spacer"></div>
+    <div class="pill"><span class="lab">Balance</span><span class="val" id="balance-val">—</span></div>
+    <button class="btn ghost" id="wallet-btn">Connect Wallet</button>
+  </div>
+
+  <div id="coinbar">
+    <div class="coin-main"><span class="coin-ic">&#129689;</span><span id="coin-bal">0</span></div>
+    <div class="coin-sub">
+      <span class="coin-rate" id="coin-rate">+0/s</span>
+      <span class="dot">&#9679;</span>
+      <span class="coin-hold" id="coin-hold">0 $SPACEX <b>1&#215;</b></span>
+    </div>
+  </div>
+
+  <div id="shop">
+    <div class="shop-h">Build</div>
+    <div class="shop-item" id="buy-factory">
+      <img src="/assets/factory.png" alt="Factory" draggable="false" />
+      <div class="nm">FACTORY</div>
+      <div class="hint">Click, then place</div>
+      <div class="cost"></div>
+    </div>
+    <div class="shop-item" id="buy-workers">
+      <img src="/assets/builder1.png" alt="Workers" draggable="false" />
+      <div class="nm">WORKERS</div>
+      <div class="hint">5 left</div>
+      <div class="cost"></div>
+    </div>
+    <div class="shop-item" id="buy-office">
+      <img src="/assets/office.png" alt="The Office" draggable="false" />
+      <div class="nm">THE OFFICE</div>
+      <div class="hint">Click, then place</div>
+      <div class="cost"></div>
+    </div>
+    <div class="shop-item" id="buy-warehouse">
+      <img src="/assets/warehouse.png" alt="The Warehouse" draggable="false" />
+      <div class="nm">THE WAREHOUSE</div>
+      <div class="hint">Click, then place</div>
+      <div class="cost"></div>
+    </div>
+    <div class="shop-item" id="buy-research">
+      <img src="/assets/research.png" alt="The Research Lab" draggable="false" />
+      <div class="nm">THE RESEARCH LAB</div>
+      <div class="hint">Click, then place</div>
+      <div class="cost"></div>
+    </div>
+    <div class="shop-item stage-card" id="buy-stage2">
+      <div class="stage-badge">2</div>
+      <div class="nm">UNLOCK STAGE 2</div>
+      <div class="hint">Place all buildings first</div>
+    </div>
+  </div>
+
+  <div id="mars-banner">THE GOAL: START A CIVILIZATION ON MARS</div>
+
+  <button id="worldbtn"><span class="planet"></span><span class="wb-label">Mars</span><span class="wb-arrow">&#8594;</span></button>
+  <button class="btn ghost" id="reset-btn">↺ Reset all</button>
+
+  <div class="expand-pop" id="expand-pop">
+    <div class="expand-card">
+      <button class="expand-x" id="expand-x" aria-label="Close">&#10005;</button>
+      <div class="expand-icon">&#129680;</div>
+      <div class="expand-title">EXPAND YOUR LAND</div>
+      <div class="expand-sub">Unlock this parcel to build beyond your base.</div>
+      <div class="expand-price">FOR <b id="expand-amt">1,000,000</b> COINS</div>
+      <button class="btn big-btn" id="expand-buy">BUY</button>
+    </div>
+  </div>
+
+  <div id="toast"></div>
+  <div id="stage2-msg">CONGRATULATIONS ON UNLOCKING STAGE 2</div>
+  <div id="factory-tutorial" aria-hidden="true">
+    <div class="tut-bubble">
+      <div class="tut-arrow"></div>
+      <div class="tut-step">&#128640; Step 1</div>
+      <div class="tut-text">Start by building the <b>factory</b></div>
+      <div class="tut-sub">It&#39;s free — tap FACTORY in the build menu on the left.</div>
+      <button type="button" class="tut-dismiss" id="tut-dismiss">Got it</button>
+    </div>
+  </div>
+  <button type="button" id="music-btn" title="Toggle music" aria-label="Toggle music">&#9835;</button>
+
+  <div class="overlay" id="connect-overlay">
+    <div class="card">
+      <img src="/assets/logo.png" alt="PROJECT SPACEX" style="width:78%;max-width:300px;image-rendering:auto;margin:0 auto 14px;display:block" />
+      <h1 style="display:none">Project SpaceX</h1>
+      <div class="sub">Hold the token (or play for free) to start. Build your base on Earth,
+        then set your sights on Mars.</div>
+      <button class="btn big-btn" id="connect-btn">Connect Phantom</button>
+      <button class="btn ghost free" id="free-btn">&#9654; Play for free (no real rewards)</button>
+      <div class="status" id="connect-status"></div>
+      <div class="req">You need at least <b id="req-amt">1,000</b> tokens to play real mode</div>
+    </div>
+  </div>
+
+  <div class="overlay hidden" id="pause-overlay">
+    <div class="card">
+      <div class="pause-emoji">⏸️</div>
+      <h1>Game Paused</h1>
+      <div class="sub">You no longer hold enough tokens.<br/>Top up to <b id="req-amt2">1,000,000</b> to resume automatically.</div>
+      <div class="status err" id="pause-status">Balance below threshold.</div>
+      <button class="btn ghost free" id="pause-free-btn">Play for free (no real rewards)</button>
+    </div>
+  </div>
+
+  <div class="overlay hidden" id="intro-overlay">
+    <div class="card">
+      <div class="intro-title">Welcome to <span class="em">Project SpaceX</span></div>
+      <div class="intro-body">
+        <p>We need you as our <b>project manager</b> to start the colonization of Mars.
+        We&#39;ve provided you with a SpaceX rocket &#8212; but it&#39;s your job to build all the
+        foundations around it, do the research needed before you leave, and make a plan to
+        colonize Mars.</p>
+      </div>
+      <div class="intro-tip">
+        Keep <b>expanding</b> to earn more coins. The more <b>$SPACEX</b> tokens you hold,
+        the faster you earn coins in the game.
+      </div>
+      <div class="intro-tip">
+        Reach <b>Stage 2</b> to start earning money from just playing and being active,
+        with payouts every single day. Creator fees are distributed based on an equation
+        between progression (<b>total coins earned</b>) and total holdings of <b>$SPACEX</b>.
+      </div>
+      <button class="btn big-btn" id="intro-btn">LET&#39;S BUILD &#128640;</button>
+    </div>
+  </div>
+</div>
+
+<script>
+"use strict";
+(function(){
+  // ============================ CONSTANTS ============================
+  const MIN_HOLD_AMOUNT = 1000;
+  const TOKEN_MINT = "9uJy4KWMbrxmA5kUtJSJPenZHK5mzd4BzbggNVdRXWh2";
+  const BALANCE_POLL_MS = 30000;
+
+  function loadImg(src){ const o={el:new Image(),ready:false,w:1,h:1};
+    o.el.onload=()=>{ o.ready=true; o.w=o.el.width; o.h=o.el.height; }; o.el.src=src; return o; }
+  const ROCKET_IMG  = loadImg("/assets/rocket.png");
+  const FACTORY_IMG = loadImg("/assets/factory.png");
+  const OFFICE_IMG  = loadImg("/assets/office.png");
+  const WAREHOUSE_IMG = loadImg("/assets/warehouse.png");
+  const RESEARCH_IMG = loadImg("/assets/research.png");
+  const TREE_IMG    = loadImg("/assets/tree.png");
+  const ROCK_IMG    = loadImg("/assets/rocks.png");
+  const MARS_ROCK_RED_IMG  = loadImg("/assets/mars_rock_red.png");
+  const MARS_ROCK_DARK_IMG = loadImg("/assets/mars_rock_dark.png");
+  const ALIEN_IMG   = loadImg("/assets/alien.png");
+  const BUILDER_IMGS = [loadImg("/assets/builder1.png"),loadImg("/assets/builder2.png"),
+                        loadImg("/assets/builder3.png"),loadImg("/assets/builder4.png")];
+  // body = sprite with the arm cut out; arm = the detached arm piece (same canvas size)
+  const BUILDER_BODY = [loadImg("/assets/builder1_body.png"),loadImg("/assets/builder2_body.png"),
+                        loadImg("/assets/builder3_body.png"),loadImg("/assets/builder4_body.png")];
+  const BUILDER_ARM  = [loadImg("/assets/builder1_arm.png"),loadImg("/assets/builder2_arm.png"),
+                        loadImg("/assets/builder3_arm.png"),loadImg("/assets/builder4_arm.png")];
+  const ARM_PVX = 0.197, ARM_PVY = 0.437;   // shoulder pivot (fraction of sprite)
+  const BUILDER_H = 34;   // on-screen height of a builder sprite (world px)
+  const ALIEN_H = 42;     // lone alien on Mars — roughly worker-sized
+  const ALIEN_TILE = { x: 20, y: 20 };  // where the alien stands on Mars
+
+  // Isometric projection — tiles are 1/4 the area of before (32x16 vs 64x32),
+  // and the grid is twice as fine so the world keeps roughly the same size.
+  const TILE_W = 32, TILE_H = 16;
+  const GRID = 40;
+  function isoToScreen(mx,my){ return { x:(mx-my)*(TILE_W/2), y:(mx+my)*(TILE_H/2) }; }
+  // Offscreen ground texture bounds (world px); built once per scene and blitted.
+  const GOX = GRID*TILE_W/2 + TILE_W, GOY = 2*TILE_H;
+  const GW = GRID*TILE_W + 2*TILE_W, GH = GRID*TILE_H + 4*TILE_H;
+
+  // Rocket sits in the middle of the map; its footprint tiles are blocked.
+  const CX = 20, CY = 20;
+  const ROCKET_H = 340;                 // drawn height (world px)
+  const ROCKET_BLOCK = 5;               // half-size of blocked square around centre
+  function rocketBlocked(i,j){ return Math.abs(i-CX)<=ROCKET_BLOCK && Math.abs(j-CY)<=ROCKET_BLOCK; }
+
+  // In isometric, a sprite's bottom-centre sits on its anchor tile, which is the
+  // FRONT corner of the building. The base is a diamond S tiles on a side, where
+  // S = (drawn base width) / TILE_W, and it extends BACKWARD from the anchor
+  // (toward smaller x and y). So the covered tiles are [x-S+1..x] x [y-S+1..y].
+  // +1 tile over the measured base so the diamond also covers the extra row the
+  // sprite occupies along its two back edges (back-left and back-right).
+  const FACTORY_W = 230;                 // drawn width (world px)
+  const FAC_BASE = 8;                    // factory base = 8x8 tiles
+  const OFFICE_W = 300;                  // drawn width (world px)
+  const OFF_BASE = 10;                   // office base = 10x10 tiles
+  const WAREHOUSE_W = 300;               // drawn width (world px)
+  const WH_BASE = 10;                    // warehouse base = 10x10 tiles
+  const RESEARCH_W = 320;                // drawn width (world px)
+  const LAB_BASE = 11;                   // research lab base = 11x11 tiles
+
+  const MAX_WORKERS = 5;
+  const TREE_W = 50, ROCK_W = 64;        // drawn widths (world px)
+  const MARS_ROCK_W = 58;                // mars stone piles (world px)
+  // Scenery props scattered around the map (kept clear of the rocket centre).
+  const PROPS = [
+    {t:"tree", x:8,  y:9 }, {t:"tree", x:30, y:11}, {t:"tree", x:12, y:31},
+    {t:"tree", x:33, y:27}, {t:"tree", x:26, y:6 },
+    {t:"rock", x:10, y:23}, {t:"rock", x:31, y:19}, {t:"rock", x:18, y:33},
+  ];
+  // ============================ ECONOMY ============================
+  // Coins tick up live. Income = baseRate * tokenMult.
+  //   baseRate grows as you build; tokenMult = max(1, holdings / 1,000,000).
+  // Costs escalate per building so finishing Stage 1 at 10M held takes ~a day.
+  const START_COINS = 1000;             // fresh players start with this
+  const BASE_RATE = 10;                 // coins/s with nothing built
+  const WORKER_BONUS = 2;               // +rate per placed worker
+  const BLD_BONUS = { factory:0, office:20, warehouse:30, lab:40 };
+  const LAND_BONUS = 5;                 // +rate per extra parcel owned
+  const TOKENS_PER_MULT = 1000000;      // 1M held = 1x bonus, 15M = 7.5x (halved)
+  const COST_WORKER = [500, 2000, 6000, 15000, 40000];
+  const BLD_COST = { factory:0, office:1000000, warehouse:8000000, lab:50000000 };
+  const LAND_COST_BASE = 1000000;       // first extra parcel; ×3 each after
+  const OFFLINE_CAP_S = 3600;           // earn while away for up to 1 hour, then pause until return
+
+  // ============================ UTIL ============================
+  const clamp=(v,a,b)=>v<a?a:v>b?b:v;
+  const lerp=(a,b,t)=>a+(b-a)*t;
+  const rand=(a,b)=>a+Math.random()*(b-a);
+  function hash(i,j){ const n=Math.sin(i*127.1+j*311.7)*43758.5453; return n-Math.floor(n); }
+  function mixc(a,b,t){ return [Math.round(lerp(a[0],b[0],t)),Math.round(lerp(a[1],b[1],t)),Math.round(lerp(a[2],b[2],t))]; }
+  const rgb=c=>"rgb("+c[0]+","+c[1]+","+c[2]+")";
+  const fmt=n=>{ if(n>=1e9)return (n/1e9).toFixed(2)+"B"; if(n>=1e6)return (n/1e6).toFixed(2)+"M"; if(n>=1e3)return (n/1e3).toFixed(2)+"K"; return n.toFixed(2); };
+  // Whole-number coins: grouped under a million, compact above.
+  const fmtCoins=n=>{ n=Math.floor(n); return n<1e6 ? n.toLocaleString() : fmt(n); };
+  const fmtRate=n=>{ if(n>=1000) return fmt(n); return (Math.round(n*10)/10).toString(); };
+  const fmtMult=m=>{ return (m>=10?Math.round(m):Math.round(m*10)/10)+"\u00D7"; };
+  const inGrid=t=>t&&t.x>=0&&t.y>=0&&t.x<GRID&&t.y<GRID;
+
+  // ---- Income / costs ----
+  function tokenMult(){ return Math.max(1,(state.balance||0)/TOKENS_PER_MULT/2); }
+  function baseRate(){
+    let r=BASE_RATE + state.builders.length*WORKER_BONUS;
+    if(state.office) r+=BLD_BONUS.office;
+    if(state.warehouse) r+=BLD_BONUS.warehouse;
+    if(state.lab) r+=BLD_BONUS.lab;
+    const extra=(state.unlocked?state.unlocked.size:1)-1;
+    r += Math.max(0,extra)*LAND_BONUS;
+    return r;
+  }
+  function incomePerSec(){ return baseRate()*tokenMult(); }
+  function buildingCost(kind){
+    if(kind==="worker") return COST_WORKER[Math.min(state.builders.length,COST_WORKER.length-1)];
+    return BLD_COST[kind]||0;
+  }
+  function landCost(){ const extra=Math.max(0,(state.unlocked?state.unlocked.size:1)-1); return Math.round(LAND_COST_BASE*Math.pow(3,extra)); }
+  function canAfford(kind){ return state.coins >= buildingCost(kind); }
+  function spend(n){ state.coins=Math.max(0,state.coins-n); updateCoinUI(); }
+
+  // ============================ LAND PARCELS ============================
+  // The world is a 3x3 grid of parcels, each GRID x GRID tiles. The centre
+  // parcel (0,0) is owned/buildable; the eight around it can be purchased.
+  const PLOTS=[-1,0,1];
+  function plotKey(pi,pj){ return pi+","+pj; }
+  function plotOf(i,j){ return { pi:Math.floor(i/GRID), pj:Math.floor(j/GRID) }; }
+  function inWorld(t){ if(!t) return false; const p=plotOf(t.x,t.y); return PLOTS.includes(p.pi)&&PLOTS.includes(p.pj); }
+  function plotUnlocked(pi,pj){ return state.unlocked && state.unlocked.has(plotKey(pi,pj)); }
+  function isCenterPlot(pi,pj){ return pi===0 && pj===0; }
+  function plotIsLocked(pi,pj){
+    if(state.scene==="mars") return !isCenterPlot(pi,pj);
+    return !plotUnlocked(pi,pj);
+  }
+  function isHoverPlot(pi,pj){ return state.hoverPlot && state.hoverPlot.pi===pi && state.hoverPlot.pj===pj; }
+  function buildable(t){ if(!inWorld(t)) return false; const p=plotOf(t.x,t.y); return plotUnlocked(p.pi,p.pj); }
+  function plotPath(pi,pj){
+    const oi=pi*GRID, oj=pj*GRID;
+    const c=[isoToScreen(oi,oj),isoToScreen(oi+GRID,oj),isoToScreen(oi+GRID,oj+GRID),isoToScreen(oi,oj+GRID)];
+    ctx.beginPath(); ctx.moveTo(c[0].x,c[0].y);
+    for(let k=1;k<4;k++) ctx.lineTo(c[k].x,c[k].y);
+    ctx.closePath();
+  }
+  // Props for every parcel: the centre keeps its hand-placed layout, the rest
+  // get trees/rocks scattered to different spots via a per-parcel seed.
+  const ALL_PROPS=(function(){
+    const out=[];
+    for(const p of PROPS) out.push({t:p.t,x:p.x,y:p.y,pi:0,pj:0});
+    for(const pi of PLOTS) for(const pj of PLOTS){
+      if(pi===0&&pj===0) continue;
+      const oi=pi*GRID, oj=pj*GRID, seed=(pi+3)*131.7+(pj+3)*37.3;
+      for(let k=0;k<8;k++){
+        const lx=4+Math.floor(hash(seed+k*3.13, k*1.77+seed*0.21)*(GRID-8));
+        const ly=4+Math.floor(hash(k*2.31+seed*0.09, seed+k*5.71)*(GRID-8));
+        out.push({t:k<5?"tree":"rock", x:oi+lx, y:oj+ly, pi, pj});
+      }
+    }
+    return out;
+  })();
+  // Mars stone piles on locked outer parcels only (centre = alien, no stones).
+  const ALL_MARS_PROPS=(function(){
+    const out=[];
+    const MIN_ROCK_DIST=8; // tiles — keeps piles from stacking on each other
+    const MAX_PER_PARCEL=4;
+    function spaced(lx,ly,placed){
+      for(const p of placed){
+        if(Math.hypot(lx-p.lx, ly-p.ly)<MIN_ROCK_DIST) return false;
+      }
+      return true;
+    }
+    for(const pi of PLOTS) for(const pj of PLOTS){
+      if(pi===0&&pj===0) continue;
+      const oi=pi*GRID, oj=pj*GRID, seed=(pi+3)*97.3+(pj+3)*41.7;
+      const placed=[];
+      for(let attempt=0; attempt<48 && placed.length<MAX_PER_PARCEL; attempt++){
+        const k=placed.length+attempt*0.41;
+        const lx=6+Math.floor(hash(seed+k*2.71, k*1.83+seed*0.27)*(GRID-12));
+        const ly=6+Math.floor(hash(k*2.17+seed*0.13, seed+k*4.61)*(GRID-12));
+        if(!spaced(lx,ly,placed)) continue;
+        placed.push({lx,ly});
+        out.push({t:placed.length%2===0?"mred":"mdark", x:oi+lx, y:oj+ly, pi, pj});
+      }
+    }
+    return out;
+  })();
+
+  // ============================ STATE ============================
+  const state = {
+    pubkey:null, demo:false, balance:0, active:false, balanceKnown:false,
+    scene:"earth",            // "earth" | "mars"
+    factory:null,             // {x,y} tile anchor once placed, else null
+    office:null,              // {x,y} tile anchor once placed, else null
+    warehouse:null,           // {x,y} tile anchor once placed, else null
+    lab:null,                 // {x,y} tile anchor once placed, else null
+    stage2:false,             // true once Stage 2 is unlocked
+    placing:null,             // null | "factory" | "worker" | "office" | "warehouse" | "lab"
+    builders:[],              // spawned workers (start empty)
+    unlocked:new Set(["0,0"]),// purchased land parcels (centre always owned)
+    coins:START_COINS,        // live currency balance
+    hoverTile:null, hoverPlot:null, selPlot:null,
+    particles:[], shake:0, toastTimer:0, stage2MsgTimer:0, _dt:0, lastReal:0,
+  };
+
+  // ============================ CANVAS / CAMERA ============================
+  const canvas=document.getElementById("game");
+  const ctx=canvas.getContext("2d");
+  let cam={ ox:0, oy:0, zoom:1, panX:0, panY:0 };
+  let cssW=0, cssH=0, dpr=1;
+  function resize(){
+    dpr=Math.min(window.devicePixelRatio||1,2);
+    cssW=window.innerWidth; cssH=window.innerHeight;
+    canvas.width=Math.floor(cssW*dpr); canvas.height=Math.floor(cssH*dpr);
+    canvas.style.width=cssW+"px"; canvas.style.height=cssH+"px";
+    const worldW=GRID*TILE_W, worldH=GRID*TILE_H;
+    cam.zoom=Math.min((cssW)/(worldW+120),(cssH)/(worldH+200));
+    cam.zoom=clamp(cam.zoom,0.4,1.6);
+    cam.ox=cssW/2;
+    cam.oy=cssH/2 - (worldH/2)*cam.zoom;
+    clampPan();
+  }
+  // Pan limits so the 3x3 world can be explored but never lost off-screen.
+  function clampPan(){
+    const exX=1900*cam.zoom, exY=1050*cam.zoom;
+    cam.panX=clamp(cam.panX,-exX,exX); cam.panY=clamp(cam.panY,-exY,exY);
+  }
+  window.addEventListener("resize",resize); resize();
+
+  function clientToTile(clientX,clientY){
+    const rect=canvas.getBoundingClientRect();
+    const mx=(clientX-rect.left - cam.ox-cam.panX)/cam.zoom;
+    const my=(clientY-rect.top  - cam.oy-cam.panY)/cam.zoom;
+    const fx=(mx/(TILE_W/2)+my/(TILE_H/2))/2;
+    const fy=(my/(TILE_H/2)-mx/(TILE_W/2))/2;
+    return { x:Math.floor(fx), y:Math.floor(fy) };
+  }
+
+  // ============================ TILES ============================
+  function tileDiamond(i,j){
+    const s=isoToScreen(i,j);
+    ctx.beginPath();
+    ctx.moveTo(s.x, s.y);
+    ctx.lineTo(s.x+TILE_W/2, s.y+TILE_H/2);
+    ctx.lineTo(s.x, s.y+TILE_H);
+    ctx.lineTo(s.x-TILE_W/2, s.y+TILE_H/2);
+    ctx.closePath();
+  }
+
+  // ---- Desert / Mars ground baked once into an offscreen canvas ----
+  // Warm Texas-desert palette: dry sand, ochre, sun-bleached and shaded patches.
+  const EARTH_BASE=[[212,191,153],[203,181,141],[219,200,163],[196,173,133],[208,184,144]];
+  const EARTH_PATCH=[[206,184,143],[217,182,134],[189,163,123],[221,203,165]];
+  const MARS_BASE=[[185,84,44],[170,73,37],[198,96,53],[152,63,33],[176,80,42]];
+  const MARS_PATCH=[[180,82,42],[202,98,54],[150,62,32],[162,71,38]];
+  const groundCache={earth:null,mars:null};
+  function frnd(i,j,s){ const n=Math.sin(i*127.1+j*311.7+s*74.7)*43758.5453; return n-Math.floor(n); }
+  function shade(c,f){ return [clamp(Math.round(c[0]*f),0,255),clamp(Math.round(c[1]*f),0,255),clamp(Math.round(c[2]*f),0,255)]; }
+  function buildGround(mars){
+    const cv=document.createElement("canvas"); cv.width=GW; cv.height=GH;
+    const c=cv.getContext("2d"); c.translate(GOX,GOY); c.imageSmoothingEnabled=false;
+    const BASE=mars?MARS_BASE:EARTH_BASE, PATCH=mars?MARS_PATCH:EARTH_PATCH;
+    for(let i=0;i<GRID;i++) for(let j=0;j<GRID;j++){
+      const s=isoToScreen(i,j), cx=s.x, top=s.y, midY=top+TILE_H/2;
+      const base=BASE[Math.floor(frnd(i,j,1)*BASE.length)];
+      const patch=PATCH[Math.floor(hash(Math.floor(i/4),Math.floor(j/4))*PATCH.length)];
+      const col=mixc(base,patch,0.4);
+      // gentle low-frequency tone drift so big areas don't look uniform
+      const drift=0.92+0.16*hash(Math.floor((i+2)/6),Math.floor((j+1)/6));
+      const fill=shade(col,drift);
+      c.beginPath(); c.moveTo(cx,top); c.lineTo(cx+TILE_W/2,midY); c.lineTo(cx,top+TILE_H); c.lineTo(cx-TILE_W/2,midY); c.closePath();
+      c.fillStyle=rgb(fill); c.fill();
+      c.save(); c.clip();
+      // sand grain speckles
+      for(let k=0;k<7;k++){
+        const a=frnd(i,j,k*2+3)-0.5, b=frnd(i,j,k*2+4)-0.5;
+        const px=cx+(a-b)*TILE_W*0.9, py=midY+(a+b)*TILE_H*0.9;
+        const light=frnd(i,j,k+50)>0.5;
+        c.fillStyle=rgb(shade(fill,light?1.09:0.88));
+        const sz=frnd(i,j,k+9)>0.85?2:1;
+        c.fillRect(px-sz/2,py-sz/2,sz,sz);
+      }
+      // occasional pebble
+      if(frnd(i,j,99)>0.9){
+        const pc=mars?[120,68,44]:[150,132,104];
+        const a=frnd(i,j,7)-0.5, b=frnd(i,j,8)-0.5;
+        const px=cx+(a-b)*TILE_W*0.7, py=midY+(a+b)*TILE_H*0.7;
+        c.fillStyle=rgb(shade(pc,0.85)); c.fillRect(px-1,py,3,2);
+        c.fillStyle=rgb(shade(pc,1.15)); c.fillRect(px-1,py-1,2,1);
+      }
+      // occasional dry crack
+      if(frnd(i,j,77)>0.93){
+        c.strokeStyle=mars?"rgba(60,20,10,0.16)":"rgba(80,58,30,0.16)"; c.lineWidth=1;
+        const a=frnd(i,j,11)-0.5, b=frnd(i,j,12)-0.5;
+        const x0=cx+(a-b)*TILE_W*0.4, y0=midY+(a+b)*TILE_H*0.4;
+        c.beginPath(); c.moveTo(x0,y0); c.lineTo(x0+(frnd(i,j,13)*9-4.5),y0+(frnd(i,j,14)*5-2.5)); c.stroke();
+      }
+      c.restore();
+    }
+    if(mars){
+      for(let n=0;n<26;n++){
+        const ci=hash(n,7)*GRID, cj=hash(n,13)*GRID, s=isoToScreen(ci,cj);
+        const rx=10+hash(n,3)*22, ry=rx*0.5;
+        c.beginPath(); c.ellipse(s.x,s.y+TILE_H/2,rx,ry,0,0,Math.PI*2);
+        c.fillStyle="rgba(95,38,18,0.30)"; c.fill();
+        c.beginPath(); c.ellipse(s.x,s.y+TILE_H/2,rx*0.62,ry*0.62,0,0,Math.PI*2);
+        c.fillStyle="rgba(60,24,12,0.34)"; c.fill();
+        c.beginPath(); c.ellipse(s.x-rx*0.2,s.y+TILE_H/2-ry*0.25,rx*0.5,ry*0.45,0,0,Math.PI*2);
+        c.fillStyle="rgba(214,120,72,0.20)"; c.fill();
+      }
+    }
+    return cv;
+  }
+  function getGround(mars){ const key=mars?"mars":"earth"; if(!groundCache[key]) groundCache[key]=buildGround(mars); return groundCache[key]; }
+
+  // ============================ SPRITES ============================
+  function drawBuildingSprite(img, cx, cy, drawW, alpha){
+    if(!img.ready) return;
+    const base=isoToScreen(cx,cy);
+    const w=drawW, h=w*(img.h/img.w);
+    ctx.imageSmoothingEnabled=false;
+    if(alpha!=null) ctx.globalAlpha=alpha;
+    ctx.drawImage(img.el, base.x - w/2, base.y - h, w, h);
+    ctx.globalAlpha=1;
+  }
+  function drawRocket(){
+    if(!ROCKET_IMG.ready) return;
+    const base=isoToScreen(CX+0.5,CY+0.5);
+    const drawH=ROCKET_H, drawW=drawH*(ROCKET_IMG.w/ROCKET_IMG.h);
+    const bx=base.x, by=base.y+6;
+    ctx.fillStyle="rgba(0,0,0,.18)"; ctx.beginPath(); ctx.ellipse(bx,by+2,drawW*0.40,8,0,0,7); ctx.fill();
+    ctx.imageSmoothingEnabled=false;
+    ctx.drawImage(ROCKET_IMG.el, bx-drawW/2, by-drawH, drawW, drawH);
+  }
+  function drawFactoryAt(tx,ty,alpha){ drawBuildingSprite(FACTORY_IMG, tx+0.5, ty+0.5, FACTORY_W, alpha); }
+  function drawOfficeAt(tx,ty,alpha){ drawBuildingSprite(OFFICE_IMG, tx+0.5, ty+0.5, OFFICE_W, alpha); }
+  function drawWarehouseAt(tx,ty,alpha){ drawBuildingSprite(WAREHOUSE_IMG, tx+0.5, ty+0.5, WAREHOUSE_W, alpha); }
+  function drawLabAt(tx,ty,alpha){ drawBuildingSprite(RESEARCH_IMG, tx+0.5, ty+0.5, RESEARCH_W, alpha); }
+  function drawAlien(){
+    if(!ALIEN_IMG.ready) return;
+    const p=isoToScreen(ALIEN_TILE.x+0.5, ALIEN_TILE.y+0.5);
+    const h=ALIEN_H, w=h*(ALIEN_IMG.w/ALIEN_IMG.h);
+    ctx.fillStyle="rgba(0,0,0,.28)"; ctx.beginPath(); ctx.ellipse(p.x,p.y,w*0.34,3,0,0,7); ctx.fill();
+    ctx.imageSmoothingEnabled=false;
+    ctx.drawImage(ALIEN_IMG.el, p.x-w/2, p.y-h, w, h);
+  }
+  function drawProp(p, alpha){
+    const img = p.t==="tree"?TREE_IMG:ROCK_IMG, w = p.t==="tree"?TREE_W:ROCK_W;
+    drawBuildingSprite(img, p.x+0.5, p.y+0.5, w, alpha==null?1:alpha);
+  }
+  function drawMarsProp(p, alpha){
+    const img = p.t==="mred"?MARS_ROCK_RED_IMG:MARS_ROCK_DARK_IMG;
+    drawBuildingSprite(img, p.x+0.5, p.y+0.5, MARS_ROCK_W, alpha==null?1:alpha);
+  }
+  function drawWorkerGhost(tx,ty){
+    const img=BUILDER_IMGS[0]; if(!img.ready) return;
+    const b=isoToScreen(tx+0.5,ty+0.5), h=BUILDER_H, w=h*(img.w/img.h);
+    ctx.globalAlpha=0.6; ctx.imageSmoothingEnabled=false;
+    ctx.drawImage(img.el, b.x-w/2, b.y-h, w, h); ctx.globalAlpha=1;
+  }
+
+  // ============================ PLACEMENT ============================
+  // True if tile (i,j) lies inside a building whose front-corner anchor is `b`
+  // and whose base is S tiles on a side (the base extends back from the anchor).
+  function inBase(b,S,i,j){ return !!b && i<=b.x && i>b.x-S && j<=b.y && j>b.y-S; }
+  function inBasePadded(b,S,i,j,pad){
+    if(!b) return false;
+    return i<=b.x+pad && i>b.x-S-pad && j<=b.y+pad && j>b.y-S-pad;
+  }
+  function buildingFootprints(includeGhost){
+    const out=[
+      [state.factory,FAC_BASE],[state.office,OFF_BASE],
+      [state.warehouse,WH_BASE],[state.lab,LAB_BASE],
+    ];
+    if(includeGhost && state.hoverTile){
+      const t=state.hoverTile;
+      if(state.placing==="factory") out.push([{x:t.x,y:t.y},FAC_BASE]);
+      else if(state.placing==="office") out.push([{x:t.x,y:t.y},OFF_BASE]);
+      else if(state.placing==="warehouse") out.push([{x:t.x,y:t.y},WH_BASE]);
+      else if(state.placing==="lab") out.push([{x:t.x,y:t.y},LAB_BASE]);
+    }
+    return out;
+  }
+  function nearBuilding(i,j,pad){
+    for(const [b,S] of buildingFootprints(true)){
+      if(inBasePadded(b,S,i,j,pad)) return true;
+    }
+    return false;
+  }
+  // A tile is occupied by the rocket base or an already-placed building.
+  function tileOccupied(i,j){
+    if(rocketBlocked(i,j)) return true;
+    if(inBase(state.factory,FAC_BASE,i,j)) return true;
+    if(inBase(state.office,OFF_BASE,i,j)) return true;
+    if(inBase(state.warehouse,WH_BASE,i,j)) return true;
+    if(inBase(state.lab,LAB_BASE,i,j)) return true;
+    return false;
+  }
+  // The whole base (anchor + S-1 tiles back in each axis) must sit on owned land
+  // and be clear of the rocket and other buildings.
+  function footprintClear(t,S){
+    if(!buildable(t)) return false;
+    for(let di=0; di<S; di++) for(let dj=0; dj<S; dj++){
+      const i=t.x-di, j=t.y-dj;
+      if(!buildable({x:i,y:j})) return false;
+      if(tileOccupied(i,j)) return false;
+    }
+    return true;
+  }
+  function canPlace(t){ return !state.factory && footprintClear(t,FAC_BASE); }
+  function canPlaceOffice(t){ return !state.office && footprintClear(t,OFF_BASE); }
+  function canPlaceWarehouse(t){ return !state.warehouse && footprintClear(t,WH_BASE); }
+  function canPlaceLab(t){ return !state.lab && footprintClear(t,LAB_BASE); }
+  function placeFactory(t){
+    if(!canPlace(t)) return false;
+    const cost=buildingCost("factory");
+    if(cost>0 && !canAfford("factory")){ showToast("Need "+fmtCoins(cost)+" coins"); return false; }
+    if(cost>0) spend(cost);
+    state.factory={x:t.x,y:t.y}; state.placing=null; persistState();
+    const p=isoToScreen(t.x+0.5,t.y+0.5); spawnBurst(p.x,p.y-30,22,["#ffd24a","#ff7a2f","#fff","#4ade80"]);
+    state.shake=6; showToast("Factory placed!"); showSceneUI();
+    return true;
+  }
+  function placeOffice(t){
+    if(!canPlaceOffice(t)) return false;
+    if(!canAfford("office")){ showToast("Need "+fmtCoins(buildingCost("office"))+" coins"); return false; }
+    spend(buildingCost("office"));
+    state.office={x:t.x,y:t.y}; state.placing=null; persistState();
+    const p=isoToScreen(t.x+0.5,t.y+0.5); spawnBurst(p.x,p.y-40,28,["#ffd24a","#9aa3b2","#fff","#4ade80"]);
+    state.shake=7; showToast("The Office placed!"); showSceneUI();
+    return true;
+  }
+  function placeWarehouse(t){
+    if(!canPlaceWarehouse(t)) return false;
+    if(!canAfford("warehouse")){ showToast("Need "+fmtCoins(buildingCost("warehouse"))+" coins"); return false; }
+    spend(buildingCost("warehouse"));
+    state.warehouse={x:t.x,y:t.y}; state.placing=null; persistState();
+    const p=isoToScreen(t.x+0.5,t.y+0.5); spawnBurst(p.x,p.y-40,28,["#ffd24a","#9aa3b2","#fff","#60a5fa"]);
+    state.shake=7; showToast("The Warehouse placed!"); showSceneUI();
+    return true;
+  }
+  function placeLab(t){
+    if(!canPlaceLab(t)) return false;
+    if(!canAfford("lab")){ showToast("Need "+fmtCoins(buildingCost("lab"))+" coins"); return false; }
+    spend(buildingCost("lab"));
+    state.lab={x:t.x,y:t.y}; state.placing=null; persistState();
+    const p=isoToScreen(t.x+0.5,t.y+0.5); spawnBurst(p.x,p.y-44,30,["#7ee0c0","#a78bfa","#fff","#4ade80"]);
+    state.shake=7; showToast("The Research Lab placed!"); showSceneUI();
+    return true;
+  }
+  // Hide trees/rocks on or within 1 tile of any building footprint (incl. placement preview).
+  function propVisible(p){ return !nearBuilding(p.x,p.y,1); }
+  // Workers can be dropped on any grid tile; behaviour is always "build at rocket".
+  function canPlaceWorker(t){ return !!state.factory && buildable(t) && state.builders.length<MAX_WORKERS; }
+  function placeWorker(t){
+    if(!canPlaceWorker(t)) return false;
+    if(!canAfford("worker")){ state.shake=4; showToast("Need "+fmtCoins(buildingCost("worker"))+" coins"); cancelPlacing(); return false; }
+    spend(buildingCost("worker"));
+    spawnWorkerAt(t.x,t.y); persistState();
+    if(state.builders.length>=MAX_WORKERS || !canAfford("worker")) cancelPlacing();
+    else showSceneUI();
+    return true;
+  }
+  function highlightTile(i,j,stroke,fill){
+    tileDiamond(i,j);
+    ctx.fillStyle=fill; ctx.fill();
+    ctx.strokeStyle=stroke; ctx.lineWidth=2.5; ctx.stroke();
+    const s=isoToScreen(i,j);
+    ctx.fillStyle=stroke;
+    for(const c of [[s.x,s.y],[s.x+TILE_W/2,s.y+TILE_H/2],[s.x,s.y+TILE_H],[s.x-TILE_W/2,s.y+TILE_H/2]])
+      ctx.fillRect(c[0]-1.5,c[1]-5,3,5);
+  }
+  // Paint a building's full base, tinting each tile green/red so the player can
+  // see exactly which tiles it covers and why a spot is (in)valid.
+  function highlightBase(t,S){
+    for(let di=0; di<S; di++) for(let dj=0; dj<S; dj++){
+      const i=t.x-di, j=t.y-dj;
+      const good=buildable({x:i,y:j}) && !tileOccupied(i,j);
+      tileDiamond(i,j);
+      ctx.fillStyle=good?"rgba(74,222,128,.20)":"rgba(248,113,113,.34)";
+      ctx.fill();
+    }
+    const ok=footprintClear(t,S);
+    const stroke=ok?"#4ade80":"#f87171";
+    const s=isoToScreen(t.x,t.y);   // mark the anchor (front corner)
+    ctx.fillStyle=stroke;
+    for(const c of [[s.x,s.y],[s.x+TILE_W/2,s.y+TILE_H/2],[s.x,s.y+TILE_H],[s.x-TILE_W/2,s.y+TILE_H/2]])
+      ctx.fillRect(c[0]-1.5,c[1]-5,3,5);
+  }
+  function drawHover(){
+    const t=state.hoverTile; if(!t) return;
+    if(state.placing==="factory") highlightBase(t,FAC_BASE);
+    else if(state.placing==="office") highlightBase(t,OFF_BASE);
+    else if(state.placing==="warehouse") highlightBase(t,WH_BASE);
+    else if(state.placing==="lab") highlightBase(t,LAB_BASE);
+    else if(state.placing==="worker"){
+      if(!buildable(t)) return;
+      const ok=canPlaceWorker(t) && canAfford("worker");
+      highlightTile(t.x,t.y, ok?"#4ade80":"#f87171", ok?"rgba(74,222,128,.22)":"rgba(248,113,113,.30)");
+    } else if(buildable(t)){
+      highlightTile(t.x,t.y,"#ffd24a","rgba(255,210,74,.16)");
+    }
+  }
+
+  // ============================ PARTICLES ============================
+  function spawnSparks(x,y){
+    const spark=Math.random()<0.5;
+    for(let k=0;k<5;k++) state.particles.push({x,y,vx:rand(-30,30),vy:rand(-70,-15),g:200,
+      life:rand(.4,.8),max:.8,size:rand(1,2.4),col:spark?(Math.random()<.5?"#ffd24a":"#ff7a2f"):"#d8c2a0"});
+  }
+  function spawnBurst(x,y,n,cols){
+    for(let k=0;k<n;k++){ const a=rand(0,6.28),sp=rand(30,150);
+      state.particles.push({x,y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp-30,g:160,life:rand(.5,1.0),max:1.0,size:rand(2,3.5),col:cols[k%cols.length]}); }
+  }
+  function updateParticles(dt){
+    for(let k=state.particles.length-1;k>=0;k--){ const p=state.particles[k];
+      p.life-=dt; if(p.life<=0){state.particles.splice(k,1);continue;}
+      p.vy+=p.g*dt; p.x+=p.vx*dt; p.y+=p.vy*dt; }
+  }
+  function drawParticles(){
+    for(const p of state.particles){ ctx.globalAlpha=clamp(p.life/p.max,0,1); ctx.fillStyle=p.col;
+      ctx.fillRect(p.x-p.size/2,p.y-p.size/2,p.size,p.size); }
+    ctx.globalAlpha=1;
+  }
+
+  // ============================ BUILDERS ============================
+  const NAMES=["Leroy","Maniu","Maxx","Cleo","Bo"];
+  // Pick a spot in a ring around the rocket (outside its blocked base).
+  function rocketSpot(){
+    const a=rand(0,Math.PI*2), r=rand(2.2, 4.0);   // tight ring hugging the rocket
+    return { x:clamp(CX+Math.cos(a)*r,2,GRID-3), y:clamp(CY+Math.sin(a)*r,2,GRID-3) };
+  }
+  // Spawn a worker at (mx,my); it immediately heads for a spot around the rocket.
+  function spawnWorkerAt(mx,my){
+    const k=state.builders.length, t=rocketSpot();
+    state.builders.push({ mx, my, tx:t.x, ty:t.y, sprite:k%4, name:NAMES[k%NAMES.length],
+      state:"walk", timer:rand(.4,2.0), swing:rand(0,6), hit:false, face:1, bob:rand(0,6) });
+  }
+  function updateBuilders(dt){
+    for(const b of state.builders){
+      b.timer-=dt;
+      if(b.state==="walk"){
+        const dx=b.tx-b.mx, dy=b.ty-b.my, dist=Math.hypot(dx,dy);
+        if(dist<0.08 || b.timer<=0){ b.state="hammer"; b.timer=rand(1.4,2.8); }
+        else { const sp=1.5*dt/dist; b.mx+=dx*Math.min(1,sp*dist); b.my+=dy*Math.min(1,sp*dist);
+          b.face=(dx-dy)>=0?1:-1; b.bob+=dt*10; }
+      } else {
+        // face toward the rocket centre while hammering
+        b.face=((CX-b.mx)-(CY-b.my))>=0?1:-1;
+        b.swing+=dt*8;
+        const c=(((b.swing%(Math.PI*2))+Math.PI*2)%(Math.PI*2))/(Math.PI*2);
+        if(c>0.72 && c<0.9 && !b.hit){ b.hit=true; const p=isoToScreen(b.mx+0.5,b.my+0.5); spawnSparks(p.x+b.face*11,p.y-5); }
+        if(c<0.5) b.hit=false;
+        if(b.timer<=0){ const t=rocketSpot(); b.tx=t.x; b.ty=t.y; b.state="walk"; b.timer=rand(.8,2.0); }
+      }
+    }
+  }
+  // Hammer swing profile over one cycle (c=0..1): slow lift, fast strike down, recover.
+  const REST_ANG=1.00, RAISED_ANG=2.25, STRIKE_ANG=0.95;
+  function hammerAng(sw){
+    const c=(((sw%(Math.PI*2))+Math.PI*2)%(Math.PI*2))/(Math.PI*2);
+    if(c<0.60){ const k=c/0.60; return lerp(REST_ANG,RAISED_ANG, k*k*(3-2*k)); }
+    if(c<0.74){ const k=(c-0.60)/0.14; return lerp(RAISED_ANG,STRIKE_ANG, k*k); }
+    const k=(c-0.74)/0.26; return lerp(STRIKE_ANG,REST_ANG, k);
+  }
+  // Body stays whole; the detached arm rotates around the shoulder to hammer.
+  function drawBuilder(b){
+    const p=isoToScreen(b.mx+0.5,b.my+0.5), x=p.x, y=p.y;
+    const body=BUILDER_BODY[b.sprite], arm=BUILDER_ARM[b.sprite], full=BUILDER_IMGS[b.sprite];
+    ctx.fillStyle="rgba(0,0,0,.22)"; ctx.beginPath(); ctx.ellipse(x,y,6,2.6,0,0,7); ctx.fill();
+    if(body && body.ready && arm && arm.ready){
+      const h=BUILDER_H, w=h*(body.w/body.h);
+      const walking=b.state==="walk";
+      const bob = walking ? -Math.abs(Math.sin(b.bob))*1.6 : 0;
+      const sway= walking ? Math.sin(b.bob)*0.05 : 0;
+      const ang = walking ? 0 : hammerAng(b.swing);
+      const pvx=-w/2 + ARM_PVX*w, pvy=-h+bob + ARM_PVY*h;
+      ctx.save(); ctx.translate(x,y); ctx.scale(b.face,1); ctx.rotate(sway);
+      ctx.imageSmoothingEnabled=false;
+      ctx.drawImage(body.el, -w/2, -h+bob, w, h);
+      ctx.save();
+      ctx.translate(pvx,pvy); ctx.rotate(ang); ctx.translate(-pvx,-pvy);
+      ctx.drawImage(arm.el, -w/2, -h+bob, w, h);
+      if(!walking){
+        const hx=-w/2 + 0.10*w, hy=-h+bob + 0.73*h;
+        const hl=h*0.20, hw=w*0.13, hh=h*0.055;
+        ctx.lineCap="round";
+        ctx.strokeStyle="#5a3a1d"; ctx.lineWidth=2.2;
+        ctx.beginPath(); ctx.moveTo(hx,hy); ctx.lineTo(hx,hy+hl); ctx.stroke();
+        ctx.fillStyle="#23262c"; ctx.fillRect(hx-hw, hy+hl-hh*0.5, hw*2, hh);
+        ctx.fillStyle="#3c424b"; ctx.fillRect(hx-hw, hy+hl-hh*0.5, hw*0.7, hh);
+      }
+      ctx.restore(); ctx.restore();
+    } else if(full && full.ready){
+      const h=BUILDER_H, w=h*(full.w/full.h);
+      ctx.save(); ctx.translate(x,y); ctx.scale(b.face,1); ctx.imageSmoothingEnabled=false;
+      ctx.drawImage(full.el, -w/2, -h, w, h); ctx.restore();
+    }
+    ctx.font="bold 8px Inter,sans-serif"; ctx.textAlign="center";
+    ctx.fillStyle="rgba(0,0,0,.5)"; ctx.fillText(b.name, x+0.5, y-BUILDER_H-2.5);
+    ctx.fillStyle="#fff"; ctx.fillText(b.name, x, y-BUILDER_H-3);
+  }
+
+  function drawLandParcels(mars){
+    const g=getGround(mars);
+    for(const pi of PLOTS) for(const pj of PLOTS){
+      const o=isoToScreen(pi*GRID, pj*GRID);
+      ctx.drawImage(g, o.x-GOX, o.y-GOY);
+      if(plotIsLocked(pi,pj) && !isHoverPlot(pi,pj)){
+        plotPath(pi,pj); ctx.fillStyle="rgba(7,5,14,0.52)"; ctx.fill();
+      }
+    }
+    for(const pi of PLOTS) for(const pj of PLOTS){
+      if(!plotIsLocked(pi,pj)) continue;
+      const hov=isHoverPlot(pi,pj);
+      plotPath(pi,pj);
+      ctx.lineWidth=hov?3:1.5; ctx.setLineDash(hov?[]:[7,6]);
+      ctx.strokeStyle=hov?"rgba(255,210,74,.95)":"rgba(255,255,255,.16)"; ctx.stroke();
+      ctx.setLineDash([]);
+      if(hov && !mars){
+        const c=isoToScreen(pi*GRID+GRID/2, pj*GRID+GRID/2);
+        ctx.font="bold 13px Inter,sans-serif"; ctx.textAlign="center"; ctx.textBaseline="middle";
+        ctx.fillStyle="rgba(0,0,0,.55)"; ctx.fillText("\uD83D\uDD12 CLICK TO EXPAND", c.x+1, c.y+1);
+        ctx.fillStyle="#ffd24a"; ctx.fillText("\uD83D\uDD12 CLICK TO EXPAND", c.x, c.y);
+        ctx.textBaseline="alphabetic";
+      }
+    }
+  }
+
+  // ============================ RENDER ============================
+  function render(){
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.clearRect(0,0,cssW,cssH);
+    const mars = state.scene==="mars";
+
+    const sky=ctx.createLinearGradient(0,0,0,cssH);
+    if(mars){ sky.addColorStop(0,"#3a1410"); sky.addColorStop(1,"#7c3c2a"); }
+    else { sky.addColorStop(0,"#8fc6ff"); sky.addColorStop(1,"#ffd9a0"); }
+    ctx.fillStyle=sky; ctx.fillRect(0,0,cssW,cssH);
+
+    ctx.save();
+    let shx=0,shy=0; if(state.shake>0){ shx=rand(-1,1)*state.shake; shy=rand(-1,1)*state.shake; }
+    ctx.translate(cam.ox+cam.panX+shx, cam.oy+cam.panY+shy); ctx.scale(cam.zoom,cam.zoom);
+    ctx.imageSmoothingEnabled=false;
+
+    if(!mars){
+      // ---- Earth: 3x3 land parcels (centre buildable, others lockable) ----
+      drawLandParcels(false);
+      drawHover();
+      // Depth split around the rocket's centre tile. Anything with tile-depth
+      // greater than the rocket sits CLOSER to the camera (drawn after it).
+      const RS=CX+CY-0.5;
+      // Single depth-sorted scene per side of the rocket so trees, buildings and
+      // workers interleave correctly (a tree behind a building draws under it).
+      // `pri` is a tiebreak at equal depth: props=0 (drawn first/behind),
+      // buildings=1, workers=2 (drawn last/front).
+      const back=[], front=[];
+      const add=(d,pri,f)=>(d>RS?front:back).push({d,pri,f});
+      const sortDraw=arr=>{ arr.sort((a,b)=> a.d-b.d || a.pri-b.pri); for(const o of arr) o.f(); };
+      for(const p of ALL_PROPS){
+        if(!propVisible(p)) continue;
+        const dim=(plotIsLocked(p.pi,p.pj) && !isHoverPlot(p.pi,p.pj))?0.4:1;
+        add(p.x+p.y, 0, ()=>drawProp(p,dim));
+      }
+      if(state.factory){ const f=state.factory; add(f.x+f.y,1,()=>drawFactoryAt(f.x,f.y,1)); }
+      if(state.office){ const o=state.office; add(o.x+o.y,1,()=>drawOfficeAt(o.x,o.y,1)); }
+      if(state.warehouse){ const w=state.warehouse; add(w.x+w.y,1,()=>drawWarehouseAt(w.x,w.y,1)); }
+      if(state.lab){ const l=state.lab; add(l.x+l.y,1,()=>drawLabAt(l.x,l.y,1)); }
+      const t=state.hoverTile;
+      if(state.placing==="factory" && buildable(t)) add(t.x+t.y+0.1,1,()=>drawFactoryAt(t.x,t.y, canPlace(t)?0.6:0.35));
+      if(state.placing==="office" && buildable(t)) add(t.x+t.y+0.1,1,()=>drawOfficeAt(t.x,t.y, canPlaceOffice(t)?0.6:0.35));
+      if(state.placing==="warehouse" && buildable(t)) add(t.x+t.y+0.1,1,()=>drawWarehouseAt(t.x,t.y, canPlaceWarehouse(t)?0.6:0.35));
+      if(state.placing==="lab" && buildable(t)) add(t.x+t.y+0.1,1,()=>drawLabAt(t.x,t.y, canPlaceLab(t)?0.6:0.35));
+      if(state.placing==="worker" && buildable(t)) add(t.x+t.y+0.1,2,()=>drawWorkerGhost(t.x,t.y));
+      updateBuilders(state._dt);
+      for(const b of state.builders) add(b.mx+b.my+0.5, 2, ()=>drawBuilder(b));
+      sortDraw(back);
+      drawRocket();
+      sortDraw(front);
+    } else {
+      // Mars: 3x3 parcels (centre = alien; outer locked with stones)
+      drawLandParcels(true);
+      const mobj=[];
+      for(const p of ALL_MARS_PROPS){
+        const dim=(plotIsLocked(p.pi,p.pj) && !isHoverPlot(p.pi,p.pj))?0.4:1;
+        mobj.push({d:p.x+p.y, f:()=>drawMarsProp(p,dim)});
+      }
+      mobj.push({d:ALIEN_TILE.x+ALIEN_TILE.y+0.5, f:drawAlien});
+      mobj.sort((a,b)=>a.d-b.d);
+      for(const o of mobj) o.f();
+    }
+
+    drawParticles();
+    ctx.restore();
+  }
+
+  // ============================ MAIN LOOP ============================
+  function frame(){
+    const now=Date.now();
+    let dt=(now-state.lastReal)/1000; if(!state.lastReal||dt>0.1) dt=0.016;
+    state.lastReal=now; state._dt=dt;
+    if(state.shake>0) state.shake=Math.max(0,state.shake-dt*16);
+    if(state.active){ state.coins += incomePerSec()*dt; updateCoinUI(); }
+    updateParticles(dt);
+    render();
+    requestAnimationFrame(frame);
+  }
+
+  // ============================ TOAST ============================
+  function showToast(txt){ const el=document.getElementById("toast"); el.textContent=txt; el.classList.add("show");
+    clearTimeout(state.toastTimer); state.toastTimer=setTimeout(()=>el.classList.remove("show"),2600); }
+  function showStage2Congrats(){
+    const el=document.getElementById("stage2-msg"); el.classList.add("show");
+    clearTimeout(state.stage2MsgTimer); state.stage2MsgTimer=setTimeout(()=>el.classList.remove("show"),4500);
+  }
+
+  // ============================ SHOP / WORLD UI ============================
+  const shopEl=document.getElementById("shop");
+  const buyEl=document.getElementById("buy-factory");
+  const workersEl=document.getElementById("buy-workers");
+  const officeEl=document.getElementById("buy-office");
+  const warehouseEl=document.getElementById("buy-warehouse");
+  const researchEl=document.getElementById("buy-research");
+  const stage2El=document.getElementById("buy-stage2");
+  const worldBtn=document.getElementById("worldbtn");
+  const resetBtn=document.getElementById("reset-btn");
+  const marsBanner=document.getElementById("mars-banner");
+  const coinbarEl=document.getElementById("coinbar");
+  const coinBalEl=document.getElementById("coin-bal");
+  const coinRateEl=document.getElementById("coin-rate");
+  const coinHoldEl=document.getElementById("coin-hold");
+  function updateCoinUI(){
+    if(!coinBalEl) return;
+    coinBalEl.textContent=fmtCoins(state.coins);
+    coinRateEl.textContent="+"+fmtRate(incomePerSec())+"/s";
+    const held = state.demo ? "FREE" : fmt(state.balance||0);
+    coinHoldEl.innerHTML = held+" $SPACEX <b>"+fmtMult(tokenMult())+"</b>";
+  }
+  const SHOP_ITEMS=[buyEl,workersEl,officeEl,warehouseEl,researchEl,stage2El];
+  const SHOP_VIS=["vis-0","vis-1","vis-2"];
+  function allBuildingsPlaced(){
+    return state.builders.length>=MAX_WORKERS && !!state.factory && !!state.office && !!state.warehouse && !!state.lab;
+  }
+  function shopProgress(){
+    if(state.stage2) return 5;
+    if(state.lab) return 4;
+    if(state.warehouse) return 3;
+    if(state.office) return 2;
+    if(state.builders.length>=MAX_WORKERS) return 2;
+    if(state.factory) return 1;
+    return 0;
+  }
+  function refreshShop(){
+    // Progression: factory (free) -> workers -> office -> warehouse -> lab.
+    const left=MAX_WORKERS-state.builders.length, workersFull=left<=0;
+    const facPlaced=!!state.factory;
+    const wrkReady=facPlaced, offReady=facPlaced && workersFull, offPlaced=!!state.office;
+    const whReady=offPlaced, whPlaced=!!state.warehouse;
+    const labReady=whPlaced, labPlaced=!!state.lab;
+    // Factory (available immediately)
+    buyEl.classList.toggle("placed",facPlaced);
+    buyEl.classList.toggle("locked",false);
+    buyEl.classList.toggle("armed",state.placing==="factory" && !facPlaced);
+    buyEl.querySelector(".hint").textContent = facPlaced ? "Placed ✓"
+      : (state.placing==="factory" ? "Click a tile…" : "Click, then place");
+    // Workers (locked until factory is placed)
+    workersEl.classList.toggle("placed",workersFull);
+    workersEl.classList.toggle("locked",!wrkReady && !workersFull);
+    workersEl.classList.toggle("armed",state.placing==="worker" && wrkReady && !workersFull);
+    workersEl.querySelector(".hint").textContent = workersFull ? "All out ✓"
+      : (!wrkReady ? "Build a factory first" : (state.placing==="worker" ? "Click a tile…" : left+" left"));
+    // Office (locked until all workers are out)
+    officeEl.classList.toggle("placed",offPlaced);
+    officeEl.classList.toggle("locked",!offReady && !offPlaced);
+    officeEl.classList.toggle("armed",state.placing==="office" && !offPlaced);
+    officeEl.querySelector(".hint").textContent = offPlaced ? "Placed ✓"
+      : (!offReady ? "Place all workers first" : (state.placing==="office" ? "Click a tile…" : "Click, then place"));
+    // Warehouse (locked until the office is placed)
+    warehouseEl.classList.toggle("placed",whPlaced);
+    warehouseEl.classList.toggle("locked",!whReady && !whPlaced);
+    warehouseEl.classList.toggle("armed",state.placing==="warehouse" && !whPlaced);
+    warehouseEl.querySelector(".hint").textContent = whPlaced ? "Placed ✓"
+      : (!whReady ? "Build the office first" : (state.placing==="warehouse" ? "Click a tile…" : "Click, then place"));
+    // Research Lab (locked until the warehouse is placed)
+    researchEl.classList.toggle("placed",labPlaced);
+    researchEl.classList.toggle("locked",!labReady && !labPlaced);
+    researchEl.classList.toggle("armed",state.placing==="lab" && !labPlaced);
+    researchEl.querySelector(".hint").textContent = labPlaced ? "Placed ✓"
+      : (!labReady ? "Build the warehouse first" : (state.placing==="lab" ? "Click a tile…" : "Click, then place"));
+    // Cost labels + affordability flag on each actionable item.
+    const setCost=(el,kind,actionable)=>{
+      const c=el.querySelector(".cost"); if(!c) return;
+      if(actionable){ c.textContent=buildingCost(kind)===0?"FREE":"\uD83E\uDE99 "+fmtCoins(buildingCost(kind)); el.classList.toggle("cant",!canAfford(kind)); }
+      else { c.textContent=""; el.classList.remove("cant"); }
+    };
+    setCost(buyEl,"factory",!facPlaced);
+    setCost(workersEl,"worker",wrkReady&&!workersFull);
+    setCost(officeEl,"office",offReady&&!offPlaced);
+    setCost(warehouseEl,"warehouse",whReady&&!whPlaced);
+    setCost(researchEl,"lab",labReady&&!labPlaced);
+    // Stage 2 (unlocks once every building is placed)
+    const stageReady=allBuildingsPlaced();
+    stage2El.classList.toggle("placed",!!state.stage2);
+    stage2El.classList.toggle("locked",!stageReady && !state.stage2);
+    stage2El.classList.toggle("armed",stageReady && !state.stage2);
+    stage2El.querySelector(".hint").textContent = state.stage2 ? "Unlocked ✓"
+      : (!stageReady ? "Place all buildings first" : "Click to unlock");
+    // Only 3 items visible at a time; completing a step slides the window down.
+    const start=Math.min(shopProgress(), SHOP_ITEMS.length-1);
+    SHOP_ITEMS.forEach((el,i)=>{
+      if(el===stage2El && !stageReady && !state.stage2){ el.classList.add("hidden"); SHOP_VIS.forEach(c=>el.classList.remove(c)); return; }
+      const slot=i-start;
+      const show=slot>=0 && slot<3;
+      el.classList.toggle("hidden",!show);
+      SHOP_VIS.forEach(c=>el.classList.remove(c));
+      if(show) el.classList.add(SHOP_VIS[slot]);
+    });
+  }
+  function unlockStage2(){
+    if(!state.active || state.scene!=="earth" || state.stage2 || !allBuildingsPlaced()) return;
+    state.stage2=true; cancelPlacing(); persistState();
+    showStage2Congrats(); state.shake=8;
+    const c=isoToScreen(CX,CY); spawnBurst(c.x,c.y-40,36,["#ffd24a","#a78bfa","#fff","#4ade80"]);
+    refreshShop();
+  }
+  function showSceneUI(){
+    const on=state.active;
+    shopEl.classList.toggle("show", on && state.scene==="earth");
+    coinbarEl.classList.toggle("show", on);
+    if(on) updateCoinUI();
+    worldBtn.classList.toggle("show", on);
+    const toEarth = state.scene!=="earth";
+    worldBtn.classList.toggle("to-earth", toEarth);
+    worldBtn.innerHTML = toEarth
+      ? '<span class="wb-arrow">\u2190</span><span class="wb-label">Earth</span><span class="planet"></span>'
+      : '<span class="planet"></span><span class="wb-label">Mars</span><span class="wb-arrow">\u2192</span>';
+    const hasProgress = !!state.factory || state.builders.length>0 || (state.unlocked && state.unlocked.size>1);
+    resetBtn.classList.toggle("show", on && state.scene==="earth" && hasProgress);
+    marsBanner.classList.toggle("show", on && state.scene==="mars");
+    refreshShop();
+  }
+  function clearSavedGame(){
+    if(!state.pubkey) return;
+    localStorage.removeItem(facKey()); localStorage.removeItem(offKey());
+    localStorage.removeItem(whKey()); localStorage.removeItem(labKey());
+    localStorage.removeItem(stage2Key()); localStorage.removeItem(wrkKey());
+    localStorage.removeItem(landKey()); localStorage.removeItem(coinsKey());
+    localStorage.removeItem(tsKey());
+  }
+  function resetFactory(){
+    state.factory=null; state.office=null; state.warehouse=null; state.lab=null; state.stage2=false; state.builders=[]; state.placing=null;
+    state.unlocked=new Set(["0,0"]); state.selPlot=null; state.coins=START_COINS;
+    cam.panX=0; cam.panY=0; closeExpand(); clearSavedGame();
+    localStorage.removeItem("w2m_intro_ver");
+    localStorage.removeItem("w2m_tutorial_ver");
+    saveCoins(); updateCoinUI();
+    document.getElementById("stage2-msg").classList.remove("show");
+    document.getElementById("intro-overlay").classList.remove("hidden");
+    showSceneUI(); showToast("Reset to start");
+  }
+  function armPlacing(kind){
+    if(!state.active || state.scene!=="earth") return;
+    if(kind==="factory") dismissFactoryTutorial();
+    if(kind==="factory" && state.factory) return;
+    if(kind==="worker" && (state.builders.length>=MAX_WORKERS || !state.factory)) return;
+    if(kind==="office" && (state.office || state.builders.length<MAX_WORKERS)) return;
+    if(kind==="warehouse" && (state.warehouse || !state.office)) return;
+    if(kind==="lab" && (state.lab || !state.warehouse)) return;
+    if(!canAfford(kind)){ state.shake=3; showToast("Need "+fmtCoins(buildingCost(kind))+" coins"); return; }
+    state.placing=kind; refreshShop(); canvas.style.cursor="copy";
+  }
+  function cancelPlacing(){ if(state.placing){ state.placing=null; refreshShop(); canvas.style.cursor="default"; } }
+  function toggleScene(){ state.scene = state.scene==="earth" ? "mars" : "earth"; cancelPlacing();
+    state.hoverTile=null; state.hoverPlot=null; cam.panX=0; cam.panY=0; closeExpand(); showSceneUI(); }
+
+  // ---- Land expansion popup ----
+  const expandPop=document.getElementById("expand-pop");
+  function openExpand(p){ state.selPlot=p;
+    document.getElementById("expand-amt").textContent=fmtCoins(landCost());
+    expandPop.classList.add("show"); }
+  function closeExpand(){ expandPop.classList.remove("show"); state.selPlot=null; }
+  function buyExpand(){
+    if(!state.selPlot) return;
+    const price=landCost();
+    if(state.coins<price){ state.shake=4; showToast("Need "+fmtCoins(price)+" coins"); return; }
+    spend(price);
+    state.unlocked.add(plotKey(state.selPlot.pi,state.selPlot.pj)); persistState();
+    closeExpand(); showToast("Land expanded! \uD83D\uDE80"); showSceneUI();
+  }
+  document.getElementById("expand-x").addEventListener("click",closeExpand);
+  document.getElementById("expand-buy").addEventListener("click",buyExpand);
+  expandPop.addEventListener("click",e=>{ if(e.target===expandPop) closeExpand(); });
+
+  buyEl.addEventListener("pointerdown",e=>{ e.preventDefault(); armPlacing("factory"); });
+  workersEl.addEventListener("pointerdown",e=>{ e.preventDefault(); armPlacing("worker"); });
+  officeEl.addEventListener("pointerdown",e=>{ e.preventDefault(); armPlacing("office"); });
+  warehouseEl.addEventListener("pointerdown",e=>{ e.preventDefault(); armPlacing("warehouse"); });
+  researchEl.addEventListener("pointerdown",e=>{ e.preventDefault(); armPlacing("lab"); });
+  stage2El.addEventListener("pointerdown",e=>{ e.preventDefault(); unlockStage2(); });
+  worldBtn.addEventListener("click",toggleScene);
+  resetBtn.addEventListener("click",resetFactory);
+  window.addEventListener("keydown",e=>{ if(e.key==="Escape"){ cancelPlacing(); closeExpand(); } });
+
+  // ============================ CANVAS INTERACTION ============================
+  function tryPlaceAt(t){
+    if(state.placing==="factory"){ if(!placeFactory(t)){ state.shake=4; showToast("Can't build there"); } }
+    else if(state.placing==="office"){ if(!placeOffice(t)){ state.shake=4; showToast("Can't build there"); } }
+    else if(state.placing==="warehouse"){ if(!placeWarehouse(t)){ state.shake=4; showToast("Can't build there"); } }
+    else if(state.placing==="lab"){ if(!placeLab(t)){ state.shake=4; showToast("Can't build there"); } }
+    else if(state.placing==="worker"){ placeWorker(t); }
+  }
+  let drag=null;
+  function updateCursor(){
+    if(drag&&drag.moved){ canvas.style.cursor="grabbing"; return; }
+    if(state.placing==="factory"){ canvas.style.cursor=canPlace(state.hoverTile)?"copy":"not-allowed"; return; }
+    if(state.placing==="office"){ canvas.style.cursor=canPlaceOffice(state.hoverTile)?"copy":"not-allowed"; return; }
+    if(state.placing==="warehouse"){ canvas.style.cursor=canPlaceWarehouse(state.hoverTile)?"copy":"not-allowed"; return; }
+    if(state.placing==="lab"){ canvas.style.cursor=canPlaceLab(state.hoverTile)?"copy":"not-allowed"; return; }
+    if(state.placing==="worker"){ const ok=canPlaceWorker(state.hoverTile)&&canAfford("worker"); canvas.style.cursor=ok?"copy":"not-allowed"; return; }
+    const hp=state.hoverPlot;
+    if(state.scene==="mars"){
+      canvas.style.cursor = (hp && plotIsLocked(hp.pi,hp.pj)) ? "default" : "grab";
+      return;
+    }
+    canvas.style.cursor = (hp && plotIsLocked(hp.pi,hp.pj)) ? "pointer" : "grab";
+  }
+  canvas.addEventListener("mousemove",e=>{
+    if(!state.active || (state.scene!=="earth" && state.scene!=="mars")){ state.hoverTile=null; state.hoverPlot=null; return; }
+    const t=clientToTile(e.clientX,e.clientY);
+    state.hoverTile=t; state.hoverPlot = inWorld(t)?plotOf(t.x,t.y):null;
+    updateCursor();
+  });
+  canvas.addEventListener("mouseleave",()=>{ state.hoverTile=null; state.hoverPlot=null; });
+  // Drag to pan the camera around the (now much larger) world.
+  canvas.addEventListener("pointerdown",e=>{
+    if(!state.active || state.placing) return;
+    if(state.scene!=="earth" && state.scene!=="mars") return;
+    drag={ sx:e.clientX, sy:e.clientY, px:cam.panX, py:cam.panY, moved:false };
+    try{ canvas.setPointerCapture(e.pointerId); }catch(_){}
+  });
+  window.addEventListener("pointermove",e=>{
+    if(!drag) return;
+    const dx=e.clientX-drag.sx, dy=e.clientY-drag.sy;
+    if(!drag.moved && Math.hypot(dx,dy)>4){ drag.moved=true; canvas.style.cursor="grabbing"; }
+    if(drag.moved){ cam.panX=drag.px+dx; cam.panY=drag.py+dy; clampPan(); }
+  });
+  // pointerup: place (if armed), pan-end, or a clean click on a locked parcel.
+  window.addEventListener("pointerup",e=>{
+    const onCanvas = e.target===canvas;
+    if(state.active && state.scene==="earth" && state.placing && onCanvas){
+      tryPlaceAt(clientToTile(e.clientX,e.clientY));
+    } else if(drag && !drag.moved && onCanvas && state.active && state.scene==="earth" && !state.placing){
+      const t=clientToTile(e.clientX,e.clientY);
+      if(inWorld(t)){ const p=plotOf(t.x,t.y); if(plotIsLocked(p.pi,p.pj)) openExpand(p); }
+    }
+    drag=null; updateCursor();
+  });
+
+  // ============================ WALLET / HOLDING ============================
+  function getProvider(){
+    if(window.solana&&window.solana.isPhantom) return window.solana;
+    if(window.phantom&&window.phantom.solana) return window.phantom.solana;
+    return window.solana||null;
+  }
+  async function connectWallet(){
+    const provider=getProvider(), status=document.getElementById("connect-status");
+    if(!provider){ status.className="status err"; status.innerHTML='No Solana wallet found. <a href="https://phantom.app" target="_blank" style="color:var(--accent2)">Install Phantom</a>.'; return; }
+    status.className="status"; status.textContent="Opening wallet…";
+    try{
+      let resp; try{ resp=await provider.connect({onlyIfTrusted:true}); }catch(_){ resp=await provider.connect(); }
+      const pk=(resp&&resp.publicKey&&resp.publicKey.toString())||(provider.publicKey&&provider.publicKey.toString());
+      if(!pk) throw new Error("No public key returned.");
+      state.pubkey=pk; state.demo=false; localStorage.setItem("w2m_lastWallet",pk);
+      document.getElementById("wallet-btn").textContent=pk.slice(0,4)+"…"+pk.slice(-4);
+      status.className="status ok"; status.textContent="Connected. Checking balance…";
+      await refreshBalance();
+    }catch(err){ status.className="status err"; status.textContent=err.message||"Connection failed."; }
+  }
+  function playFree(){
+    state.demo=true; state.pubkey="DEMO"; state.balanceKnown=true; state.balance=MIN_HOLD_AMOUNT;
+    document.getElementById("wallet-btn").textContent="Free Play";
+    document.getElementById("balance-val").textContent="FREE";
+    applyHolding(true);
+  }
+  async function disconnectWallet(){
+    const provider=getProvider(); try{ if(provider&&provider.disconnect) await provider.disconnect(); }catch(_){}
+    state.pubkey=null; state.demo=false; state.active=false; state.balanceKnown=false;
+    state.factory=null; state.office=null; state.warehouse=null; state.lab=null; state.stage2=false; state.builders=[]; state.placing=null; state.scene="earth";
+    state.unlocked=new Set(["0,0"]); state.selPlot=null; cam.panX=0; cam.panY=0; closeExpand();
+    localStorage.removeItem("w2m_lastWallet");
+    document.getElementById("wallet-btn").textContent="Connect Wallet";
+    document.getElementById("balance-val").textContent="—";
+    showSceneUI(); showConnectOverlay();
+  }
+  async function refreshBalance(){
+    if(!state.pubkey||state.demo) return;
+    try{
+      const res=await fetch("/api/balance?wallet="+encodeURIComponent(state.pubkey));
+      const data=await res.json(); if(!res.ok) throw new Error(data.error||"balance error");
+      state.balance=data.balance||0; state.balanceKnown=true;
+      document.getElementById("balance-val").textContent=fmt(state.balance);
+      applyHolding(state.balance>=MIN_HOLD_AMOUNT);
+    }catch(err){ const s=document.getElementById("connect-status"); if(s){ s.className="status err"; s.textContent="RPC busy — retrying… ("+err.message+")"; } }
+  }
+  function facKey(){ return "w2m_fac_"+state.pubkey; }
+  function offKey(){ return "w2m_off_"+state.pubkey; }
+  function whKey(){ return "w2m_wh_"+state.pubkey; }
+  function labKey(){ return "w2m_lab_"+state.pubkey; }
+  function stage2Key(){ return "w2m_s2_"+state.pubkey; }
+  function wrkKey(){ return "w2m_wrk_"+state.pubkey; }
+  function landKey(){ return "w2m_land_"+state.pubkey; }
+  function coinsKey(){ return "w2m_coins_"+state.pubkey; }
+  function tsKey(){ return "w2m_ts_"+state.pubkey; }
+  function saveCoins(){ if(!state.pubkey) return;
+    localStorage.setItem(coinsKey(), String(state.coins));
+    localStorage.setItem(tsKey(), String(Date.now()));
+  }
+  function creditAwayTime(showToast){
+    if(!state.pubkey || !state.active) return 0;
+    const ts=parseFloat(localStorage.getItem(tsKey())||"0")||0;
+    if(ts<=0){ saveCoins(); return 0; }
+    const elapsed=Math.max(0,(Date.now()-ts)/1000);
+    const credited=Math.min(elapsed, OFFLINE_CAP_S);
+    if(credited<=0){ saveCoins(); return 0; }
+    const before=state.coins;
+    state.coins+=incomePerSec()*credited;
+    saveCoins();
+    updateCoinUI();
+    const gain=state.coins-before;
+    if(showToast && credited>=10 && gain>=1)
+      showToast("+"+fmtCoins(gain)+" coins while away");
+    return gain;
+  }
+  function persistState(){ if(!state.pubkey) return;
+    if(state.factory) localStorage.setItem(facKey(),JSON.stringify(state.factory)); else localStorage.removeItem(facKey());
+    if(state.office) localStorage.setItem(offKey(),JSON.stringify(state.office)); else localStorage.removeItem(offKey());
+    if(state.warehouse) localStorage.setItem(whKey(),JSON.stringify(state.warehouse)); else localStorage.removeItem(whKey());
+    if(state.lab) localStorage.setItem(labKey(),JSON.stringify(state.lab)); else localStorage.removeItem(labKey());
+    if(state.stage2) localStorage.setItem(stage2Key(),"1"); else localStorage.removeItem(stage2Key());
+    localStorage.setItem(wrkKey(), String(state.builders.length));
+    localStorage.setItem(landKey(), JSON.stringify([...state.unlocked]));
+    saveCoins();
+  }
+  function loadState(){
+    try{ const v=localStorage.getItem(facKey()); state.factory=v?JSON.parse(v):null; }catch(_){ state.factory=null; }
+    try{ const v=localStorage.getItem(offKey()); state.office=v?JSON.parse(v):null; }catch(_){ state.office=null; }
+    try{ const v=localStorage.getItem(whKey()); state.warehouse=v?JSON.parse(v):null; }catch(_){ state.warehouse=null; }
+    try{ const v=localStorage.getItem(labKey()); state.lab=v?JSON.parse(v):null; }catch(_){ state.lab=null; }
+    state.stage2 = localStorage.getItem(stage2Key())==="1";
+    state.builders=[];
+    let n=0; try{ n=parseInt(localStorage.getItem(wrkKey())||"0",10)||0; }catch(_){ n=0; }
+    for(let k=0;k<Math.min(n,MAX_WORKERS);k++){ const s=rocketSpot(); spawnWorkerAt(s.x,s.y); }
+    state.unlocked=new Set(["0,0"]);
+    try{ const v=localStorage.getItem(landKey()); if(v){ for(const k of JSON.parse(v)) state.unlocked.add(k); } }catch(_){}
+    // Coins: restore balance, give starters to brand-new players, then credit
+    // idle/offline time at the current income rate (capped at 1 hour away).
+    const saved=localStorage.getItem(coinsKey());
+    state.coins = saved===null ? START_COINS : (parseFloat(saved)||0);
+    if(saved!==null) creditAwayTime(false);
+    else saveCoins();
+  }
+  function applyHolding(holds){
+    state.active=holds;
+    if(holds){ loadState(); hideOverlays(); showSceneUI(); updateCoinUI(); maybeShowIntro(); tryStartMusic();
+      if(localStorage.getItem("w2m_intro_ver")===INTRO_VER && introOverlay.classList.contains("hidden"))
+        setTimeout(maybeShowFactoryTutorial, 450);
+    }
+    else { state.factory=null; state.office=null; state.warehouse=null; state.lab=null; state.stage2=false; state.builders=[]; if(state.balanceKnown) showPauseOverlay(); else showConnectOverlay(); showSceneUI(); }
+  }
+
+  function hideOverlays(){ document.getElementById("connect-overlay").classList.add("hidden"); document.getElementById("pause-overlay").classList.add("hidden"); }
+  function showConnectOverlay(){ document.getElementById("connect-overlay").classList.remove("hidden"); document.getElementById("pause-overlay").classList.add("hidden"); }
+  function showPauseOverlay(){ document.getElementById("pause-overlay").classList.remove("hidden"); document.getElementById("connect-overlay").classList.add("hidden");
+    document.getElementById("pause-status").textContent="Balance: "+fmt(state.balance)+" (need "+MIN_HOLD_AMOUNT.toLocaleString()+")"; }
+
+  // ============================ AMBIENT MUSIC ============================
+  // Soft looping pads + slow arp — no external audio files; starts on first click.
+  const Music=(function(){
+    const CHORDS=[
+      [130.81,164.81,196.00,246.94],
+      [146.83,174.61,220.00,261.63],
+      [164.81,196.00,246.94,293.66],
+      [174.61,207.65,261.63,329.63],
+      [196.00,233.08,293.66,349.23],
+      [174.61,220.00,261.63,329.63],
+    ];
+    const BAR_S=12;
+    let ac=null, master=null, filter=null, started=false, nextBar=0, barIdx=0, schedTimer=null;
+    function init(){
+      if(ac) return;
+      ac=new (window.AudioContext||window.webkitAudioContext)();
+      master=ac.createGain();
+      filter=ac.createBiquadFilter();
+      filter.type="lowpass"; filter.frequency.value=820; filter.Q.value=0.5;
+      master.gain.value=isMuted()?0:0.10;
+      filter.connect(master); master.connect(ac.destination);
+    }
+    function isMuted(){ return localStorage.getItem("w2m_music_muted")==="1"; }
+    function setMuted(m){
+      localStorage.setItem("w2m_music_muted", m?"1":"0");
+      if(ac&&master) master.gain.setTargetAtTime(m?0:0.10, ac.currentTime, 0.5);
+      syncBtn();
+    }
+    function toggle(){ setMuted(!isMuted()); }
+    function syncBtn(){
+      const b=document.getElementById("music-btn"); if(!b) return;
+      b.classList.toggle("muted", isMuted());
+      b.textContent=isMuted()?"\u{1F507}":"\u{1F3B5}";
+    }
+    function pad(freq,t0,dur,vol){
+      const o=ac.createOscillator(), g=ac.createGain();
+      o.type="sine"; o.frequency.value=freq;
+      g.gain.setValueAtTime(0,t0);
+      g.gain.linearRampToValueAtTime(vol,t0+2.5);
+      g.gain.setValueAtTime(vol*0.85,t0+dur-3);
+      g.gain.linearRampToValueAtTime(0,t0+dur);
+      o.connect(g); g.connect(filter);
+      o.start(t0); o.stop(t0+dur+0.05);
+    }
+    function twinkle(freq,t0,vol){
+      const o=ac.createOscillator(), g=ac.createGain();
+      o.type="triangle"; o.frequency.value=freq;
+      g.gain.setValueAtTime(0,t0);
+      g.gain.linearRampToValueAtTime(vol,t0+0.08);
+      g.gain.exponentialRampToValueAtTime(0.001,t0+1.6);
+      o.connect(g); g.connect(filter);
+      o.start(t0); o.stop(t0+1.8);
+    }
+    function scheduleBar(idx,t0){
+      const ch=CHORDS[idx%CHORDS.length], dur=BAR_S+0.4;
+      ch.forEach((f,i)=> pad(f, t0+i*0.12, dur, 0.018));
+      pad(ch[0]*0.5, t0, dur, 0.024);
+      for(let i=0;i<5;i++) twinkle(ch[i%4]*2, t0+1.5+i*2.1, 0.009);
+    }
+    function scheduler(){
+      if(!started||!ac) return;
+      const now=ac.currentTime;
+      while(nextBar<now+28){
+        scheduleBar(barIdx, nextBar);
+        nextBar+=BAR_S; barIdx++;
+      }
+    }
+    function start(){
+      init();
+      syncBtn();
+      if(ac.state==="suspended") ac.resume();
+      if(!started){
+        started=true;
+        nextBar=ac.currentTime+0.3;
+        barIdx=0;
+        scheduler();
+        schedTimer=setInterval(scheduler, 3500);
+      }else scheduler();
+      if(master) master.gain.setTargetAtTime(isMuted()?0:0.10, ac.currentTime, 0.4);
+    }
+    return { start, toggle, isMuted, syncBtn };
+  })();
+  function tryStartMusic(){ try{ Music.start(); }catch(_){} }
+
+  // ============================ BOOT ============================
+  const SAVE_VER = "2";
+  function enforceSaveVersion(){
+    if(localStorage.getItem("w2m_save_ver") === SAVE_VER) return;
+    const drop=[];
+    for(let i=0;i<localStorage.length;i++){
+      const k=localStorage.key(i);
+      if(k && k.startsWith("w2m_")) drop.push(k);
+    }
+    drop.forEach(k=>localStorage.removeItem(k));
+    localStorage.setItem("w2m_save_ver", SAVE_VER);
+  }
+  enforceSaveVersion();
+
+  document.getElementById("req-amt").textContent=MIN_HOLD_AMOUNT.toLocaleString();
+  document.getElementById("req-amt2").textContent=MIN_HOLD_AMOUNT.toLocaleString();
+  document.getElementById("expand-amt").textContent=MIN_HOLD_AMOUNT.toLocaleString();
+  document.getElementById("connect-btn").addEventListener("click",connectWallet);
+  document.getElementById("free-btn").addEventListener("click",playFree);
+  document.getElementById("pause-free-btn").addEventListener("click",playFree);
+  document.getElementById("wallet-btn").addEventListener("click",()=>{ if(state.pubkey) disconnectWallet(); else connectWallet(); });
+  // Welcome / how-it-works modal — shown once per browser.
+  const INTRO_VER = "2";
+  const TUTORIAL_VER = "1";
+  const introOverlay=document.getElementById("intro-overlay");
+  const factoryTutorial=document.getElementById("factory-tutorial");
+  function maybeShowIntro(){ if(localStorage.getItem("w2m_intro_ver")===INTRO_VER) return; introOverlay.classList.remove("hidden"); }
+  function positionFactoryTutorial(){
+    if(!factoryTutorial||!buyEl) return;
+    const wrap=document.getElementById("wrap").getBoundingClientRect();
+    const rect=buyEl.getBoundingClientRect();
+    const bubble=factoryTutorial.querySelector(".tut-bubble");
+    if(!bubble) return;
+    bubble.style.top=(rect.top-wrap.top+rect.height/2)+"px";
+    bubble.style.left=(rect.right-wrap.left+16)+"px";
+  }
+  function dismissFactoryTutorial(){
+    if(localStorage.getItem("w2m_tutorial_ver")===TUTORIAL_VER) return;
+    localStorage.setItem("w2m_tutorial_ver",TUTORIAL_VER);
+    if(factoryTutorial) factoryTutorial.classList.remove("show");
+    if(buyEl) buyEl.classList.remove("tutorial-pulse");
+  }
+  function maybeShowFactoryTutorial(){
+    if(localStorage.getItem("w2m_tutorial_ver")===TUTORIAL_VER) return;
+    if(!state.active||state.scene!=="earth"||state.factory||!shopEl.classList.contains("show")) return;
+    positionFactoryTutorial();
+    factoryTutorial.classList.add("show");
+    buyEl.classList.add("tutorial-pulse");
+  }
+  document.getElementById("intro-btn").addEventListener("click",()=>{
+    introOverlay.classList.add("hidden");
+    localStorage.setItem("w2m_intro_ver",INTRO_VER);
+    tryStartMusic();
+    setTimeout(maybeShowFactoryTutorial, 380);
+  });
+  document.getElementById("tut-dismiss").addEventListener("click",dismissFactoryTutorial);
+  window.addEventListener("resize",()=>{ if(factoryTutorial&&factoryTutorial.classList.contains("show")) positionFactoryTutorial(); });
+  document.getElementById("music-btn").addEventListener("click",()=>{ tryStartMusic(); Music.toggle(); });
+  document.getElementById("wrap").addEventListener("pointerdown",()=>{ tryStartMusic(); }, { once:true });
+  Music.syncBtn();
+  // Keep coins saved while idle / when leaving the page; credit gaps on return.
+  setInterval(saveCoins,5000);
+  window.addEventListener("beforeunload",saveCoins);
+  document.addEventListener("visibilitychange",()=>{
+    if(document.hidden) saveCoins();
+    else if(state.active) creditAwayTime(true);
+  });
+  window.addEventListener("focus",()=>{ if(!document.hidden && state.active) creditAwayTime(false); });
+  window.addEventListener("pageshow",()=>{ if(state.active) creditAwayTime(false); });
+
+  (async function tryAuto(){
+    const provider=getProvider(), last=localStorage.getItem("w2m_lastWallet");
+    if(provider&&last){ try{ const resp=await provider.connect({onlyIfTrusted:true}); const pk=resp&&resp.publicKey&&resp.publicKey.toString();
+      if(pk){ state.pubkey=pk; document.getElementById("wallet-btn").textContent=pk.slice(0,4)+"…"+pk.slice(-4); await refreshBalance(); } }catch(_){} }
+  })();
+
+  setInterval(()=>{ if(state.pubkey&&!state.demo) refreshBalance(); },BALANCE_POLL_MS);
+  showSceneUI();
+  frame();
+})();
+</script>
+</body>
+</html>
