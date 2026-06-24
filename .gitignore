@@ -1,6 +1,6 @@
 .env
 
-# Playwright / browser profiles (tens of thousands of files)
+# Playwright / browser profiles — logged-in sessions (cookies/wallet), NEVER commit
 .extract_profile/
 .axiom_profile/
 .axiom_j7_profile/
@@ -8,6 +8,16 @@
 .j7ogcoins_axiom_profile/
 .customdev_profile/
 .j7tracker_storage_state.json
+# broad catch-alls for every local browser profile (incl. all PAMPS ones)
+.*_profile/
+.*_profile_broken/
+.pamps_*/
+.axiom_*/
+.j7cm_*/
+.j7_coin_match_*/
+
+# PAMPS research data (bulky local dataset; not needed for the deploy)
+pamps_dataset.jsonl
 
 # Python
 __pycache__/

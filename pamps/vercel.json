@@ -1,0 +1,25 @@
+{
+  "version": 2,
+  "name": "pamps",
+  "builds": [
+    { "src": "api/live.py", "use": "@vercel/python" },
+    { "src": "api/search.py", "use": "@vercel/python" },
+    { "src": "index.html", "use": "@vercel/static" },
+    { "src": "assets/**", "use": "@vercel/static" },
+    { "src": "search.json", "use": "@vercel/static" },
+    { "src": "live.json", "use": "@vercel/static" }
+  ],
+  "routes": [
+    { "src": "/api/live", "dest": "/api/live.py" },
+    { "src": "/api/search", "dest": "/api/search.py" },
+    { "src": "/", "dest": "/index.html" },
+    { "src": "/assets/(.*)", "dest": "/assets/$1" },
+    { "src": "/(live|search).json", "dest": "/$1.json" },
+    { "handle": "filesystem" }
+  ],
+  "headers": [
+    { "source": "/", "headers": [{ "key": "Cache-Control", "value": "no-store" }] },
+    { "source": "/index.html", "headers": [{ "key": "Cache-Control", "value": "no-store" }] },
+    { "source": "/assets/(.*)", "headers": [{ "key": "Cache-Control", "value": "public, max-age=86400" }] }
+  ]
+}
