@@ -58,6 +58,18 @@ html.open #page{transform:translateY(100dvh)}
   border-bottom:1px solid var(--line2)}
 #pull:hover{color:#fff;filter:brightness(1.25)}
 #pull .arr{display:inline-block;animation:bounce 1.6s ease-in-out infinite;letter-spacing:0}
+/* mirror of the pull bar, at the BOTTOM of the brain view -> back to the game */
+#pullGame{flex:none;width:100%;border:0;cursor:pointer;padding:0;height:64px;
+  color:#eafff3;font:inherit;letter-spacing:.28em;font-size:15px;text-transform:uppercase;
+  background:
+    linear-gradient(rgba(4,7,10,.82),rgba(4,7,10,.82)),
+    linear-gradient(90deg,var(--log),var(--cre),var(--soc),var(--ins),var(--mem),var(--per),var(--log));
+  background-size:100% 100%,300% 100%;
+  animation:pullsweep 9s linear infinite;
+  border-top:1px solid var(--line2)}
+#pullGame:hover{color:#fff;filter:brightness(1.25)}
+#pullGame .arr{display:inline-block;animation:bounceUp 1.6s ease-in-out infinite;letter-spacing:0}
+@keyframes bounceUp{0%,100%{transform:translateY(2px)}50%{transform:translateY(-3px)}}
 @keyframes pullsweep{to{background-position:0 0,300% 0}}
 @keyframes bounce{0%,100%{transform:translateY(-2px)}50%{transform:translateY(3px)}}
 
@@ -387,7 +399,8 @@ footer{border-top:1px dashed var(--line);color:var(--dimmer);font-size:11px;
      Leave EMPTY when the game server serves this page (local, or PC-hosted).
      When this site is hosted on Vercel, set it to your PC's public address,
      e.g. "https://xxxx.trycloudflare.com" (no trailing slash). */
-  window.__SYN_API = "https://mounting-deposits-crossword-hats.trycloudflare.com";
+  window.__SYN_API = (location.hostname==='localhost'||location.hostname==='127.0.0.1')
+    ? "" : "https://mounting-deposits-crossword-hats.trycloudflare.com";
   if(window.__SYN_API){const _f=window.fetch.bind(window);
     window.fetch=(u,o)=>_f((typeof u==='string'&&u[0]==='/')?window.__SYN_API+u:u,o);}
 
@@ -403,7 +416,6 @@ footer{border-top:1px dashed var(--line);color:var(--dimmer);font-size:11px;
   <!-- ==================== THE BRAIN (curtain above) ==================== -->
   <section id="brain">
     <div class="brain-top">
-      <button id="closeBrain">&#9650; BACK TO THE GAME</button>
       <button id="docsBtn">DOCS</button>
       <div id="regionBanner"><span class="sub">loading the mind_</span></div>
       <button id="caBox" title="click to copy the contract address">
@@ -619,6 +631,7 @@ footer{border-top:1px dashed var(--line);color:var(--dimmer);font-size:11px;
         <div class="mkt-note">click a listing to jump to it on the map. buyers pay the seller in SOL, wallet-to-wallet.</div>
       </aside>
     </div>
+    <button id="pullGame"><span class="arr">&#9650;</span>&nbsp;&nbsp;OPEN THE GAME&nbsp;&nbsp;<span class="arr">&#9650;</span></button>
   </section>
 
   <!-- ==================== THE SITE / GAME ==================== -->
@@ -1130,6 +1143,10 @@ function renderCache(){
     else{dw=bw;dh=bw/ar;dy=y0-(dh-bh)/2;}
     c.save();c.clip(paths[p.i]);c.imageSmoothingEnabled=true;
     c.drawImage(im,dx,dy,dw,dh);c.restore();}
+  // thick BLACK separators between regions (drawn on top of the fills, UNDER the
+  // neon region borders) so each part of the brain reads as clearly divided
+  c.strokeStyle='#000'; c.lineJoin='round'; c.lineCap='round'; c.lineWidth=0.85;
+  for(let ri=0;ri<REG.length;ri++) c.stroke(regOut[ri]);
   // ink layer: gyri fold-lines + silhouette/region outlines, then glow-composited
   const ink=document.createElement('canvas');
   ink.width=baseCache.width; ink.height=baseCache.height;
@@ -1651,7 +1668,7 @@ async function pollState(){
 function openBrain(){document.documentElement.classList.add('open');localStorage.synapse_view='brain';resize();}
 function closeBrain(){document.documentElement.classList.remove('open');localStorage.synapse_view='site';pinReg=-1;}
 $('pull').onclick=openBrain;
-$('closeBrain').onclick=closeBrain;
+$('pullGame').onclick=closeBrain;
 addEventListener('keydown',e=>{if(e.key==='Escape')closeBrain();});
 window.openMap=openBrain; window.closeMap=closeBrain;
 

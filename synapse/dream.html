@@ -9,7 +9,8 @@
   /* ===== backend location ===== (see index.html for details)
      EMPTY = the game server serves this page. When hosted on Vercel, set it to
      your PC's public address, e.g. "https://xxxx.trycloudflare.com". */
-  window.__SYN_API = "https://mounting-deposits-crossword-hats.trycloudflare.com";
+  window.__SYN_API = (location.hostname==='localhost'||location.hostname==='127.0.0.1')
+    ? "" : "https://mounting-deposits-crossword-hats.trycloudflare.com";
   if(window.__SYN_API){const _f=window.fetch.bind(window);
     window.fetch=(u,o)=>_f((typeof u==='string'&&u[0]==='/')?window.__SYN_API+u:u,o);}
 </script>
