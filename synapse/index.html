@@ -57,7 +57,6 @@ html.open #page{transform:translateY(100dvh)}
   animation:pullsweep 9s linear infinite;
   border-bottom:1px solid var(--line2)}
 #pull:hover{color:#fff;filter:brightness(1.25)}
-#pull .arr{display:inline-block;animation:bounce 1.6s ease-in-out infinite;letter-spacing:0}
 /* mirror of the pull bar, at the BOTTOM of the brain view -> back to the game */
 #pullGame{flex:none;width:100%;border:0;cursor:pointer;padding:0;height:64px;
   color:#eafff3;font:inherit;letter-spacing:.28em;font-size:15px;text-transform:uppercase;
@@ -68,10 +67,13 @@ html.open #page{transform:translateY(100dvh)}
   animation:pullsweep 9s linear infinite;
   border-bottom:1px solid var(--line2)}
 #pullGame:hover{color:#fff;filter:brightness(1.25)}
-#pullGame .arr{display:inline-block;animation:bounceUp 1.6s ease-in-out infinite;letter-spacing:0}
-@keyframes bounceUp{0%,100%{transform:translateY(2px)}50%{transform:translateY(-3px)}}
+/* arrows point INWARD toward the label and pulse toward it -> reads as "click" */
+#pull .arr,#pullGame .arr{display:inline-block;letter-spacing:0}
+#pull .arrL,#pullGame .arrL{animation:nudgeR 1.3s ease-in-out infinite}
+#pull .arrR,#pullGame .arrR{animation:nudgeL 1.3s ease-in-out infinite}
 @keyframes pullsweep{to{background-position:0 0,300% 0}}
-@keyframes bounce{0%,100%{transform:translateY(-2px)}50%{transform:translateY(3px)}}
+@keyframes nudgeR{0%,100%{transform:translateX(-3px)}50%{transform:translateX(4px)}}
+@keyframes nudgeL{0%,100%{transform:translateX(3px)}50%{transform:translateX(-4px)}}
 
 /* ---------- header ---------- */
 header{display:flex;align-items:center;gap:14px;padding:10px 18px;
@@ -432,7 +434,7 @@ footer{border-top:1px dashed var(--line);color:var(--dimmer);font-size:11px;
 
   <!-- ==================== THE BRAIN (curtain above) ==================== -->
   <section id="brain">
-    <button id="pullGame"><span class="arr">&#9650;</span>&nbsp;&nbsp;OPEN THE GAME&nbsp;&nbsp;<span class="arr">&#9650;</span></button>
+    <button id="pullGame"><span class="arr arrL">&#9654;</span>&nbsp;&nbsp;OPEN THE GAME&nbsp;&nbsp;<span class="arr arrR">&#9664;</span></button>
     <div class="brain-top">
       <button id="docsBtn">DOCS</button>
       <div id="regionBanner"><span class="sub">loading the mind_</span></div>
@@ -653,7 +655,7 @@ footer{border-top:1px dashed var(--line);color:var(--dimmer);font-size:11px;
 
   <!-- ==================== THE SITE / GAME ==================== -->
   <div id="site">
-    <button id="pull"><span class="arr">&#9660;</span>&nbsp;&nbsp;OPEN THE BRAIN&nbsp;&nbsp;<span class="arr">&#9660;</span></button>
+    <button id="pull"><span class="arr arrL">&#9654;</span>&nbsp;&nbsp;OPEN THE BRAIN&nbsp;&nbsp;<span class="arr arrR">&#9664;</span></button>
 
     <header>
       <div class="logo">SYNAPSE<span class="cur">_</span></div>
