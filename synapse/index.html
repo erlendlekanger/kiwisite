@@ -1510,11 +1510,13 @@ async function act(path,payload){
 /* load / drop owner pictures to match server state, redraw on arrival */
 function syncImages(){
   let dirty=false;
+  const base=window.__SYN_API||'';        // uploaded images live on the backend
   for(const pid in IMAGES){
     if(!IMG[pid]||IMG[pid].url!==IMAGES[pid]){
       const im=new Image();
+      im.crossOrigin='anonymous';         // draw the backend image without tainting
       im.onload=()=>{baseDirty=true;requestDraw();};
-      im.src='/uploads/'+IMAGES[pid];
+      im.src=base+'/uploads/'+IMAGES[pid];
       IMG[pid]={url:IMAGES[pid],img:im};
       dirty=true;
     }
