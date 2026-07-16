@@ -306,19 +306,23 @@ footer{border-top:1px dashed var(--line);color:var(--dimmer);font-size:11px;
 #wcClose{position:absolute;top:8px;right:12px;border:0;background:none;color:var(--dim);
   font-size:22px;line-height:1;cursor:pointer}
 #wcClose:hover{color:var(--green)}
-/* train the mind panel */
-.train-hint{font-size:10px;color:var(--dim);line-height:1.5;margin-bottom:7px;font-style:italic}
-#trainText{width:100%;min-height:86px;resize:vertical;background:var(--panel2);
-  border:1px solid var(--line2);color:#eafff3;font:inherit;font-size:12px;padding:8px;line-height:1.5}
-#trainText:focus{outline:none;border-color:var(--green)}
-.train-row{display:flex;align-items:center;justify-content:space-between;margin-top:7px;gap:8px}
-#trainCount{font-size:11px;color:var(--dim);white-space:nowrap}
-#trainCount.over{color:#ff4d4d}
-#trainSave{border:1px solid var(--green);background:rgba(43,255,154,.1);color:var(--green);
-  font:inherit;font-size:11px;letter-spacing:.12em;padding:6px 12px;cursor:pointer;flex:none}
-#trainSave:hover{background:rgba(43,255,154,.2)}
-#trainSave:disabled{opacity:.4;cursor:default}
-.train-msg{font-size:10.5px;color:var(--green);margin-top:7px;min-height:12px;line-height:1.5}
+/* per-plot public message editor (in the plot panel) */
+.msgbox{margin-top:11px;border-top:1px solid var(--line);padding-top:9px}
+.msglbl{font-size:9px;letter-spacing:.16em;color:var(--dim);text-transform:uppercase;margin-bottom:6px}
+.msglbl .msgpub{color:var(--dimmer);letter-spacing:.04em}
+#plotMsg{width:100%;min-height:70px;resize:vertical;background:var(--panel2);
+  border:1px solid var(--line2);color:#eafff3;font:inherit;font-size:12px;padding:7px;line-height:1.5}
+#plotMsg:focus{outline:none;border-color:var(--green)}
+.msgrow{display:flex;align-items:center;justify-content:space-between;margin-top:6px;gap:8px}
+#plotMsgCount{font-size:11px;color:var(--dim);white-space:nowrap}
+#plotMsgCount.over{color:#ff4d4d}
+#plotMsgSave{border:1px solid var(--green);background:rgba(43,255,154,.1);color:var(--green);
+  font:inherit;font-size:10.5px;letter-spacing:.1em;padding:5px 11px;cursor:pointer;flex:none}
+#plotMsgSave:hover{background:rgba(43,255,154,.2)}
+#plotMsgSave:disabled{opacity:.4;cursor:default}
+.msgfb{font-size:10px;color:var(--green);margin-top:6px;min-height:12px;line-height:1.45}
+.msgread{font-size:12px;color:#cfe8d8;font-style:italic;line-height:1.55;
+  background:var(--panel2);border:1px solid var(--line);padding:8px}
 /* top-left label so nobody wonders what the shape is */
 #brainLabel{position:absolute;top:12px;left:14px;z-index:12;pointer-events:none;
   color:var(--green);font-size:15px;font-weight:700;letter-spacing:.26em;
@@ -585,19 +589,6 @@ footer{border-top:1px dashed var(--line);color:var(--dimmer);font-size:11px;
           <h3>Your land</h3>
           <div class="bd" id="yourBd"><div class="none">you own nothing yet. buy a plot._</div></div>
         </div>
-        <div class="box" id="trainBox">
-          <h3>Train the mind</h3>
-          <div class="bd">
-            <div class="none" id="trainNone">own land to feed the mind. what you write shapes what it dreams._</div>
-            <div id="trainForm" style="display:none">
-              <div class="train-hint">1 symbol per cell you own. the mind dreams what it is fed.</div>
-              <textarea id="trainText" placeholder="feed the mind thoughts, obsessions, names, anything…"></textarea>
-              <div class="train-row"><span id="trainCount">0 / 0</span>
-                <button id="trainSave">FEED THE MIND</button></div>
-              <div id="trainMsg" class="train-msg"></div>
-            </div>
-          </div>
-        </div>
       </aside>
       <div id="mapWrap">
         <canvas id="mapBase"></canvas>
@@ -759,7 +750,7 @@ footer{border-top:1px dashed var(--line);color:var(--dimmer);font-size:11px;
 "use strict";
 /* ============================== state ============================== */
 let MAP=null, PLOTS=[], byId={}, REG=[], GRID=null;
-let OWNED={}, LISTINGS={}, BIDS={}, STATS=null, IMAGES={};
+let OWNED={}, LISTINGS={}, BIDS={}, STATS=null, IMAGES={}, MESSAGES={};
 let MARKET={sol_per_cell:0.0002, treasury:'', mint:'', reserve_s:90};
 const IMG={};   // plot_id -> {url, img}  loaded owner pictures
 let s=2, ox=0, oy=0, dpr=1;              // draw scale + offsets (css px)
@@ -882,7 +873,7 @@ async function init(){
     fetch('/api/state').then(r=>r.json())]);
   MAP=m; PLOTS=m.plots; REG=m.regions;
   OWNED=st.owned; LISTINGS=st.listings||{}; BIDS=st.bids||{}; STATS=st.stats;
-  IMAGES=st.images||{}; MARKET=st.market||MARKET;
+  IMAGES=st.images||{}; MESSAGES=st.messages||{}; MARKET=st.market||MARKET;
   regHsl=REG.map(r=>hexToHsl(r.color));
   PLOTS.forEach(p=>byId[p.i]=p);
   $('mktRegion').innerHTML='<option value="">all regions</option>'+
@@ -893,8 +884,6 @@ async function init(){
   const walletClick=()=>PUB?disconnectWallet():connectWallet();
   $('wallet').onclick=walletClick;
   if($('walletB'))$('walletB').onclick=walletClick;
-  if($('trainText'))$('trainText').oninput=updateTrainCount;
-  if($('trainSave'))$('trainSave').onclick=saveTrain;
   // DOCS overlay -- re-parent to <body>: inside #page its transform (the
   // curtain slide) hijacks position:fixed and the overlay opens off-screen.
   document.body.appendChild($('docs'));
@@ -1448,7 +1437,7 @@ async function buyPlot(pid){
         body:JSON.stringify({wallet,plot:pid,signature:sig})});
       const j=await r.json();
       if(r.ok){
-        OWNED=j.owned;LISTINGS=j.listings||{};BIDS=j.bids||{};STATS=j.stats;IMAGES=j.images||{};MARKET=j.market||MARKET;
+        OWNED=j.owned;LISTINGS=j.listings||{};BIDS=j.bids||{};STATS=j.stats;IMAGES=j.images||{};MESSAGES=j.messages||{};MARKET=j.market||MARKET;
         syncImages();baseDirty=true;drawBase();
         renderPlotPanel();renderLegends();renderStats();renderYourLand();renderMarket();kickFx();
         set('bought — the plot is yours.');return;
@@ -1490,9 +1479,22 @@ function renderPlotPanel(){
   }
   html+=`<div class="stat"><span>owner</span><b>${mine?'you':short(own.owner)}</b></div>`;
   if(listing)html+=`<div class="stat"><span>ask price</span><b class="saletag">${fmtSol(+listing.price)}</b></div>`;
+  // one public message per plot (1 symbol per cell). owner edits, everyone reads.
+  const msgTxt=MESSAGES[p.i]||'';
+  if(mine){
+    html+=`<div class="msgbox">
+      <div class="msglbl">YOUR MESSAGE <span class="msgpub">public · 1 symbol / cell</span></div>
+      <textarea id="plotMsg" placeholder="write what this plot whispers into the mind…">${esc(msgTxt)}</textarea>
+      <div class="msgrow"><span id="plotMsgCount">0 / ${p.cells}</span>
+        <button id="plotMsgSave">SAVE MESSAGE</button></div>
+      <div id="plotMsgFb" class="msgfb"></div></div>`;
+  }else if(msgTxt){
+    html+=`<div class="msgbox"><div class="msglbl">MESSAGE</div>
+      <div class="msgread">&ldquo;${esc(msgTxt)}&rdquo;</div></div>`;
+  }
   if(mine){
     html+=`<div class="imgrow"><span class="imglbl">YOUR PICTURE</span>
-      ${IMAGES[p.i]?`<img class="imgthumb" src="/uploads/${IMAGES[p.i]}" alt="">`
+      ${IMAGES[p.i]?`<img class="imgthumb" src="${(window.__SYN_API||'')}/uploads/${IMAGES[p.i]}" alt="">`
                    :'<span class="imgnone">none yet</span>'}</div>
       <div class="field">
         <label class="filebtn">${IMAGES[p.i]?'REPLACE':'UPLOAD IMAGE'}<input id="imgFile" type="file"
@@ -1529,14 +1531,32 @@ function renderPlotPanel(){
     prepareImage(f).then(url=>uploadImg(p.i,url))
       .catch(()=>{if(m)m.textContent='could not read that image';});};
   if(q('imgDel'))q('imgDel').onclick=()=>act('/api/remove_img',{plot:p.i});
+  if(q('plotMsg')){
+    const ta=q('plotMsg'),cnt=q('plotMsgCount'),save=q('plotMsgSave');
+    const upd=()=>{const used=[...ta.value].length;const over=used>p.cells;
+      cnt.textContent=used+' / '+p.cells;cnt.classList.toggle('over',over);save.disabled=over;};
+    ta.oninput=upd; upd();
+    save.onclick=async()=>{
+      const fb=q('plotMsgFb');save.disabled=true;fb.style.color='var(--dim)';fb.textContent='saving…';
+      try{const r=await fetch('/api/train',{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({wallet,plot:p.i,text:ta.value})});
+        const j=await r.json();
+        if(!r.ok){fb.style.color='#ff4d4d';fb.textContent=j.err||'failed';upd();return;}
+        MESSAGES[p.i]=ta.value; fb.style.color='var(--green)';
+        fb.textContent='saved · public on this plot · the next dream will remember this';
+      }catch(e){fb.style.color='#ff4d4d';fb.textContent='failed';}
+      upd();
+    };
+  }
 }
+function esc(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 async function act(path,payload){
   const msg=$('buyMsg');if(msg)msg.textContent='';
   const r=await fetch(path,{method:'POST',headers:{'Content-Type':'application/json'},
     body:JSON.stringify({wallet,...payload})});
   const j=await r.json();
   if(!r.ok){const m=$('buyMsg');if(m)m.textContent=j.err||'failed';return;}
-  OWNED=j.owned;LISTINGS=j.listings||{};BIDS=j.bids||{};STATS=j.stats;IMAGES=j.images||{};MARKET=j.market||MARKET;
+  OWNED=j.owned;LISTINGS=j.listings||{};BIDS=j.bids||{};STATS=j.stats;IMAGES=j.images||{};MESSAGES=j.messages||{};MARKET=j.market||MARKET;
   syncImages();baseDirty=true;drawBase();
   renderPlotPanel();renderLegends();renderStats();renderYourLand();renderMarket();kickFx();
 }
@@ -1588,7 +1608,7 @@ async function uploadImg(pid,dataurl){
       body:JSON.stringify({wallet,plot:pid,data:dataurl})});
     const j=await r.json();
     if(!r.ok){if(msg)msg.textContent=j.err||'upload failed';return;}
-    OWNED=j.owned;LISTINGS=j.listings||{};BIDS=j.bids||{};STATS=j.stats;IMAGES=j.images||{};
+    OWNED=j.owned;LISTINGS=j.listings||{};BIDS=j.bids||{};STATS=j.stats;IMAGES=j.images||{};MESSAGES=j.messages||{};
     syncImages();baseDirty=true;drawBase();
     renderPlotPanel();renderStats();renderYourLand();renderMarket();kickFx();
   }catch(e){if(msg)msg.textContent='upload failed';}
@@ -1654,49 +1674,6 @@ function renderYourLand(){
     bd.querySelectorAll('.row').forEach(el=>el.onclick=()=>{
       selId=+el.dataset.p;renderPlotPanel();kickFx();});
   }else{bd.innerHTML='<div class="none">you own nothing yet. buy a plot._</div>';}
-  renderTrain(mine);
-}
-
-/* ---- train the mind: 1 symbol per cell owned; shapes the next dream ---- */
-let trainBudget=0, trainLoadedFor=null;
-async function renderTrain(mine){
-  const none=$('trainNone'), form=$('trainForm'); if(!none)return;
-  const cells=mine.reduce((a,p)=>a+p.cells,0);
-  if(!wallet||cells<=0){
-    form.style.display='none'; none.style.display='';
-    none.textContent = wallet
-      ? 'own land to feed the mind. what you write shapes what it dreams._'
-      : 'connect your wallet and own land to train the mind._';
-    trainLoadedFor=null; return;
-  }
-  none.style.display='none'; form.style.display=''; trainBudget=cells;
-  if(trainLoadedFor!==wallet){                 // pull the wallet's saved text once
-    trainLoadedFor=wallet;
-    try{const d=await fetch('/api/training?wallet='+encodeURIComponent(wallet)).then(r=>r.json());
-      if(d.budget)trainBudget=d.budget;
-      if(d.text!==undefined)$('trainText').value=d.text;}catch(e){}
-  }
-  updateTrainCount();
-}
-function updateTrainCount(){
-  const t=$('trainText'),c=$('trainCount'),b=$('trainSave'); if(!t)return;
-  const used=[...t.value].length;              // count symbols (code points)
-  c.textContent=used+' / '+trainBudget+' symbols';
-  const over=used>trainBudget; c.classList.toggle('over',over);
-  b.disabled=over;
-}
-async function saveTrain(){
-  const t=$('trainText'),msg=$('trainMsg'),b=$('trainSave');
-  b.disabled=true; msg.style.color='var(--dim)'; msg.textContent='feeding…';
-  try{
-    const r=await fetch('/api/train',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({wallet,text:t.value})});
-    const j=await r.json();
-    if(!r.ok){msg.style.color='#ff4d4d';msg.textContent=j.err||'failed';updateTrainCount();return;}
-    msg.style.color='var(--green)';
-    msg.textContent='fed · '+j.used+'/'+j.budget+' symbols · the next dream will remember this';
-  }catch(e){msg.style.color='#ff4d4d';msg.textContent='failed';}
-  updateTrainCount();
 }
 function legendHtml(){
   return REG.map((rg,ri)=>{
@@ -1737,7 +1714,7 @@ async function pollState(){
   try{const st=await fetch('/api/state').then(r=>r.json());
     const changed=JSON.stringify([st.owned,st.listings,st.bids,st.images])
                 !==JSON.stringify([OWNED,LISTINGS,BIDS,IMAGES]);
-    OWNED=st.owned;LISTINGS=st.listings||{};BIDS=st.bids||{};STATS=st.stats;IMAGES=st.images||{};MARKET=st.market||MARKET;
+    OWNED=st.owned;LISTINGS=st.listings||{};BIDS=st.bids||{};STATS=st.stats;IMAGES=st.images||{};MESSAGES=st.messages||{};MARKET=st.market||MARKET;
     if(changed){syncImages();baseDirty=true;drawBase();renderLegends();renderYourLand();renderPlotPanel();renderMarket();}
     renderStats();
   }catch(e){}
