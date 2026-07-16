@@ -1,0 +1,23 @@
+{
+  "version": 2,
+  "name": "synapse",
+  "builds": [
+    { "src": "index.html", "use": "@vercel/static" },
+    { "src": "dream.html", "use": "@vercel/static" },
+    { "src": "pfp.png", "use": "@vercel/static" },
+    { "src": "favicon.png", "use": "@vercel/static" },
+    { "src": "favicon32.png", "use": "@vercel/static" }
+  ],
+  "routes": [
+    { "src": "/", "dest": "/index.html" },
+    { "src": "/dream", "dest": "/dream.html" },
+    { "src": "/pfp.png", "dest": "/pfp.png" },
+    { "src": "/favicon.png", "dest": "/favicon.png" },
+    { "src": "/favicon32.png", "dest": "/favicon32.png" },
+    { "handle": "filesystem" }
+  ],
+  "headers": [
+    { "source": "/", "headers": [{ "key": "Cache-Control", "value": "no-store" }] },
+    { "source": "/dream", "headers": [{ "key": "Cache-Control", "value": "no-store" }] }
+  ]
+}

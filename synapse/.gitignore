@@ -1,0 +1,20 @@
+# ===== BACKEND STAYS PRIVATE =====
+# synapse.py generates the daily quest ANSWERS from a seed. This repo is public,
+# so publishing the backend would let anyone compute the answers and defeat the
+# whole anti-cheat. Only the frontend (index.html, dream.html, images) is public.
+synapse.py
+synapse_tweet.py
+synapse_keys.txt
+admin.html
+admin_key.txt
+synapse_state.json
+synapse_state.json.bak
+synapse_map_cache.json
+uploads/
+tweet_media/
+scratchpad/
+__pycache__/
+*.pyc
+start_public.bat
+
+.vercel

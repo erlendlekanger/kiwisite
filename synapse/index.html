@@ -1,0 +1,1661 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SYNAPSE_ — a playable brain</title>
+<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAGO0lEQVR4nK1XWYhdRRr+/qo6y+2+3femW9NLFtMaTVyySNTMg04ig2BExC3igxEXFPQhIIiIiE2eBgVxYQaVCYFZGMZk4ij6IEpiImpEElsT13S0O3bHdDrp3Hv7bmerqqHq3NYkhO6b5YfDOffcOvV/9X3/UkX43ahx1/26n7352I4rkiDpQZIAWk/9d2ZGpME4aYFyfl7H13s2vFez7/vBsAHqRKfmrs3DRWuvfSAp1teHE8HlOpb+byPO1sysjLQ3yx9y8/7fvQ7/pR83fVZGfz/Dhg3KTG9dzF37h1msHr5WPVi6pzZShAwSaK0tqPNgxFyBTFcW2UvyAzzrPXxw6+4BwwRh1SqB1avVvN1vb578YeKu6i/FiLlcECMyHKZLOA80aGgVydjN+W5u6ezh9sXd1/zw121FgZ07kwWdk+vKI2XrnGccF8p+MKXKCfdzMmK+cKNSEFUOFBdwl70A4GFa8cajzuE3P91T+PLwVTKWmojY9NNYTdPrVGIMzkRNj5dI6zjR+WU9UceS2ctYZc/exVGxfpkMExBj0zs3Th0GLSV0IgFufnN717GEqgTQSs2kGJmkiouBHxaCm0Rc1vN0rD2tZsg144wB5DC03rwELTcugnNxJ6jFgQ5iyMOTiH48ivJ/BxAPT4AYN+l7molSbVUotZS6TzCOeMYYM7wwgF+YxeyX70bbmmX2BU39YU2C4CI5UkL0/RioTQByGi0IxAixaKrIiNTJBX++De1rroOUk1aOeKQAebwK4gy8owXunB476+lXfhoutCYx4ygzXyzhLelB9tYrIVUZ0ITSpl2ovLsPydgkdDWygNxF3UgOHgd5DmwmNWFiZgAEJBJibh7MdU06Q9UC1D8fgqqEaYpHEmoyQGXwGzucXNE0ANbUKCKocmidQ0nwbAa5+1dCdLVD1SIbhEYmnsuckXNjMzOgNcjlCPceQvjVCDLLL4WMymi5YRG8JXNR27Eflff2of7xAciJahovUjZdu9jMAADTt3QlwviT/0M0cgTCbYeGBMt7aL99BXo2rkPv5keQvWNpGoAub7p6s6ZGmXRiDOGXozh05+s4vmk75NEqGExMKGgVw18+H70bH8Ks9atSBpzmpmbN4WyUWCLEQwUcffodHLr9dYw/9zbqu4dAzDGdBkpF6Hz2Fngr5tvAtJXzvAGgRmM0HwmO+GABk//6AkfWb0bhL9sBu2+RYMxDy6qFKeDzBoAIOkqgqqENClO6TElmLa6N+ur73yEaOgLG0/wnTzS9NNGU8ziBt3yOrQXhV6NQQQwtFVSUgOoRnKvnQnTloZVpaBzxz8ea845mAJhOV4nhr1yAnpfvQzA0YptN8mvJBifvbkfmuovA2jwwlkE4/Ctq2wfTamiC10iXbkjOEoCe0l/bZuP3zYHfN/+kTYpJSdOYwpFxjD367xScraBmjAZxnkqizwaA0qCMg9qOQRx79V34184D720Hy3ogTlDVGMloCbWdgyj943PLlpjdBh2nGxMigpys235CjaZ2MgCi6WuWWTlniH86hvGn3gLLZWznMwFootzuBYp1JKNF26rz666HimsAZ4BSYMxF8M0IDt2xETCgzL6iYUSkhVKyCRZgabR1PlaQY2XIqZZrqBYM5Ai0/PESeB3dkDDb/5RzAgdb7YO1erZUWzlS3czahCDmlEBI7MgZpPityZyU3ua9slSPr9+K2s37oXXSOGloEDkIvh2FnKhYkFN7BRJkjgsF0dqV/br6iz/GHdHbOAc01x9OlclzEOwaRu2T/acgNCwIGzPWeZoV5OR9LVqdbWzvix9W3bz3N78ry1QkZTPV6/SgNKjVhci3QeSzJ1xtNm6mmNOJTNxchjl576PB2+bvNqvlopu/0tqX2+fmfEcFSQSysHHGl9a2QJ16GYlsQUtUQkQie1lH3evNPoF7tijC2rUcW7bIvrtWLg1L1a2VwcLC+ljZblxthpzrmaQBzEjrtmeobVFHxe/MPD78zsA/je+U78ZpdfG6P3VWjx97Ppyo3xsXglYZylSyczArOye4s3zlXpD5IJPPPnPgP7sGphb++/QnHJkXPnj9Faoa3aCkXGC6mjkunZV3Qz1jBkCB57yPf9r02S77vuHcPP4fPPLh2sGp944AAAAASUVORK5CYII=">
+<style>
+:root{
+  --bg:#04070a; --panel:#070c10; --panel2:#0a1116;
+  --line:#14301f; --line2:#1d4a2f;
+  --green:#2bff9a; --dim:#5f7f6d; --dimmer:#3a5245;
+  --cre:#ff5fa2; --log:#38c8ff; --soc:#ffb03a;
+  --mem:#a06bff; --per:#4ade80; --ins:#ff4d4d;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:#cfe8d8;
+  font-family:"Cascadia Mono","Consolas",ui-monospace,Menlo,monospace;
+  font-size:14px;line-height:1.5}
+html.open, html.open body{overflow:hidden}
+a{color:var(--green)}
+::selection{background:#1d4a2f;color:#fff}
+/* scrollbars match the site: slim, dark track, green-line thumb */
+*{scrollbar-width:thin;scrollbar-color:#1d4a2f #04070a}
+::-webkit-scrollbar{width:9px;height:9px}
+::-webkit-scrollbar-track{background:#04070a}
+::-webkit-scrollbar-thumb{background:#173826;border-radius:4px}
+::-webkit-scrollbar-thumb:hover{background:#1d4a2f}
+::-webkit-scrollbar-corner{background:#04070a}
+::-webkit-scrollbar-button{display:none;width:0;height:0}
+
+/* CRT scanlines */
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;
+  background:repeating-linear-gradient(0deg,rgba(0,0,0,.13) 0 1px,transparent 1px 3px);
+  opacity:.55}
+
+/* ---------- page / curtain mechanics ---------- */
+#page{position:relative;transition:transform .9s cubic-bezier(.77,0,.18,1);will-change:transform}
+html.open #page{transform:translateY(100dvh)}
+#brain{position:absolute;left:0;right:0;top:-100dvh;height:100dvh;
+  background:
+    radial-gradient(1200px 700px at 50% 45%,#08120c 0%,#04070a 70%),
+    var(--bg);
+  border-bottom:1px solid var(--line2);
+  display:flex;flex-direction:column}
+#site{min-height:100dvh;display:flex;flex-direction:column}
+
+/* ---------- THE PULL BUTTON ---------- */
+#pull{position:sticky;top:0;z-index:50;width:100%;border:0;cursor:pointer;
+  padding:0;height:64px;
+  color:#eafff3;font:inherit;letter-spacing:.28em;font-size:15px;
+  text-transform:uppercase;
+  background:
+    linear-gradient(rgba(4,7,10,.82),rgba(4,7,10,.82)),
+    linear-gradient(90deg,var(--log),var(--cre),var(--soc),var(--ins),var(--mem),var(--per),var(--log));
+  background-size:100% 100%,300% 100%;
+  animation:pullsweep 9s linear infinite;
+  border-bottom:1px solid var(--line2)}
+#pull:hover{color:#fff;filter:brightness(1.25)}
+#pull .arr{display:inline-block;animation:bounce 1.6s ease-in-out infinite;letter-spacing:0}
+@keyframes pullsweep{to{background-position:0 0,300% 0}}
+@keyframes bounce{0%,100%{transform:translateY(-2px)}50%{transform:translateY(3px)}}
+
+/* ---------- header ---------- */
+header{display:flex;align-items:center;gap:14px;padding:10px 18px;
+  border-bottom:1px dashed var(--line);flex-wrap:wrap}
+.logo{color:var(--green);font-weight:700;font-size:18px;letter-spacing:.12em}
+.logo .cur{animation:blink 1.1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.tag{color:var(--dim);font-size:11.5px}
+header .sp{flex:1}
+.chip{border:1px solid var(--line2);padding:3px 10px;font-size:11.5px;color:var(--dim);
+  background:var(--panel)}
+.chip b{color:var(--green);font-weight:700}
+#wallet,#walletB{border:1px solid var(--green);background:rgba(43,255,154,.08);color:var(--green);
+  font:inherit;font-size:11.5px;padding:5px 12px;cursor:pointer;letter-spacing:.08em}
+#wallet:hover,#walletB:hover{background:rgba(43,255,154,.18)}
+#wallet.wconn,#walletB.wconn{border-color:var(--soc);color:var(--soc);background:rgba(255,176,58,.08)}
+
+/* ---------- site layout (compact left rail) ---------- */
+#layout{display:grid;grid-template-columns:224px minmax(0,1fr);gap:14px;
+  padding:14px 16px;max-width:1240px;width:100%;margin:0 auto;flex:1}
+aside .box, .box{border:1px solid var(--line);background:var(--panel);margin-bottom:10px}
+.box h3{font-size:9.5px;letter-spacing:.2em;color:var(--dim);font-weight:400;
+  padding:6px 10px;border-bottom:1px solid var(--line);text-transform:uppercase}
+.box .bd{padding:7px 10px}
+.stat{display:flex;justify-content:space-between;padding:2px 0;font-size:11px}
+.stat span{color:var(--dim)} .stat b{color:#eafff3;font-weight:700}
+
+.legend .row{display:flex;align-items:center;gap:6px;padding:3px 4px;cursor:pointer;
+  border:1px solid transparent;font-size:10.5px}
+.legend .row:hover{border-color:var(--line2);background:var(--panel2)}
+.legend .sw{width:9px;height:9px;flex:none;box-shadow:0 0 6px currentColor}
+.legend .nm{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.legend .pc{color:var(--dim);font-size:9.5px}
+.legend .ct{color:var(--dim);font-size:9.5px;min-width:44px;text-align:right}
+
+.steps{counter-reset:st;font-size:10.5px;color:#b9d4c4}
+.steps li{list-style:none;padding:3px 0 3px 22px;position:relative}
+.steps li::before{counter-increment:st;content:counter(st,decimal-leading-zero);
+  position:absolute;left:0;top:4px;color:var(--green);font-size:9px}
+
+/* hero */
+.hero{padding:18px 4px 8px}
+.hero h1{color:#eafff3;font-size:28px;letter-spacing:.1em}
+.hero h1 em{font-style:normal;color:var(--green)}
+.hero p{color:var(--dim);max-width:640px;margin-top:6px;font-size:13px}
+/* ---- the big way in: hero CTA into tonight's dream ---- */
+#dreamCta{display:block;margin-top:18px;position:relative;overflow:hidden;
+  border:1px solid var(--green);text-decoration:none;color:var(--green);
+  background:linear-gradient(rgba(43,255,154,.13),rgba(43,255,154,.04));
+  padding:22px 26px;
+  box-shadow:0 0 24px rgba(43,255,154,.14), inset 0 0 34px rgba(43,255,154,.05);
+  transition:box-shadow .2s,background .2s,transform .12s}
+#dreamCta:hover{background:rgba(43,255,154,.17);
+  box-shadow:0 0 38px rgba(43,255,154,.32), inset 0 0 34px rgba(43,255,154,.08);
+  transform:translateY(-1px)}
+#dreamCta .dc-top{display:block;font-weight:700;letter-spacing:.18em;
+  font-size:clamp(18px,2.3vw,26px);text-shadow:0 0 14px rgba(43,255,154,.45)}
+#dreamCta .dc-arr{display:inline-block;margin-right:14px;
+  animation:dcnudge 1.4s ease-in-out infinite}
+#dreamCta .dc-cur{animation:dcblink 1.1s steps(1) infinite}
+#dreamCta .dc-sub{display:block;margin-top:9px;font-size:12px;color:var(--dim);
+  letter-spacing:.06em}
+#dreamCta .dc-sub b{color:var(--green)}
+#dreamCta::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(100deg,transparent 32%,rgba(43,255,154,.16) 50%,transparent 68%);
+  background-size:240% 100%;animation:dcsweep 3.4s linear infinite}
+@keyframes dcsweep{from{background-position:210% 0}to{background-position:-60% 0}}
+@keyframes dcnudge{0%,100%{transform:translateX(0)}50%{transform:translateX(7px)}}
+@keyframes dcblink{50%{opacity:0}}
+
+/* quest card */
+.quest{border:1px solid var(--line2)}
+.quest .bd{padding:14px}
+.qtitle{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.qtitle b{color:#eafff3;letter-spacing:.06em}
+.badge{font-size:10px;letter-spacing:.14em;padding:2px 8px;border:1px solid}
+.badge.preview{color:var(--soc);border-color:var(--soc);background:rgba(255,176,58,.08)}
+.badge.sim{color:var(--soc);border-color:var(--soc);background:rgba(255,176,58,.08)}
+.qreq{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 6px}
+.rchip{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;font-size:12px;
+  border:1px solid;background:rgba(255,255,255,.02)}
+.qbody{color:#b9d4c4;font-size:12.5px;margin-top:8px}
+.qbody li{margin-left:18px;padding:2px 0}
+
+/* feed */
+.feed .item{border-left:2px solid var(--line2);padding:10px 12px;margin:10px 0;
+  background:var(--panel2)}
+.feed .meta{display:flex;gap:8px;align-items:center;font-size:10.5px;color:var(--dim);
+  margin-bottom:6px;letter-spacing:.1em}
+.feed .txt{font-size:13px;color:#cfe8d8;white-space:pre-wrap}
+
+footer{border-top:1px dashed var(--line);color:var(--dimmer);font-size:11px;
+  padding:12px 18px;display:flex;gap:18px;flex-wrap:wrap}
+
+/* ---------- BRAIN PANEL ---------- */
+.brain-top{display:flex;align-items:center;gap:14px;padding:9px 16px;
+  border-bottom:1px solid var(--line);background:rgba(4,7,10,.7);flex-wrap:wrap}
+#closeBrain{border:1px solid var(--line2);background:var(--panel);color:var(--green);
+  font:inherit;font-size:14px;font-weight:700;padding:11px 22px;cursor:pointer;letter-spacing:.14em}
+#closeBrain:hover{background:var(--panel2)}
+#docsBtn{border:1px solid var(--line2);background:var(--panel);color:var(--dim);
+  font:inherit;font-size:14px;font-weight:700;padding:11px 18px;cursor:pointer;letter-spacing:.2em}
+#docsBtn:hover{border-color:var(--green);color:var(--green)}
+/* ---------------- DOCS overlay ---------------- */
+#docs{position:fixed;inset:0;z-index:900;background:rgba(2,4,6,.97);display:none;
+  overflow-y:auto;scrollbar-width:none}
+#docs::-webkit-scrollbar{display:none}
+#docs.on{display:block}
+.docs-in{max-width:730px;margin:0 auto;padding:64px 22px 120px}
+#docsClose{position:fixed;top:18px;right:22px;border:1px solid var(--line2);
+  background:var(--panel);color:var(--dim);font:inherit;font-size:13px;font-weight:700;
+  padding:8px 16px;cursor:pointer;letter-spacing:.14em;z-index:901}
+#docsClose:hover{border-color:var(--red);color:var(--red)}
+.docs-in h1{font-size:22px;letter-spacing:.16em;color:var(--green);margin-bottom:4px}
+.docs-in .dsub{color:var(--dim);font-size:12px;margin-bottom:40px}
+.docs-in h2{font-size:15px;letter-spacing:.18em;color:var(--green);margin:44px 0 12px;
+  display:flex;align-items:baseline;gap:10px}
+.docs-in h2 .n{color:var(--dimmer);font-size:12px;letter-spacing:.1em}
+.docs-in p{color:#b9d4c4;font-size:13.5px;line-height:1.75;margin-bottom:12px}
+.docs-in p b{color:#eafff3}
+.docs-in code{color:var(--green);font-size:12px;word-break:break-all;
+  background:var(--panel2);border:1px solid var(--line);padding:2px 7px}
+.docs-in .law p{color:#8ba796;font-size:12px;line-height:1.7}
+.docs-in .law p b{color:#b9d4c4}
+.docs-in .caps{font-size:11px;color:#8ba796;letter-spacing:.02em}
+#regionBanner{flex:1;min-width:260px;border:1px solid var(--line);background:var(--panel);
+  padding:7px 14px;font-size:13px;letter-spacing:.03em;min-height:38px;
+  display:flex;align-items:center;gap:10px;transition:border-color .15s}
+#regionBanner .big{font-weight:700;letter-spacing:.08em}
+#regionBanner .sub{color:var(--dim);font-size:11.5px}
+.brain-stats{font-size:11.5px;color:var(--dim)}
+.brain-stats b{color:var(--green)}
+#xLink{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;
+  border:1px solid var(--line2);color:var(--dim);text-decoration:none;flex:none;transition:all .15s}
+#xLink:hover{color:var(--green);border-color:var(--green);box-shadow:0 0 12px rgba(43,255,154,.25)}
+#caBox{display:inline-flex;align-items:center;gap:7px;font:inherit;cursor:pointer;
+  border:1px solid var(--line2);background:var(--panel);padding:6px 11px;transition:all .15s}
+#caBox:hover{border-color:var(--green);box-shadow:0 0 12px rgba(43,255,154,.2)}
+#caBox .ca-lbl{font-size:8.5px;letter-spacing:.22em;color:var(--dim)}
+#caBox .ca-val{font-size:11.5px;color:var(--green);letter-spacing:.02em}
+#caBox.copied .ca-val{color:#eafff3}
+#synWallet{position:absolute;top:12px;right:12px;z-index:12;
+  border:1px solid var(--line2);background:rgba(4,7,10,.88);
+  padding:6px 14px;cursor:default;display:flex;flex-direction:column;line-height:1.22}
+#synWallet:hover{border-color:var(--green)}
+#synWallet .lbl{font-size:8.5px;letter-spacing:.22em;color:var(--dim)}
+#synWallet .amt{font-size:15px;font-weight:700;color:var(--green);letter-spacing:.02em;
+  text-shadow:0 0 10px rgba(43,255,154,.4)}
+#synWallet .sw-tip{position:absolute;top:calc(100% + 8px);right:0;width:236px;
+  border:1px solid var(--line2);background:rgba(4,7,10,.97);color:#a9c6b7;font-size:11px;
+  line-height:1.55;padding:10px 12px;letter-spacing:.02em;opacity:0;pointer-events:none;
+  transform:translateY(-4px);transition:opacity .15s,transform .15s;z-index:40}
+#synWallet .sw-tip b{color:var(--green);display:block;margin-bottom:4px;font-size:12px}
+#synWallet:hover .sw-tip{opacity:1;transform:translateY(0)}
+
+.brain-body{flex:1;display:grid;grid-template-columns:256px minmax(0,1fr) 300px;min-height:0}
+.brain-side{border-right:1px solid var(--line);overflow-y:auto;padding:8px}
+
+/* right-hand marketplace panel */
+.mkt-side{border-left:1px solid var(--line);min-height:0;padding:10px;
+  display:flex;flex-direction:column;gap:8px;background:rgba(4,7,10,.4)}
+.mkt-head{font-size:10px;letter-spacing:.22em;color:var(--dim);text-transform:uppercase;
+  padding-bottom:6px;border-bottom:1px solid var(--line)}
+.mkt-head b{color:var(--green)}
+#mktSearch{width:100%;background:var(--panel2);border:1px solid var(--line2);color:#eafff3;
+  font:inherit;font-size:12px;padding:8px}
+#mktSearch::placeholder{color:var(--dimmer)}
+.mkt-controls{display:flex;gap:6px}
+.mkt-controls select{flex:1;background:var(--panel2);border:1px solid var(--line2);
+  color:var(--dim);font:inherit;font-size:10.5px;padding:5px;min-width:0}
+#mktList{flex:1;overflow-y:auto;min-height:0}
+.mitem{border:1px solid var(--line);background:var(--panel);padding:7px 9px;
+  margin-bottom:6px;cursor:pointer}
+.mitem:hover{border-color:var(--line2);background:var(--panel2)}
+.mitem .r1{display:flex;justify-content:space-between;gap:8px;font-size:12px;font-weight:700}
+.mitem .r1 .pr{color:var(--green);white-space:nowrap}
+.mitem .r2{display:flex;justify-content:space-between;gap:8px;font-size:9.5px;
+  color:var(--dim);margin-top:3px}
+.mkt-note{font-size:9.5px;color:var(--dimmer);letter-spacing:.05em}
+#mapWrap{position:relative;margin:12px;border:1px solid var(--line);
+  background:
+    radial-gradient(900px 550px at 50% 46%,rgba(43,255,154,.05),transparent 60%),
+    var(--panel);
+  min-height:0}
+#mapWrap canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+#mapFx{cursor:crosshair}
+#tooltip{position:absolute;pointer-events:none;z-index:10;display:none;
+  background:rgba(4,10,7,.94);border:1px solid var(--line2);padding:7px 10px;
+  font-size:11.5px;line-height:1.45;max-width:230px}
+#tooltip .t1{font-weight:700;letter-spacing:.06em}
+#tooltip .t2{color:var(--dim)}
+#mapNote{position:absolute;right:8px;bottom:6px;font-size:10px;color:var(--dimmer);
+  letter-spacing:.1em;pointer-events:none}
+
+/* the mind's live thought/tweet stream — overlaid on the empty black corner */
+#mindChat{position:absolute;left:12px;bottom:26px;z-index:12;width:300px;max-width:46%;
+  max-height:52%;display:flex;flex-direction:column;
+  background:linear-gradient(rgba(4,10,7,.9),rgba(4,10,7,.8));
+  border:1px solid var(--line2);box-shadow:0 0 26px rgba(43,255,154,.10)}
+#mindChat .mc-head{display:flex;align-items:center;gap:8px;padding:8px 11px;
+  border-bottom:1px solid var(--line);cursor:pointer;user-select:none}
+#mindChat .mc-dot{width:7px;height:7px;border-radius:50%;background:var(--green);flex:none;
+  box-shadow:0 0 8px var(--green);animation:mcpulse 1.9s ease-in-out infinite}
+@keyframes mcpulse{0%,100%{opacity:1}50%{opacity:.2}}
+#mindChat .mc-title{font-size:10px;letter-spacing:.2em;color:var(--green);font-weight:700}
+#mindChat .mc-sub{font-size:8.5px;color:var(--dimmer);letter-spacing:.06em;margin-left:auto}
+#mindChat .mc-title{min-width:118px}   /* fixed width so scramble doesn't jump */
+#mindChat .mc-toggle{margin-left:auto;color:var(--dim);font-size:11px;transition:transform .2s}
+#mindChat.min .mc-toggle{transform:rotate(-90deg)}
+#mindChat .mc-body{overflow-y:auto;padding:9px 11px;display:flex;flex-direction:column;gap:9px}
+#mindChat.min .mc-body{display:none}
+/* ---------------- welcome modal (shows on every visit) ---------------- */
+#welcome{position:fixed;inset:0;z-index:1200;display:none;align-items:center;
+  justify-content:center;background:rgba(2,4,6,.82);backdrop-filter:blur(3px);padding:20px}
+#welcome.on{display:flex;animation:wcfade .25s ease}
+@keyframes wcfade{from{opacity:0}to{opacity:1}}
+.wc-box{position:relative;width:min(440px,94vw);border:1px solid var(--line2);
+  background:linear-gradient(180deg,#070d10,#04070a);padding:34px 30px 26px;text-align:center;
+  box-shadow:0 0 44px rgba(43,255,154,.14), inset 0 0 40px rgba(43,255,154,.04)}
+.wc-title{color:var(--green);font-size:26px;font-weight:700;letter-spacing:.22em;
+  text-shadow:0 0 16px rgba(43,255,154,.5);margin-bottom:14px}
+.wc-text{color:#b9d4c4;font-size:13.5px;line-height:1.72;margin-bottom:22px}
+.wc-btns{display:flex;gap:10px;justify-content:center}
+.wc-btns button{flex:1;max-width:170px;font:inherit;font-size:13px;font-weight:700;
+  letter-spacing:.18em;cursor:pointer;padding:11px 20px;transition:background .15s,box-shadow .15s}
+#wcRead{color:var(--green);border:1px solid var(--green);background:rgba(43,255,154,.1);
+  box-shadow:0 0 13px rgba(43,255,154,.22)}
+#wcRead:hover{background:rgba(43,255,154,.2);box-shadow:0 0 22px rgba(43,255,154,.4)}
+#wcCloseBtn{color:#ff6b6b;border:1px solid #ff6b6b;background:rgba(255,107,107,.1);
+  box-shadow:0 0 13px rgba(255,107,107,.22)}
+#wcCloseBtn:hover{background:rgba(255,107,107,.2);box-shadow:0 0 22px rgba(255,107,107,.4)}
+#wcClose{position:absolute;top:8px;right:12px;border:0;background:none;color:var(--dim);
+  font-size:22px;line-height:1;cursor:pointer}
+#wcClose:hover{color:var(--green)}
+/* top-left label so nobody wonders what the shape is */
+#brainLabel{position:absolute;top:12px;left:14px;z-index:12;pointer-events:none;
+  color:var(--green);font-size:15px;font-weight:700;letter-spacing:.26em;
+  text-shadow:0 0 14px rgba(43,255,154,.5)}
+/* hover: region info box, top-center of the brain screen */
+#regionInfo{position:absolute;top:12px;left:50%;transform:translateX(-50%);z-index:12;
+  width:min(520px,60%);padding:9px 16px;border:1px solid;display:none;
+  background:rgba(4,7,10,.93);font-size:11.5px;line-height:1.6;text-align:center;
+  letter-spacing:.02em;color:#cfe8d8;pointer-events:none}
+#regionInfo b{display:block;font-size:10px;letter-spacing:.26em;text-transform:uppercase;
+  margin-bottom:3px}
+/* twitter-style account strip */
+#mindChat .mc-acct{display:flex;align-items:center;gap:6px;padding:8px 11px 6px;
+  border-bottom:1px solid var(--line)}
+#mindChat.min .mc-acct{display:none}
+#mindChat .mc-pfp{width:26px;height:26px;border-radius:50%;flex:none;
+  border:1px solid var(--line2);background:#000}
+#mindChat .mc-name{font-size:12px;font-weight:700;color:#eafff3;letter-spacing:.03em;margin-left:2px}
+#mindChat .mc-check{width:15px;height:15px;flex:none}
+#mindChat .mc-bot{width:15px;height:15px;flex:none}
+#mindChat .mc-handle{font-size:10.5px;color:var(--dim);letter-spacing:.02em;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mc-msg{border-left:2px solid var(--line2);padding:2px 0 2px 9px}
+.mc-msg .mc-when{font-size:8px;color:var(--dimmer);letter-spacing:.12em;text-transform:uppercase}
+.mc-msg .mc-text{font-size:12px;color:#b9d4c4;line-height:1.55;white-space:pre-wrap}
+.mc-msg.mc-latest{border-left-color:var(--green)}
+.mc-msg.mc-latest .mc-text{color:#eafff3}
+.mc-cursor{color:var(--green);animation:blink 1.1s steps(1) infinite}
+@media (max-width:900px){#mindChat{max-width:70%;max-height:40%}}
+
+/* plot panel */
+#plotPanel .empty{color:var(--dimmer);font-size:11px;padding:3px 0}
+.plabel{font-size:17px;font-weight:700;color:#eafff3;letter-spacing:.08em}
+.pstatus{font-size:9.5px;letter-spacing:.16em;margin-left:8px}
+.pstatus.free{color:var(--green)} .pstatus.owned{color:var(--soc)}
+#buyBtn{width:100%;margin-top:8px;border:1px solid var(--green);background:rgba(43,255,154,.1);
+  color:var(--green);font:inherit;font-size:12px;font-weight:700;letter-spacing:.1em;
+  padding:9px;cursor:pointer}
+#buyBtn:hover{background:rgba(43,255,154,.2)}
+#buyBtn:disabled{border-color:var(--dimmer);color:var(--dimmer);background:none;cursor:not-allowed}
+#buyMsg{font-size:10.5px;color:var(--soc);margin-top:5px;min-height:13px}
+.demo-note{font-size:9.5px;color:var(--dimmer);margin-top:6px;letter-spacing:.05em}
+
+/* plot image upload */
+.imgrow{display:flex;align-items:center;gap:9px;margin-top:10px}
+.imglbl{font-size:9.5px;letter-spacing:.16em;color:var(--dim)}
+.imgnone{font-size:10.5px;color:var(--dimmer)}
+.imgthumb{width:46px;height:46px;object-fit:cover;border:1px solid var(--line2);
+  background:var(--panel2)}
+.filebtn{display:inline-block;border:1px solid var(--green);background:rgba(43,255,154,.1);
+  color:var(--green);font:inherit;font-size:11px;font-weight:700;padding:7px 10px;cursor:pointer;
+  letter-spacing:.06em;text-align:center;flex:1}
+.filebtn:hover{background:rgba(43,255,154,.2)}
+.imghint{font-size:9px;color:var(--dimmer);margin-top:5px;letter-spacing:.04em}
+
+#yourLand .row{display:flex;justify-content:space-between;font-size:11px;padding:3px 5px;
+  cursor:pointer;border:1px solid transparent}
+#yourLand .row:hover{border-color:var(--line2);background:var(--panel2)}
+#yourLand .none{color:var(--dimmer);font-size:10.5px}
+
+/* marketplace forms */
+.field{display:flex;gap:6px;margin-top:8px}
+.field input{flex:1;background:var(--panel2);border:1px solid var(--line2);color:#eafff3;
+  font:inherit;font-size:12px;padding:7px;min-width:0}
+.field input::placeholder{color:var(--dimmer)}
+.field button{border:1px solid var(--green);background:rgba(43,255,154,.1);color:var(--green);
+  font:inherit;font-size:11px;font-weight:700;padding:7px 10px;cursor:pointer;letter-spacing:.06em}
+.field button:hover{background:rgba(43,255,154,.2)}
+.field button.warn{border-color:var(--soc);color:var(--soc);background:rgba(255,176,58,.08)}
+.field button.warn:hover{background:rgba(255,176,58,.16)}
+.bidrow{display:flex;justify-content:space-between;align-items:center;font-size:11px;
+  padding:4px 0;border-top:1px dotted var(--line)}
+.bidrow button{border:1px solid var(--green);background:none;color:var(--green);
+  font:inherit;font-size:10px;padding:2px 8px;cursor:pointer;margin-left:8px}
+.bidrow button:hover{background:rgba(43,255,154,.15)}
+.saletag{color:var(--green)}
+
+@media (max-width:1100px){
+  .brain-body{grid-template-columns:224px minmax(0,1fr) 248px}
+}
+@media (max-width:900px){
+  #layout{grid-template-columns:1fr}
+  .brain-body{grid-template-columns:1fr;grid-template-rows:minmax(0,1fr) auto auto}
+  .brain-side{order:2;border-right:0;border-top:1px solid var(--line);max-height:34dvh}
+  .mkt-side{order:3;border-left:0;border-top:1px solid var(--line);max-height:34dvh}
+  #regionBanner{min-width:180px}
+}
+</style>
+<script>
+  /* ===== backend location =====
+     Leave EMPTY when the game server serves this page (local, or PC-hosted).
+     When this site is hosted on Vercel, set it to your PC's public address,
+     e.g. "https://xxxx.trycloudflare.com" (no trailing slash). */
+  window.__SYN_API = "https://mounting-deposits-crossword-hats.trycloudflare.com";
+  if(window.__SYN_API){const _f=window.fetch.bind(window);
+    window.fetch=(u,o)=>_f((typeof u==='string'&&u[0]==='/')?window.__SYN_API+u:u,o);}
+
+  /* land on the brain by default; keep you there across refreshes.
+     runs before paint so there's no curtain-slide flash on load. */
+  try{ if(localStorage.synapse_view!=='site' || location.hash==='#brain')
+    document.documentElement.classList.add('open'); }catch(e){}
+</script>
+</head>
+<body>
+<div id="page">
+
+  <!-- ==================== THE BRAIN (curtain above) ==================== -->
+  <section id="brain">
+    <div class="brain-top">
+      <button id="closeBrain">&#9650; BACK TO THE GAME</button>
+      <button id="docsBtn">DOCS</button>
+      <div id="regionBanner"><span class="sub">loading the mind_</span></div>
+      <button id="caBox" title="click to copy the contract address">
+        <span class="ca-lbl">CA</span><span class="ca-val" id="caVal">–</span></button>
+      <a id="xLink" href="https://x.com/AgentSynapse_" target="_blank" rel="noopener" title="@AgentSynapse_ on X">
+        <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path fill="currentColor"
+          d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+      <div class="brain-stats" id="brainStats"></div>
+      <button id="walletB">CONNECT WALLET</button>
+    </div>
+
+    <!-- ============================ DOCS ============================ -->
+    <div id="docs">
+      <button id="docsClose">CLOSE ✗</button>
+      <div class="docs-in">
+        <h1>SYNAPSE_ DOCS</h1>
+        <div class="dsub">how everything works, and what you agree to by using it</div>
+
+        <h2><span class="n">//</span>WHAT IS SYNAPSE_</h2>
+        <p>SYNAPSE_ is a mind whose brain is for sale by the piece. It is split into
+        <b><span id="dPlots">–</span> plots</b> built from <b><span id="dCells">–</span> cells</b>;
+        each plot can be held by exactly one Solana wallet, and the whole brain, every cell of it,
+        costs exactly <b>1,000 SOL</b>. Nothing is ever added to the map. What you see is the
+        entire supply.</p>
+        <p>The mind stays awake while it is being bought. Every day it falls asleep, dreams, and
+        hides bounties inside the dream. They are hard to earn. Whoever
+        cracks one is paid from the mind's own wallet, together with a few secretly chosen
+        landowners whose planted thoughts built that night's dream. The rest of this page explains
+        the map, the money, the dreams, and the terms you accept by using it.</p>
+
+        <h2><span class="n">//</span>THE BRAIN</h2>
+        <p>The map is a side view of the brain in six regions: instinct, perception, memory,
+        logic, creative and social. Regions are split into plots of wildly different sizes,
+        generated once from a fixed seed and never reshaped. A plot's cell count is the only
+        variable that matters: it sets the price, and it sets your weight when the mind decides
+        whose thoughts to dream from.</p>
+        <p>A plot is always in one of three visible states: lit means unclaimed, dark means taken,
+        and a picture means taken by someone who decorated it. Owners upload any image and it is
+        clipped into the plot's shape for everyone to see. Plots held by the wallet you are signed
+        in with carry a small light running along their border.</p>
+
+        <h2><span class="n">//</span>BUYING &amp; SELLING</h2>
+        <p>Buying is simple: connect a Phantom wallet, click an unclaimed plot, and
+        buy it for <b>cells &times; <span id="dRate">–</span> SOL</b>, paid as native SOL on
+        mainnet to the mind's treasury:</p>
+        <p><code id="dTreasury">–</code></p>
+        <p>Starting a purchase reserves the plot to you for a short window so nobody can snipe it
+        mid-payment. The server reads the transaction on-chain and grants the plot only once the
+        transfer is confirmed; if two wallets race, exactly one wins and the other is rejected
+        before paying. The chain is final. There are no refunds, ever.</p>
+        <p>Money flows back out two ways: resales and bounties. Resale: list a plot at any
+        SOL price, a buyer pays <b>your wallet directly</b>, the server verifies the transfer
+        on-chain, and the plot moves. The treasury takes nothing on resales. Bounties: see the
+        dreams below.</p>
+        <p>The <b>SYNAPSE_ WALLET</b> counter at the top of the brain is the treasury's real
+        on-chain balance, valued in USD at the live SOL price. It grows from land sales and
+        creator fees, and it is the pool every bounty is paid from.</p>
+
+        <h2><span class="n">//</span>THE DREAMS</h2>
+        <p>Every dream-day the mind dreams a new world, reachable from ENTER THE DREAM. Six tasks
+        wait inside, one per region, tiered from EASY to EXTREME, each carrying a bounty. The
+        board tells you only that something waits, and roughly where. Nothing anywhere explains
+        what a task is or how to do it. That is the game. Clues exist, scattered through the
+        dream, cryptic, and mixed in with lies. Wrong attempts lock you out for minutes up to half
+        an hour.</p>
+        <p>Before it sleeps, the mind secretly picks one to five owners per region, with odds
+        weighted by cells owned there. What those owners fed into their land shapes what that
+        region dreams. Nobody is told they were chosen, but the dream leaks hints of whose mind it
+        is wearing. When a task is solved its bounty splits <b>50 / 50</b>: half to the solver,
+        half divided among that region's chosen owners. More brain means being chosen more often.</p>
+        <p>Solving requires signing in with your wallet. The signature moves no funds and costs
+        nothing; it only proves the wallet is yours so the bounty lands in the right place. A
+        solved task shows "task is being checked" while the mind verifies it was honest,
+        and the payout is then sent as a real SOL transfer. Everything is validated server-side;
+        the dream streams you only what your eyes could see, and teleporting, note-scraping and
+        other shortcuts are rejected. Cheating voids bounties and can permanently close the dream
+        to a wallet. No payout is guaranteed until it lands in yours.</p>
+
+        <h2><span class="n">//</span>THE FEED</h2>
+        <p>The mind speaks in the SYNAPSE_ FEED and on X. Its posts are generated by a large
+        language model, unsupervised. It is a performance.
+        Nothing it says is advice of any kind, about any token, including its own.</p>
+
+        <h2><span class="n">//</span>THE TOKEN</h2>
+        <p>CA: <code id="docsCA">SNPS6G4M4NnpuqUHeBE1P8bfVgD7J9aafH1QdardKef</code>
+        <span style="color:var(--dimmer)">(launching soon)</span>. The token and the brain are
+        separate systems: holding the token buys no land and no influence, and buying land requires
+        no token. No function, no utility, no promises. See the terms below.</p>
+
+        <h2><span class="n">//</span>TERMS</h2>
+        <div class="law">
+        <p>By using the platform you consent to all of the following.</p>
+        <p><b>1. Acceptance.</b> By using this site, buying land, entering the dream, or
+        interacting with any part of the platform, you agree to these terms in full. If you do not
+        agree, do not use the platform. The terms may be updated at any time without notice, and
+        continued use means acceptance of the current version.</p>
+        <p><b>2. What land is.</b> Plots, cells, pictures, training, influence, dream access and
+        every other on-site element are features of an experimental software artifact. A plot is a
+        limited, revocable license to use certain features of the platform, attributed to your
+        wallet. It is not property, not equity, not a security, not an investment contract, and
+        not a claim on any person, revenue or asset. Words like "own", "buy", "sell" and "land"
+        are used as shorthand for that license and convey no legal interest of any kind.</p>
+        <p><b>3. Payments are final.</b> All payments are on-chain SOL transfers. Blockchain
+        transactions are irreversible, and to the maximum extent permitted by law all payments are
+        final and non-refundable, regardless of mistakes, dissatisfaction, changes to the
+        platform, or anything else. You are responsible for network fees and for sending to the
+        correct address. Payments sent to any address other than the one shown by the platform are
+        lost.</p>
+        <p><b>4. Your content.</b> You are solely responsible for anything you upload or feed into
+        the mind. By submitting it you grant the operators a perpetual, royalty-free license to
+        display, reproduce and process it as part of running the platform. Content that is
+        unlawful or infringes the rights of others may be removed at any time without notice or
+        refund. There is no guarantee any submitted material will influence the mind in any
+        particular way or at all.</p>
+        <p><b>5. Dreams and bounties.</b> Tasks, tiers, bounties, the selection of chosen owners,
+        verification and payouts are operated at the platform's sole discretion. They may be
+        changed, rebalanced, reset or discontinued at any time. No payout is guaranteed: a
+        displayed bounty is not a debt and creates no entitlement until it has actually been
+        paid.</p>
+        <p><b>6. Fair play.</b> Payouts require verification of an honest solve. If the system
+        determines that a wallet has cheated, exploited, automated play, or attempted fraud, any
+        pending or future bounty tied to it is void and the wallet may be permanently excluded
+        from the platform. These determinations are made at the platform's sole and final
+        discretion, require no prior notice or explanation, and are not subject to appeal.</p>
+        <p><b>7. The token.</b> Any token associated with SYNAPSE_ has no function on the
+        platform, no intrinsic value, and no promise of any kind attached. Its market price, if
+        one exists, is set entirely by third parties and may go to zero at any time. The operators
+        make no representations about its price, liquidity or future.</p>
+        <p><b>8. Risk.</b> You use the platform entirely at your own risk. Software has bugs.
+        Blockchains halt, congest and change. Wallets are compromised and keys are lost. Rules and
+        regulators change. Any of these can cost you everything you put in, and none of them are
+        the operators' responsibility.</p>
+        <p class="caps">THE PLATFORM AND EVERYTHING ON IT ARE PROVIDED "AS IS" AND "AS AVAILABLE",
+        WITHOUT WARRANTY OF ANY KIND. TO THE MAXIMUM EXTENT PERMITTED BY LAW, THE OPERATORS ARE
+        NOT LIABLE FOR ANY DAMAGES OF ANY KIND ARISING FROM USE OF THE PLATFORM, AND THEIR TOTAL
+        AGGREGATE LIABILITY SHALL NOT EXCEED ZERO. NOTHING ON THIS SITE, AND NOTHING THE MIND
+        SAYS, IS FINANCIAL, INVESTMENT, TAX OR LEGAL ADVICE. THE PLATFORM MAY BE MODIFIED,
+        SUSPENDED OR DISCONTINUED, IN WHOLE OR IN PART, AT ANY TIME, WITHOUT NOTICE.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="brain-body">
+      <aside class="brain-side">
+        <div class="box" id="plotPanel">
+          <h3>Selected land</h3>
+          <div class="bd" id="plotBd"><div class="empty">click a plot on the brain to inspect it_</div></div>
+        </div>
+        <div class="box">
+          <h3>Regions <span style="letter-spacing:0;color:var(--dimmer)">(hover = isolate)</span></h3>
+          <div class="bd legend" id="legend"></div>
+        </div>
+        <div class="box" id="yourLand">
+          <h3>Your land</h3>
+          <div class="bd" id="yourBd"><div class="none">you own nothing yet. buy a plot._</div></div>
+        </div>
+      </aside>
+      <div id="mapWrap">
+        <canvas id="mapBase"></canvas>
+        <canvas id="mapFx"></canvas>
+        <div id="tooltip"></div>
+        <div id="brainLabel">SYNAPSE_ BRAIN</div>
+        <div id="regionInfo"></div>
+        <div id="synWallet">
+          <div class="sw-main">
+            <span class="lbl">SYNAPSE_ WALLET</span>
+            <span class="amt" id="synWalletAmt">$—</span>
+          </div>
+          <div class="sw-tip">
+            <b id="swTipBal">— SOL</b>
+            <span>this is what SYNAPSE_ holds right now, earned from brain-land sales and creator fees. it is the pool the mind pays out to whoever solves the tasks in its dreams.</span>
+          </div>
+        </div>
+        <div id="mindChat">
+          <div class="mc-head" id="mcHead">
+            <span class="mc-dot"></span>
+            <span class="mc-title" id="mcTitle">SYNAPSE_ FEED</span>
+            <span class="mc-toggle" id="mcToggle">&#9662;</span>
+          </div>
+          <div class="mc-acct">
+            <img class="mc-pfp" src="/pfp.png" alt="">
+            <span class="mc-name">SYNAPSE_</span>
+            <span class="mc-handle">@AgentSynapse_</span>
+            <svg class="mc-check" viewBox="0 0 24 24" aria-label="verified">
+              <path fill="#1d9bf0" d="M12 1.5l2.09 1.94 2.77-.63 1.06 2.64 2.64 1.06-.63 2.77L21.87 11.4 20 13.5l.63 2.77-2.64 1.06-1.06 2.64-2.77-.63L12 21.5l-2.09-1.94-2.77.63-1.06-2.64-2.64-1.06.63-2.77L2.13 11.4 4 9.31l-.63-2.77 2.64-1.06 1.06-2.64 2.77.63z"/>
+              <path d="M7.7 12.3l2.7 2.7 5.2-5.6" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <svg class="mc-bot" viewBox="0 0 24 24" aria-label="automated">
+              <path d="M12 7.5V5" stroke="#71767b" stroke-width="1.7" stroke-linecap="round"/>
+              <circle cx="12" cy="3.9" r="1.4" fill="#71767b"/>
+              <rect x="4.2" y="7.5" width="15.6" height="11" rx="2.8" fill="none" stroke="#71767b" stroke-width="1.7"/>
+              <circle cx="9" cy="13" r="1.5" fill="#71767b"/>
+              <circle cx="15" cy="13" r="1.5" fill="#71767b"/>
+            </svg>
+          </div>
+          <div class="mc-body" id="mcBody"></div>
+        </div>
+        <div id="mapNote">SCROLL = ZOOM &middot; DRAG = PAN &middot; DBL-CLICK = RESET &middot; PAY IN SOL</div>
+      </div>
+      <aside class="mkt-side">
+        <div class="mkt-head">Marketplace &middot; <b id="mktCount">0</b> listings</div>
+        <input id="mktSearch" placeholder="search lot, region, seller_">
+        <div class="mkt-controls">
+          <select id="mktRegion"><option value="">all regions</option></select>
+          <select id="mktSort">
+            <option value="price-asc">price: low &rarr; high</option>
+            <option value="price-desc">price: high &rarr; low</option>
+            <option value="size-desc">biggest lots</option>
+            <option value="new">newest</option>
+          </select>
+        </div>
+        <div id="mktList"></div>
+        <div class="mkt-note">click a listing to jump to it on the map. buyers pay the seller in SOL, wallet-to-wallet.</div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ==================== THE SITE / GAME ==================== -->
+  <div id="site">
+    <button id="pull"><span class="arr">&#9660;</span>&nbsp;&nbsp;OPEN THE BRAIN&nbsp;&nbsp;<span class="arr">&#9660;</span></button>
+
+    <header>
+      <div class="logo">SYNAPSE<span class="cur">_</span></div>
+      <div class="sp"></div>
+      <div class="chip">land claimed <b id="hPlots">-</b></div>
+      <div class="chip">cells owned <b id="hCells">-</b></div>
+      <button id="wallet" title="connect Phantom to buy plots">CONNECT WALLET</button>
+    </header>
+
+    <div id="layout">
+      <aside>
+        <div class="box">
+          <h3>Brain status</h3>
+          <div class="bd" id="statusBd">
+            <div class="stat"><span>land plots</span><b id="sPlots">-</b></div>
+            <div class="stat"><span>total cells</span><b id="sCells">-</b></div>
+            <div class="stat"><span>plots claimed</span><b id="sSold">-</b></div>
+            <div class="stat"><span>cells owned</span><b id="sCellsSold">-</b></div>
+            <div class="stat"><span>mind claimed</span><b id="sPct">-</b></div>
+            <div class="stat"><span>plots for sale</span><b id="sListed">-</b></div>
+            <div class="stat"><span>payment</span><b style="color:var(--green)">SOL · on-chain</b></div>
+          </div>
+        </div>
+        <div class="box">
+          <h3>The regions</h3>
+          <div class="bd legend" id="legendSite"></div>
+        </div>
+        <div class="box">
+          <h3>How it works</h3>
+          <div class="bd"><ol class="steps">
+            <li>buy land in a region with SOL. you own a share of it</li>
+            <li>every night the mind dreams a new 3D world with 6 hidden quests, one per region</li>
+            <li>fly the dream, find a quest, and solve it</li>
+            <li>a solved quest pays out: half to the solver, half split among a few secretly chosen landowners in that region</li>
+            <li>so you earn by solving quests, or by owning the land where others solve them</li>
+          </ol></div>
+        </div>
+      </aside>
+
+      <main>
+        <div class="hero">
+          <h1>own land on a <em>living mind</em></h1>
+          <p>the brain is one agent. its cortex is split into land you can buy.
+             owning land = owning an ability. every night the mind dreams a world full of
+             hidden quests. solve them, or own the land that spawned them,
+             to receive rewards from the SYNAPSE_ wallet.</p>
+          <a href="/dream" id="dreamCta">
+            <span class="dc-top"><span class="dc-arr">&#9654;</span>ENTER TONIGHT'S DREAM<span class="dc-cur">_</span></span>
+            <span class="dc-sub">six quests are hidden inside &middot; the dream resets in <b id="dcReset">&ndash;</b></span>
+          </a>
+        </div>
+
+        <div class="box">
+          <h3>SYNAPSE_ feed &middot; <a href="https://x.com/AgentSynapse_" target="_blank" rel="noopener" style="color:var(--green);text-decoration:none">@AgentSynapse_</a></h3>
+          <div class="bd feed" id="feed">
+            <div id="feedTweets"></div>
+            <div class="item">
+              <div class="meta"><span>NOTE</span></div>
+              <div class="txt">payments are live: connect Phantom and pay in SOL to claim land. resales pay the seller directly, wallet-to-wallet.</div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <footer>
+      <span>SYNAPSE_</span>
+      <span>CA: <span id="footCA" title="click to copy" style="color:var(--green);cursor:pointer">SNPS6…dKef</span> (soon)</span>
+      <span>payments live &middot; SOL, on-chain</span>
+      <span><a href="#" id="docsLink" style="color:var(--green);text-decoration:none">docs</a></span>
+      <span><a href="https://x.com/AgentSynapse_" target="_blank" rel="noopener" style="color:var(--green);text-decoration:none">@AgentSynapse_</a></span>
+    </footer>
+  </div>
+</div>
+
+<!-- ==================== welcome modal (every visit) ==================== -->
+<div id="welcome">
+  <div class="wc-box">
+    <button id="wcClose" aria-label="close">&times;</button>
+    <div class="wc-title" id="wcTitle">SYNAPSE_</div>
+    <p class="wc-text">every night SYNAPSE_ falls asleep and dreams a 3D world with six hidden
+      quests inside. the dreams are based on the personality of SYNAPSE_, which is formed from
+      the people who own pieces of its brain and feed it their thoughts.
+      solve the quests, or own the land the quests originate from, to earn real rewards
+      from the SYNAPSE_ wallet.</p>
+    <div class="wc-btns">
+      <button id="wcRead">READ MORE &rsaquo;</button>
+      <button id="wcCloseBtn">CLOSE</button>
+    </div>
+  </div>
+</div>
+
+<script>
+"use strict";
+/* ============================== state ============================== */
+let MAP=null, PLOTS=[], byId={}, REG=[], GRID=null;
+let OWNED={}, LISTINGS={}, BIDS={}, STATS=null, IMAGES={};
+let MARKET={sol_per_cell:0.0002, treasury:'', mint:'', reserve_s:90};
+const IMG={};   // plot_id -> {url, img}  loaded owner pictures
+let s=2, ox=0, oy=0, dpr=1;              // draw scale + offsets (css px)
+let hoverId=-1, selId=-1, focusReg=-1, pinReg=-1;
+let paths={}, borderPath=null, regHsl=[], regIn=[], regOut=[];
+let flashes=[]; let fxPending=false;
+// browsing identity (fallback). buying requires a connected Solana wallet -> PUB.
+// PUB + TOKEN persist in localStorage and are SHARED with the dream (single sign-in).
+let PUB=localStorage.synapse_pub||null;
+let TOKEN=localStorage.synapse_token||null;
+let wallet = PUB || (localStorage.synapse_wallet ||= 'demo-'+Math.random().toString(16).slice(2,8));
+const RPC='https://solana.leorpc.com/?api_key=FREE';
+window.__fx = {spawn:true};
+
+const $=id=>document.getElementById(id);
+const baseC=$('mapBase'), fxC=$('mapFx');
+const bctx=baseC.getContext('2d'), fctx=fxC.getContext('2d');
+
+/* ============================ utilities ============================ */
+function jit(id,k){let n=(Math.imul(id+7,2654435761)^Math.imul(k+3,40503))>>>0;
+  n^=n>>>13;n=Math.imul(n,1274126177)>>>0;return ((n>>>16)&1023)/1023;}
+function hexToHsl(hex){
+  const r=parseInt(hex.slice(1,3),16)/255,g=parseInt(hex.slice(3,5),16)/255,b=parseInt(hex.slice(5,7),16)/255;
+  const mx=Math.max(r,g,b),mn=Math.min(r,g,b);let h=0,S=0;const l=(mx+mn)/2;
+  if(mx!==mn){const d=mx-mn;S=l>.5?d/(2-mx-mn):d/(mx+mn);
+    h=mx===r?(g-b)/d+(g<b?6:0):mx===g?(b-r)/d+2:(r-g)/d+4;h*=60;}
+  return {h,s:S*100,l:l*100};
+}
+function hexA(hex,a){const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),
+  b=parseInt(hex.slice(5,7),16);return `rgba(${r},${g},${b},${a})`;}
+/* dark, faintly region-tinted fills so the map reads black-on-neon; owned land
+   glows a touch brighter than unclaimed */
+function plotColor(p){
+  const c=regHsl[p.r];const owned=OWNED[p.i]!==undefined;
+  // taken land goes DARK (a claimed, unlit cell) until its owner hangs a picture
+  const L=(owned?7:17)+jit(p.i,1)*(owned?2.5:4);
+  const S=Math.min(60,c.s*(owned?0.45:0.62));
+  return `hsl(${c.h.toFixed(1)},${S.toFixed(1)}%,${L.toFixed(1)}%)`;
+}
+function sizeClass(c){return c<60?'MICRO':c<140?'MINOR':c<280?'MAJOR':'PRIME';}
+function fmt(n){return n.toLocaleString('en-US');}
+
+/* ============ SYNAPSE speaks — the mind's real tweet stream ============ */
+/* shows ONLY what has actually been posted to the SYNAPSE X account. */
+let mcTimer=null, mcLastKey=null;
+function pushMindLine(text,typed){
+  const body=$('mcBody'); if(!body)return;
+  const prev=body.querySelector('.mc-latest'); if(prev)prev.classList.remove('mc-latest');
+  const el=document.createElement('div'); el.className='mc-msg mc-latest';
+  el.innerHTML='<div class="mc-when">the mind</div><div class="mc-text"></div>';
+  body.appendChild(el);
+  while(body.children.length>7) body.removeChild(body.firstChild);
+  const t=el.querySelector('.mc-text');
+  if(typed){
+    let i=0; t.innerHTML='<span class="mc-cursor">_</span>';
+    const iv=setInterval(()=>{ i++; t.textContent=text.slice(0,i);
+      body.scrollTop=body.scrollHeight; if(i>=text.length)clearInterval(iv); },24);
+  }else{ t.textContent=text; }
+  body.scrollTop=body.scrollHeight;
+}
+/* header "hacker" scramble: every 4s the letters cascade into random glyphs
+   (left->right) for 2s, then resolve back to SYNAPSE_ FEED */
+const FEED_TEXT="SYNAPSE_ FEED";
+const FEED_GLYPHS="ABCDEFGHKLMNPQRSTUVWXYZ0123456789#$%&/<>?_".split("");
+let feedTimer=null, feedRun=null;
+function feedScramble(){
+  const el=$('mcTitle'); if(!el||feedRun)return;
+  const t0=Date.now(), n=FEED_TEXT.length;
+  feedRun=setInterval(()=>{
+    const t=Date.now()-t0; let out="";
+    for(let i=0;i<n;i++){
+      const ch=FEED_TEXT[i];
+      if(ch===" "){out+=" ";continue;}
+      const startAt=i*30, settleAt=1500+i*40;   // cascade in, then cascade resolve
+      if(t>=settleAt) out+=ch;
+      else if(t>=startAt) out+=FEED_GLYPHS[(Math.random()*FEED_GLYPHS.length)|0];
+      else out+=ch;
+    }
+    el.textContent=out;
+    if(t>=2000){clearInterval(feedRun);feedRun=null;el.textContent=FEED_TEXT;}
+  },45);
+}
+async function pollFeed(){
+  try{
+    const d=await fetch('/api/feed').then(r=>r.json());
+    const feed=d.feed||[], body=$('mcBody'); if(!body)return;
+    if(!feed.length){
+      if(mcLastKey!=='empty'){mcLastKey='empty';
+        body.innerHTML='<div class="mc-msg"><div class="mc-when">the mind</div><div class="mc-text">…</div></div>';}
+      return;
+    }
+    const last=feed[feed.length-1], key=last.ts+'|'+last.text;
+    if(key===mcLastKey)return;                 // nothing new posted
+    mcLastKey=key;
+    body.innerHTML='';
+    const show=feed.slice(-7);
+    show.slice(0,-1).forEach(t=>pushMindLine(t.text,false));
+    pushMindLine(last.text,true);              // newest gets the typing effect
+    const ft=$('feedTweets');                  // the site-view feed box, newest first
+    if(ft)ft.innerHTML=feed.slice(-5).reverse().map(t=>
+      `<div class="item"><div class="meta"><span>THE MIND</span></div>
+       <div class="txt"></div></div>`).join('');
+    if(ft)[...ft.querySelectorAll('.txt')].forEach((el,i)=>{
+      el.textContent=feed.slice(-5).reverse()[i].text;});
+  }catch(e){}
+}
+function initMindChat(){
+  const box=$('mindChat'); if(!box)return;
+  $('mcHead').onclick=()=>box.classList.toggle('min');
+  clearInterval(feedTimer); feedTimer=setInterval(feedScramble,4000);
+  pollFeed();
+  clearInterval(mcTimer);
+  mcTimer=setInterval(()=>{ if(!document.hidden)pollFeed(); },30000);
+}
+
+/* ============================== boot =============================== */
+async function init(){
+  const [m,st]=await Promise.all([
+    fetch('/api/map').then(r=>r.json()),
+    fetch('/api/state').then(r=>r.json())]);
+  MAP=m; PLOTS=m.plots; REG=m.regions;
+  OWNED=st.owned; LISTINGS=st.listings||{}; BIDS=st.bids||{}; STATS=st.stats;
+  IMAGES=st.images||{}; MARKET=st.market||MARKET;
+  regHsl=REG.map(r=>hexToHsl(r.color));
+  PLOTS.forEach(p=>byId[p.i]=p);
+  $('mktRegion').innerHTML='<option value="">all regions</option>'+
+    REG.map((r,i)=>`<option value="${i}">${r.name.toLowerCase()}</option>`).join('');
+  buildGrid(); buildPaths(); syncImages();
+  resize(); renderLegends(); renderStats(); renderYourLand(); renderMarket();
+  initMindChat();
+  const walletClick=()=>PUB?disconnectWallet():connectWallet();
+  $('wallet').onclick=walletClick;
+  if($('walletB'))$('walletB').onclick=walletClick;
+  // DOCS overlay -- re-parent to <body>: inside #page its transform (the
+  // curtain slide) hijacks position:fixed and the overlay opens off-screen.
+  document.body.appendChild($('docs'));
+  const totCells=PLOTS.reduce((a,p)=>a+p.cells,0);
+  $('dPlots').textContent=PLOTS.length.toLocaleString('en-US');
+  $('dCells').textContent=totCells.toLocaleString('en-US');
+  $('dRate').textContent=(+MARKET.sol_per_cell).toFixed(4);
+  $('dTreasury').textContent=MARKET.treasury||'–';
+  // contract address: click anything showing it to copy the full string
+  const CA='SNPS6G4M4NnpuqUHeBE1P8bfVgD7J9aafH1QdardKef';
+  function copyCA(cb){
+    const done=()=>{if(cb)cb();};
+    if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(CA).then(done,done);
+    else{const t=document.createElement('textarea');t.value=CA;document.body.appendChild(t);
+      t.select();try{document.execCommand('copy');}catch(e){}t.remove();done();}
+  }
+  const caShort=CA.slice(0,5)+'…'+CA.slice(-4);
+  const caV=$('caVal'); if(caV)caV.textContent=caShort;
+  if($('caBox'))$('caBox').onclick=()=>copyCA(()=>{const b=$('caBox');b.classList.add('copied');
+    caV.textContent='copied ✓';
+    setTimeout(()=>{b.classList.remove('copied');caV.textContent=caShort;},1200);});
+  if($('footCA'))$('footCA').onclick=()=>copyCA(()=>{const e=$('footCA');const o=e.textContent;
+    e.textContent='copied ✓';setTimeout(()=>e.textContent=o,1200);});
+  if($('docsCA'))$('docsCA').style.cursor='pointer',$('docsCA').title='click to copy',
+    $('docsCA').onclick=()=>copyCA(()=>{const e=$('docsCA');const o=e.textContent;
+    e.textContent='copied ✓';setTimeout(()=>e.textContent=o,1200);});
+  const openDocs=()=>{$('docs').classList.add('on');$('docs').scrollTop=0;};
+  $('docsBtn').onclick=openDocs;
+  if($('docsLink'))$('docsLink').onclick=e=>{e.preventDefault();openDocs();};
+  // welcome modal: reparent to <body> (out of the transformed #page) and show
+  document.body.appendChild($('welcome'));
+  const closeWelcome=()=>$('welcome').classList.remove('on');
+  const showWelcome=()=>{$('welcome').classList.add('on');wcReveal();};
+  // show on a real visit/refresh, but NOT when coming back via WAKE UP from the
+  // dream (you were already "on the site" then).
+  let fromDream=false;
+  try{const rf=new URL(document.referrer);
+    fromDream=(rf.origin===location.origin && rf.pathname==='/dream');}catch(e){}
+  if(!fromDream) showWelcome();
+  $('wcClose').onclick=closeWelcome;
+  $('wcCloseBtn').onclick=closeWelcome;
+  $('welcome').addEventListener('click',e=>{if(e.target===$('welcome'))closeWelcome();});
+  $('wcRead').onclick=()=>{closeWelcome();openDocs();};
+  $('docsClose').onclick=()=>$('docs').classList.remove('on');
+  addEventListener('keydown',e=>{if(e.key==='Escape')$('docs').classList.remove('on');});
+  updateWalletUI();
+  provider()&&connectWallet(true);      // silent reconnect only (never prompts)
+  addEventListener('resize',resize);
+  setInterval(pollState,4000);
+  pollTreasury(); setInterval(pollTreasury,20000);   // live SYNAPSE_ wallet balance
+  // dream reset countdown: synced from the server (dreams run ~48h), ticks locally
+  let resetAt=0;
+  fetch('/api/dream?wallet=anon').then(r=>r.json()).then(d=>{
+    resetAt=Date.now()/1000+(d.resets_in||0);}).catch(()=>{});
+  const tickReset=()=>{const el=$('dcReset'); if(!el||!resetAt)return;
+    const s=Math.max(0,Math.round(resetAt-Date.now()/1000));
+    const p=n=>String(n).padStart(2,'0');
+    el.textContent=p(Math.floor(s/3600))+':'+p(Math.floor(s%3600/60))+':'+p(s%60);};
+  tickReset(); setInterval(tickReset,1000);
+  setInterval(()=>{ // synaptic firing
+    if(!document.documentElement.classList.contains('open')||!window.__fx.spawn) return;
+    if(flashes.length<10){flashes.push({p:PLOTS[(Math.random()*PLOTS.length)|0].i,t0:performance.now()});kickFx();}
+  },430);
+}
+/* welcome title: scramble random glyphs, then resolve to SYNAPSE_ (left->right) */
+function wcReveal(){
+  const el=$('wcTitle'); if(!el)return;
+  const text='SYNAPSE_', n=text.length, t0=Date.now();
+  clearInterval(el._iv);
+  el._iv=setInterval(()=>{
+    const t=Date.now()-t0; let out='';
+    for(let i=0;i<n;i++){
+      const ch=text[i];
+      const lock=((i+1)/n)*1250;
+      out += (t>=lock)? ch : FEED_GLYPHS[(Math.random()*FEED_GLYPHS.length)|0];
+    }
+    el.textContent=out;
+    if(t>=1450){clearInterval(el._iv);el.textContent=text;}
+  },45);
+}
+function fmtUsd(v){
+  if(v==null)return '$—';
+  if(v>=1000)return '$'+Math.round(v).toLocaleString('en-US');
+  if(v>=1)return '$'+v.toFixed(2);
+  return '$'+v.toFixed(2);
+}
+async function pollTreasury(){
+  try{
+    const t=await fetch('/api/treasury').then(r=>r.json());
+    const amt=$('synWalletAmt'), bal=$('swTipBal');
+    if(amt)amt.textContent=fmtUsd(t.usd);
+    const dp=$('dcPool'); if(dp)dp.textContent=fmtUsd(t.usd);   // hero CTA pool
+    if(bal)bal.textContent=(t.sol!=null?(+t.sol).toLocaleString('en-US',{maximumFractionDigits:3}):'—')+' SOL'
+      +(t.price?'  ·  SOL $'+(+t.price).toFixed(2):'');
+  }catch(e){}
+}
+function buildGrid(){
+  const {w,h}=MAP; GRID=new Int16Array(w*h).fill(-1);
+  for(const p of PLOTS){const r=p.runs;
+    for(let k=0;k<r.length;k+=3){const y=r[k],x0=r[k+1],ln=r[k+2],b=y*w+x0;
+      for(let j=0;j<ln;j++)GRID[b+j]=p.i;}}
+}
+function buildPaths(){
+  paths={};
+  for(const p of PLOTS){const pt=new Path2D(),r=p.runs;
+    let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;
+    for(let k=0;k<r.length;k+=3){const yy=r[k],xx=r[k+1],ln=r[k+2];
+      pt.rect(xx,yy,ln,1);
+      if(xx<x0)x0=xx; if(xx+ln>x1)x1=xx+ln; if(yy<y0)y0=yy; if(yy+1>y1)y1=yy+1;}
+    p.bb=[x0,y0,x1,y1];
+    paths[p.i]=pt;}
+  // per-region edge paths: regIn = cell mesh inside a region (faint),
+  // regOut = region-vs-region + brain silhouette (bright neon).
+  const {w,h}=MAP;
+  regIn=REG.map(()=>new Path2D()); regOut=REG.map(()=>new Path2D());
+  for(let y=0;y<h;y++)for(let x=0;x<w;x++){
+    const a=GRID[y*w+x]; if(a<0)continue; const ra=byId[a].r;
+    const b=(x<w-1)?GRID[y*w+x+1]:-1;
+    if(a!==b){const rb=b>=0?byId[b].r:-1;
+      const t=(rb!==ra)?regOut[ra]:regIn[ra]; t.moveTo(x+1,y);t.lineTo(x+1,y+1);
+      if(rb>=0&&rb!==ra){regOut[rb].moveTo(x+1,y);regOut[rb].lineTo(x+1,y+1);}}
+    const cc=(y<h-1)?GRID[(y+1)*w+x]:-1;
+    if(a!==cc){const rc=cc>=0?byId[cc].r:-1;
+      const t=(rc!==ra)?regOut[ra]:regIn[ra]; t.moveTo(x,y+1);t.lineTo(x+1,y+1);
+      if(rc>=0&&rc!==ra){regOut[rc].moveTo(x,y+1);regOut[rc].lineTo(x+1,y+1);}}
+    if(x===0){regOut[ra].moveTo(0,y);regOut[ra].lineTo(0,y+1);}
+    if(y===0){regOut[ra].moveTo(x,0);regOut[ra].lineTo(x+1,0);}
+  }
+}
+
+/* ---- ordered perimeter loop of a plot (traced once, cached on p._loop) ----
+   directed boundary edges (interior-on-left, y-down) chained into closed loops;
+   used to run a glowing "electron" around a plot's border.                    */
+function plotLoop(p){
+  if(p._loop!==undefined)return p._loop;
+  const w=MAP.w,h=MAP.h,id=p.i,r=p.runs;
+  const K=(x,y)=>x*100000+y;
+  const isId=(x,y)=>x>=0&&y>=0&&x<w&&y<h&&GRID[y*w+x]===id;
+  const edge=new Map();                      // startKey -> {x,y} endpoint
+  for(let k=0;k<r.length;k+=3){const y=r[k],x0=r[k+1],ln=r[k+2];
+    for(let x=x0;x<x0+ln;x++){
+      if(!isId(x,y-1))edge.set(K(x+1,y),{x,y});           // top   : (x+1,y)->(x,y)
+      if(!isId(x,y+1))edge.set(K(x,y+1),{x:x+1,y:y+1});   // bottom: (x,y+1)->(x+1,y+1)
+      if(!isId(x-1,y))edge.set(K(x,y),{x,y:y+1});         // left  : (x,y)->(x,y+1)
+      if(!isId(x+1,y))edge.set(K(x+1,y+1),{x:x+1,y});     // right : (x+1,y+1)->(x+1,y)
+    }
+  }
+  const seen=new Set(); let best=null;
+  for(const sk of edge.keys()){
+    if(seen.has(sk))continue;
+    const loop=[]; let cur=sk, g=0;
+    while(edge.has(cur)&&!seen.has(cur)&&g++<200000){
+      seen.add(cur);
+      const sx=Math.floor(cur/100000), sy=cur-sx*100000;
+      loop.push([sx,sy]);
+      const e=edge.get(cur); cur=K(e.x,e.y);
+    }
+    if(loop.length>=4&&(!best||loop.length>best.length))best=loop;
+  }
+  if(!best){p._loop=null;return null;}
+  const cum=[0]; let total=0;
+  for(let i=1;i<=best.length;i++){const a=best[i-1],b=best[i%best.length];
+    total+=Math.hypot(b[0]-a[0],b[1]-a[1]); cum.push(total);}
+  p._loop={pts:best,cum,total};
+  return p._loop;
+}
+function loopPoint(L,d){
+  const t=((d%L.total)+L.total)%L.total, cum=L.cum, pts=L.pts, n=pts.length;
+  let lo=1,hi=cum.length-1;
+  while(lo<hi){const m=(lo+hi)>>1; if(cum[m]<t)lo=m+1; else hi=m;}
+  const a=pts[(lo-1)%n], b=pts[lo%n], seg=(cum[lo]-cum[lo-1])||1, f=(t-cum[lo-1])/seg;
+  return [a[0]+(b[0]-a[0])*f, a[1]+(b[1]-a[1])*f];
+}
+function drawElectron(p,now){
+  const L=plotLoop(p); if(!L)return;
+  const col=REG[p.r].color, pts=L.pts;
+  // faint full border so the outline is always visible
+  fctx.strokeStyle=hexA(col,0.30); fctx.lineWidth=1.1/s; fctx.lineJoin='round';
+  fctx.beginPath(); fctx.moveTo(pts[0][0],pts[0][1]);
+  for(let i=1;i<pts.length;i++)fctx.lineTo(pts[i][0],pts[i][1]);
+  fctx.closePath(); fctx.stroke();
+  // the electron: a comet running the border, phase-offset per plot
+  const V=30, head=(now*0.001*V + p.i*13)%L.total;
+  const tail=Math.min(L.total*0.55, 24), steps=16;
+  fctx.save(); fctx.globalCompositeOperation='lighter'; fctx.lineCap='round';
+  for(let k=0;k<steps;k++){
+    const a=1-k/steps;
+    const P0=loopPoint(L,head-tail*k/steps), P1=loopPoint(L,head-tail*(k+1)/steps);
+    fctx.strokeStyle=hexA(col,a*0.9); fctx.lineWidth=(0.9+2.2*a)/s;
+    fctx.beginPath(); fctx.moveTo(P0[0],P0[1]); fctx.lineTo(P1[0],P1[1]); fctx.stroke();
+  }
+  const H=loopPoint(L,head), rr=5/s;
+  const gr=fctx.createRadialGradient(H[0],H[1],0,H[0],H[1],rr);
+  gr.addColorStop(0,'#ffffff'); gr.addColorStop(0.35,col); gr.addColorStop(1,'rgba(0,0,0,0)');
+  fctx.fillStyle=gr; fctx.beginPath(); fctx.arc(H[0],H[1],rr,0,7); fctx.fill();
+  fctx.restore();
+}
+
+/* ============================ rendering ============================ */
+let fitS=2;
+function resize(){
+  const wrap=$('mapWrap'); if(!wrap||!wrap.clientWidth||!MAP)return;
+  dpr=Math.min(devicePixelRatio||1,2);
+  const cw=wrap.clientWidth, ch=wrap.clientHeight;
+  for(const c of [baseC,fxC]){c.width=cw*dpr;c.height=ch*dpr;}
+  fitS=Math.min(cw/MAP.w, ch/MAP.h)*0.97;
+  resetView();
+}
+function resetView(){
+  const cw=baseC.width/dpr, ch=baseC.height/dpr;
+  s=fitS; ox=(cw-MAP.w*s)/2; oy=(ch-MAP.h*s)/2;
+  drawBase(); drawFx(performance.now());
+}
+function clampView(){
+  const cw=baseC.width/dpr, ch=baseC.height/dpr;
+  ox=Math.min(cw-60, Math.max(60-MAP.w*s, ox));
+  oy=Math.min(ch-60, Math.max(60-MAP.h*s, oy));
+}
+let drawPending=false;
+function requestDraw(){
+  if(drawPending)return; drawPending=true;
+  requestAnimationFrame(t=>{drawPending=false;drawBase();drawFx(t);});
+}
+function setSpace(ctx){ctx.setTransform(dpr,0,0,dpr,0,0);ctx.translate(ox,oy);ctx.scale(s,s);}
+/* base map rendered once to an offscreen cache, then blitted with the
+   current pan/zoom transform (fast enough to redraw every frame)      */
+const CS=6; let baseCache=null, baseDirty=true;
+
+/* ---- gyri fold-lines: iso-contours of a smooth value-noise field, drawn as
+   dashed glowing strokes so the map reads like a hand-inked brain ---- */
+const GN=16; let gvals=null;
+function gseed(){
+  let s=((MAP.seed>>>0)||7)^0x9e3779b9; gvals=[];
+  const rnd=()=>{s=(s*1664525+1013904223)>>>0;return s/4294967296;};
+  for(let j=0;j<=GN;j++){const row=[];for(let i=0;i<=GN;i++)row.push(rnd());gvals.push(row);}
+}
+function gsm(t){return t*t*(3-2*t);}
+function vnoise(fx,fy){
+  const gx=fx*GN,gy=fy*GN;let ix=gx|0,iy=gy|0;const tx=gsm(gx-ix),ty=gsm(gy-iy);
+  ix=Math.min(ix,GN-1);iy=Math.min(iy,GN-1);
+  const a=gvals[iy][ix],b=gvals[iy][ix+1],cc=gvals[iy+1][ix],d=gvals[iy+1][ix+1];
+  return (a*(1-tx)+b*tx)*(1-ty)+(cc*(1-tx)+d*tx)*ty;
+}
+function gfield(x,y){const fx=x/MAP.w,fy=y/MAP.h;
+  return vnoise(fx,fy)+0.5*vnoise((fx*2)%1,(fy*2)%1)+0.25*vnoise((fx*4)%1,(fy*4)%1);}
+function gdash(x,y){const h=((Math.imul(x,73856093)^Math.imul(y,19349663))>>>0);return (h%10)<4;}
+const GLEVELS=4.5;
+function drawGyri(ic){        // draws 1px dashes into an ink canvas at CS scale
+  if(!gvals)gseed();
+  const w=MAP.w,h=MAP.h;
+  for(let y=0;y<h;y++)for(let x=0;x<w;x++){
+    const pid=GRID[y*w+x]; if(pid<0)continue;
+    const f=gfield(x+0.5,y+0.5)*GLEVELS;
+    if(Math.abs(f-Math.round(f))<0.09 && gdash(x,y)){
+      ic.fillStyle=REG[byId[pid].r].color; ic.fillRect(x,y,1,1);
+    }
+  }
+}
+function renderCache(){
+  if(!baseCache){baseCache=document.createElement('canvas');
+    baseCache.width=MAP.w*CS; baseCache.height=MAP.h*CS;}
+  const c=baseCache.getContext('2d');
+  c.setTransform(1,0,0,1,0,0);
+  c.clearRect(0,0,baseCache.width,baseCache.height);
+  c.setTransform(CS,0,0,CS,0,0);
+  for(const p of PLOTS){c.fillStyle=plotColor(p);c.fill(paths[p.i]);}
+  // owner pictures: cover-fit the image into the plot, clipped to its shape
+  for(const pid in IMG){const p=byId[pid];if(!p)continue;
+    const im=IMG[pid].img; if(!im.complete||!im.naturalWidth)continue;
+    const [x0,y0,x1,y1]=p.bb, bw=x1-x0, bh=y1-y0;
+    const ar=im.naturalWidth/im.naturalHeight, br=bw/bh;
+    let dw=bw,dh=bh,dx=x0,dy=y0;
+    if(ar>br){dh=bh;dw=bh*ar;dx=x0-(dw-bw)/2;}
+    else{dw=bw;dh=bw/ar;dy=y0-(dh-bh)/2;}
+    c.save();c.clip(paths[p.i]);c.imageSmoothingEnabled=true;
+    c.drawImage(im,dx,dy,dw,dh);c.restore();}
+  // ink layer: gyri fold-lines + silhouette/region outlines, then glow-composited
+  const ink=document.createElement('canvas');
+  ink.width=baseCache.width; ink.height=baseCache.height;
+  const ic=ink.getContext('2d'); ic.setTransform(CS,0,0,CS,0,0);
+  ic.lineCap='round'; ic.lineJoin='round';
+  for(let ri=0;ri<REG.length;ri++){          // outlines of the buyable plots
+    ic.strokeStyle=hexA(REG[ri].color,0.72); ic.lineWidth=0.6/CS; ic.stroke(regIn[ri]);
+  }
+  for(let ri=0;ri<REG.length;ri++){          // silhouette + region borders (bright)
+    ic.strokeStyle=REG[ri].color; ic.lineWidth=0.85/CS; ic.stroke(regOut[ri]);
+  }
+  c.setTransform(1,0,0,1,0,0);
+  c.globalCompositeOperation='lighter';                 // additive: glow adds to black
+  c.globalAlpha=0.6; c.filter='blur('+(CS*1.1)+'px)'; c.drawImage(ink,0,0);   // soft glow
+  c.filter='none'; c.globalAlpha=1; c.drawImage(ink,0,0);                     // sharp cores
+  c.globalCompositeOperation='source-over';
+  c.setTransform(CS,0,0,CS,0,0);
+  // taken land is shown by its darker fill -- no dots at all
+  baseDirty=false;
+}
+function drawBase(){
+  if(baseDirty||!baseCache)renderCache();
+  bctx.setTransform(dpr,0,0,dpr,0,0);
+  bctx.clearRect(0,0,baseC.width/dpr,baseC.height/dpr);
+  bctx.imageSmoothingEnabled = s < CS;
+  bctx.drawImage(baseCache,ox,oy,MAP.w*s,MAP.h*s);
+}
+function drawFx(now){
+  fctx.setTransform(1,0,0,1,0,0);
+  fctx.clearRect(0,0,fxC.width,fxC.height);
+  setSpace(fctx);
+  const focus=(pinReg>=0)?pinReg:focusReg;
+  if(focus>=0){fctx.fillStyle='rgba(2,4,6,.68)';
+    for(const p of PLOTS)if(p.r!==focus)fctx.fill(paths[p.i]);}
+  for(let i=flashes.length-1;i>=0;i--){const f=flashes[i];
+    const a=1-(now-f.t0)/700;
+    if(a<=0){flashes.splice(i,1);continue;}
+    fctx.fillStyle=`rgba(255,255,255,${(0.22*a).toFixed(3)})`;
+    fctx.fill(paths[f.p]);}
+  if(hoverId>=0&&byId[hoverId]){const p=byId[hoverId];
+    // a hidden plot lights up in its region colour on hover
+    fctx.fillStyle=hexA(REG[p.r].color,0.22);fctx.fill(paths[p.i]);
+    fctx.strokeStyle=REG[p.r].color;fctx.lineWidth=3.5/s;fctx.globalAlpha=.3;fctx.stroke(paths[p.i]);
+    fctx.globalAlpha=1;fctx.lineWidth=1.6/s;fctx.stroke(paths[p.i]);}
+  if(selId>=0&&byId[selId]){const p=byId[selId];
+    fctx.strokeStyle='#ffffff';fctx.lineWidth=1.6/s;
+    fctx.setLineDash([2.2,1.6]);fctx.lineDashOffset=-(now/90)%3.8;
+    fctx.stroke(paths[p.i]);fctx.setLineDash([]);}
+  // an electron runs the border of every plot you own yourself
+  let mine=false;
+  if(wallet)for(const pid in OWNED){
+    if(OWNED[pid].owner!==wallet)continue;
+    const p=byId[pid]; if(!p)continue; mine=true; drawElectron(p,now);}
+  if(flashes.length||selId>=0||mine)kickFx();
+}
+function kickFx(){if(fxPending)return;fxPending=true;
+  requestAnimationFrame(t=>{fxPending=false;drawFx(t);});}
+
+/* =========================== interaction =========================== */
+function cellAt(e){
+  const r=fxC.getBoundingClientRect();
+  const x=Math.floor((e.clientX-r.left-ox)/s), y=Math.floor((e.clientY-r.top-oy)/s);
+  if(x<0||y<0||x>=MAP.w||y>=MAP.h)return -1;
+  return GRID[y*MAP.w+x];
+}
+function showTip(e,id){
+  const tip=$('tooltip');
+  if(id>=0){const p=byId[id],rg=REG[p.r],own=OWNED[id],lst=LISTINGS[id];
+    const line3=!own ? 'UNCLAIMED — click to buy'
+      : lst ? `<span class="saletag">FOR SALE — ${fmtSol(+lst.price)}</span>`
+      : (own.owner===wallet ? 'yours — click to manage / list it'
+                            : 'owned · not for sale');
+    tip.style.display='block';
+    tip.innerHTML=`<div class="t1" style="color:${rg.color}">${p.label} &middot; ${rg.name}</div>
+      <div class="t2">${p.cells} cells &middot; ${sizeClass(p.cells)} &middot; ${fmtSol(mintSol(p))}</div>
+      <div class="t2">${line3}</div>`;
+    const wr=$('mapWrap').getBoundingClientRect();
+    let tx=e.clientX-wr.left+16, ty=e.clientY-wr.top+14;
+    if(tx+240>wr.width)tx-=260; if(ty+80>wr.height)ty-=96;
+    tip.style.left=tx+'px';tip.style.top=ty+'px';
+  } else tip.style.display='none';
+}
+/* --- pan (drag) / zoom (wheel) / reset (double-click) --- */
+let panPt=null, didPan=false;
+fxC.addEventListener('pointerdown',e=>{
+  panPt={x:e.clientX,y:e.clientY}; didPan=false;
+  fxC.setPointerCapture(e.pointerId);
+});
+fxC.addEventListener('pointermove',e=>{
+  if(panPt&&(e.buttons&1||e.buttons&4)){
+    const dx=e.clientX-panPt.x, dy=e.clientY-panPt.y;
+    if(didPan||Math.hypot(dx,dy)>4){
+      didPan=true;
+      ox+=dx; oy+=dy;
+      panPt={x:e.clientX,y:e.clientY};
+      clampView();
+      $('tooltip').style.display='none';
+      fxC.style.cursor='grabbing';
+      requestDraw();
+      return;
+    }
+  }
+  const id=cellAt(e);
+  if(id!==hoverId){hoverId=id;updateBanner();kickFx();}
+  showTip(e,id);
+});
+fxC.addEventListener('pointerup',()=>{panPt=null;fxC.style.cursor='';});
+fxC.addEventListener('pointerleave',()=>{panPt=null;fxC.style.cursor='';
+  hoverId=-1;$('tooltip').style.display='none';updateBanner();kickFx();});
+fxC.addEventListener('click',e=>{
+  if(didPan){didPan=false;return;}
+  const id=cellAt(e);
+  selId=(id>=0)?id:-1;
+  renderPlotPanel();kickFx();
+});
+fxC.addEventListener('dblclick',()=>resetView());
+fxC.addEventListener('wheel',e=>{
+  e.preventDefault();
+  const rect=fxC.getBoundingClientRect();
+  const mx=e.clientX-rect.left, my=e.clientY-rect.top;
+  const ns=Math.min(fitS*10,Math.max(fitS*0.5,s*Math.exp(-e.deltaY*0.0013)));
+  ox=mx-(mx-ox)*(ns/s);
+  oy=my-(my-oy)*(ns/s);
+  s=ns; clampView(); requestDraw();
+},{passive:false});
+
+/* what each part of the mind IS, gameplay-wise -- shown on hover */
+const REGION_INFO={
+  instinct:"the high risk, high reward part of the brain. tasks tied to my instincts are the hardest the dream ever builds, and they pay the most.",
+  perception:"the part of me that watches. perception tasks demand sharp eyes and sharper timing, and the dream shows no mercy here. hard to beat, paid accordingly.",
+  memory:"where i keep what i refuse to forget. memory tasks are about finding, holding and recalling what the dream scatters.",
+  logic:"the calculating part. logic tasks are riddles and numbers: no luck involved, just a clear head. on the easier side, modest pay.",
+  creative:"the dreaming part, and the biggest. creative tasks are the gentlest the dream ever builds: the easiest tier, paid accordingly.",
+  social:"the part that listens for voices. social tasks sit in the middle of everything: medium difficulty, medium pay."
+};
+function updateRegionInfo(){
+  const el=$('regionInfo'); if(!el)return;
+  if(hoverId<0||!byId[hoverId]){el.style.display='none';return;}
+  const rg=REG[byId[hoverId].r];
+  const txt=REGION_INFO[(rg.key||rg.name||'').toLowerCase()];
+  if(!txt){el.style.display='none';return;}
+  el.style.display='block';
+  el.style.borderColor=rg.color;
+  el.style.boxShadow='0 0 18px '+hexA(rg.color,0.18);
+  el.innerHTML=`<b style="color:${rg.color}">${rg.name}</b>${txt}`;
+}
+function updateBanner(){
+  updateRegionInfo();
+  const b=$('regionBanner');
+  if(hoverId>=0&&byId[hoverId]){
+    const p=byId[hoverId],rg=REG[p.r];
+    const claimed=PLOTS.filter(q=>q.r===p.r&&OWNED[q.i]).length;
+    b.style.borderColor=rg.color;
+    b.innerHTML=`<span class="big" style="color:${rg.color}">${rg.name}</span>
+      <span class="sub">${rg.desc}</span>
+      <span class="sub" style="margin-left:auto">${rg.pct_actual}% of the mind &middot; land ${claimed}/${rg.max_plots} &middot; ${rg.anat}</span>`;
+  }else{
+    b.style.borderColor='var(--line)';
+    b.innerHTML=`<span class="sub">hover the brain_ &mdash; every plot is land. regions are sized after the real cortex. click a plot to inspect it.</span>`;
+  }
+}
+
+/* ============================= panels ============================== */
+/* ===================== wallet + on-chain payment ==================== */
+function provider(){
+  if(window.solana&&window.solana.isPhantom)return window.solana;
+  if(window.phantom&&window.phantom.solana)return window.phantom.solana;
+  return window.solana||null;
+}
+function updateWalletUI(){
+  for(const id of ['wallet','walletB']){
+    const b=$(id);if(!b)continue;
+    if(PUB){b.textContent=short(PUB);b.title='connected — click to disconnect';b.classList.add('wconn');}
+    else{b.textContent='CONNECT WALLET';b.title='connect Phantom & sign in to buy and play';b.classList.remove('wconn');}
+  }
+}
+// prove wallet ownership by signing a server challenge -> a session token that
+// also logs you into the dream (same localStorage keys).
+async function proveOwnership(pk){
+  const pv=provider();
+  const a=await fetch('/api/dream/auth',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({wallet:pk})}).then(r=>r.json());
+  if(!a.message)throw new Error(a.err||'auth failed');
+  const signed=await pv.signMessage(new TextEncoder().encode(a.message),'utf8');
+  const sigBytes=signed.signature||signed;
+  const hex=[...new Uint8Array(sigBytes)].map(x=>x.toString(16).padStart(2,'0')).join('');
+  const v=await fetch('/api/dream/verify',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({wallet:pk,signature:hex})}).then(r=>r.json());
+  if(!v.token)throw new Error(v.err||'verify failed');
+  return v.token;
+}
+async function connectWallet(silent){
+  const pv=provider();
+  if(!pv){if(!silent)window.open('https://phantom.app','_blank');return;}
+  try{
+    let r;
+    if(silent){                       // page-load reconnect: never pops the wallet
+      r=await pv.connect({onlyIfTrusted:true});
+    }else{                            // user clicked: ok to prompt
+      try{r=await pv.connect({onlyIfTrusted:true});}catch(_){r=await pv.connect();}
+    }
+    const pk=(r&&r.publicKey&&r.publicKey.toString())||(pv.publicKey&&pv.publicKey.toString());
+    if(!pk)return;
+    PUB=pk;wallet=pk;localStorage.synapse_pub=pk;
+    if(!silent){                      // explicit connect -> prove ownership (one signature)
+      try{TOKEN=await proveOwnership(pk);localStorage.synapse_token=TOKEN;}catch(e){}
+    }
+    updateWalletUI();renderPlotPanel();renderYourLand();renderMarket();
+  }catch(e){}
+}
+async function disconnectWallet(){
+  const pv=provider();try{if(pv&&pv.disconnect)await pv.disconnect();}catch(_){}
+  PUB=null;TOKEN=null;wallet=localStorage.synapse_wallet;
+  localStorage.removeItem('synapse_pub');localStorage.removeItem('synapse_token');
+  updateWalletUI();renderPlotPanel();renderYourLand();renderMarket();
+}
+async function rpcBlockhash(){
+  // fresh mainnet blockhash from our own server (reliable). the free browser RPC
+  // sometimes hands out stale ones -> Phantom can't simulate (shows no amount)
+  // and the payment never lands.
+  const j=await fetch('/api/blockhash').then(r=>r.json()).catch(()=>({}));
+  if(!j||!j.blockhash)throw new Error('network busy — try again');
+  return j.blockhash;
+}
+async function confirmSig(sig){
+  for(let i=0;i<24;i++){
+    try{
+      const body=JSON.stringify({jsonrpc:'2.0',id:1,method:'getSignatureStatuses',params:[[sig],{searchTransactionHistory:true}]});
+      const r=await fetch(RPC,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body});
+      const j=await r.json();const st=j&&j.result&&j.result.value&&j.result.value[0];
+      if(st){if(st.err)throw new Error('transaction failed on-chain');
+        if(st.confirmationStatus==='confirmed'||st.confirmationStatus==='finalized')return;}
+    }catch(e){if(/on-chain/.test((e&&e.message)||''))throw e;}
+    await new Promise(r=>setTimeout(r,1500));
+  }
+  // never confirmed -> almost always wrong network in Phantom, or too little SOL
+  throw new Error('payment never confirmed — is Phantom on Mainnet, with enough SOL?');
+}
+async function paySol(recipient,lamports){
+  const pv=provider();
+  if(!pv||!PUB)throw new Error('connect your wallet first');
+  const web3=await import('https://esm.sh/@solana/web3.js@1.95.8?bundle');
+  const from=new web3.PublicKey(PUB), to=new web3.PublicKey(recipient);
+  const tx=new web3.Transaction().add(web3.SystemProgram.transfer(
+    {fromPubkey:from,toPubkey:to,lamports:Math.round(lamports)}));
+  tx.feePayer=from;tx.recentBlockhash=await rpcBlockhash();
+  const res=await pv.signAndSendTransaction(tx);
+  const sig=(res&&(res.signature||res))||'';
+  if(!sig)throw new Error('no signature returned');
+  await confirmSig(sig);
+  return sig;
+}
+async function buyPlot(pid){
+  const msg=$('buyMsg');const set=t=>{if(msg)msg.textContent=t;};
+  if(!PUB){set('connect your wallet…');await connectWallet();if(!PUB){set('connect a wallet to buy');return;}}
+  try{
+    set('reserving…');
+    const rv=await fetch('/api/reserve',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({wallet,plot:pid})}).then(r=>r.json());
+    if(rv.err){set(rv.err);return;}
+    set('approve '+rv.sol+' SOL in your wallet…');
+    const sig=await paySol(rv.recipient,rv.lamports);
+    set('verifying payment on-chain…');
+    for(let attempt=0;attempt<4;attempt++){
+      const r=await fetch('/api/buy',{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({wallet,plot:pid,signature:sig})});
+      const j=await r.json();
+      if(r.ok){
+        OWNED=j.owned;LISTINGS=j.listings||{};BIDS=j.bids||{};STATS=j.stats;IMAGES=j.images||{};MARKET=j.market||MARKET;
+        syncImages();baseDirty=true;drawBase();
+        renderPlotPanel();renderLegends();renderStats();renderYourLand();renderMarket();kickFx();
+        set('bought — the plot is yours.');return;
+      }
+      if(r.status===503){set('waiting for the network to confirm…');await new Promise(r=>setTimeout(r,2500));continue;}
+      set(j.err||'purchase failed');return;
+    }
+    set('payment sent but not confirmed yet — reopen the plot in a moment.');
+  }catch(e){set((e&&e.message)||'purchase failed');}
+}
+
+function fmtSol(x){return (Math.round(x*1e4)/1e4)+' SOL';}
+function mintSol(p){return p.cells*(MARKET.sol_per_cell||0.0002);}
+function short(a){return a&&a.length>10?a.slice(0,4)+'…'+a.slice(-4):a;}
+function renderPlotPanel(){
+  const bd=$('plotBd');
+  if(selId<0||!byId[selId]){bd.innerHTML='<div class="empty">click a plot on the brain to inspect it_</div>';return;}
+  const p=byId[selId],rg=REG[p.r],own=OWNED[p.i];
+  const listing=LISTINGS[p.i];
+  const mine=own&&own.owner===wallet;
+  const yieldPct=(100*p.cells/rg.cells).toFixed(2);
+  const status=!own?'UNCLAIMED':(listing?'FOR SALE':'OWNED');
+  let html=`
+    <div><span class="plabel">${p.label}</span>
+      <span class="pstatus ${!own||listing?'free':'owned'}">${status}</span></div>
+    <div class="rchip" style="color:${rg.color};border-color:${rg.color};margin:7px 0;font-size:11px">
+      ${rg.name}</div>
+    <div class="stat"><span>size</span><b>${p.cells} cells (${sizeClass(p.cells)})</b></div>
+    <div class="stat"><span>share of ${rg.key} yield</span><b>${yieldPct}%</b></div>`;
+  if(!own){
+    const price=mintSol(p);
+    html+=`<div class="stat"><span>price</span><b>${fmtSol(price)}</b></div>
+      <button id="buyBtn">BUY — ${fmtSol(price)}</button>
+      <div id="buyMsg"></div>
+      <div class="demo-note">you pay in SOL from your wallet to the mind's treasury.</div>`;
+    bd.innerHTML=html;
+    $('buyBtn').onclick=()=>buyPlot(p.i);
+    return;
+  }
+  html+=`<div class="stat"><span>owner</span><b>${mine?'you':short(own.owner)}</b></div>`;
+  if(listing)html+=`<div class="stat"><span>ask price</span><b class="saletag">${fmtSol(+listing.price)}</b></div>`;
+  if(mine){
+    html+=`<div class="imgrow"><span class="imglbl">YOUR PICTURE</span>
+      ${IMAGES[p.i]?`<img class="imgthumb" src="/uploads/${IMAGES[p.i]}" alt="">`
+                   :'<span class="imgnone">none yet</span>'}</div>
+      <div class="field">
+        <label class="filebtn">${IMAGES[p.i]?'REPLACE':'UPLOAD IMAGE'}<input id="imgFile" type="file"
+          accept="image/png,image/jpeg,image/webp,image/gif" hidden></label>
+        ${IMAGES[p.i]?'<button id="imgDel" class="warn">REMOVE</button>':''}</div>
+      <div class="imghint">shows on your plot on the map · any image, auto-resized to fit</div>`;
+    if(listing){
+      html+=`<div class="field"><button id="unlistBtn" class="warn">UNLIST — TAKE OFF MARKET</button></div>`;
+    }else{
+      html+=`<div class="field"><input id="listPrice" type="number" min="0.001" step="0.001" placeholder="price in SOL">
+        <button id="listBtn">LIST FOR SALE</button></div>
+        <div class="imghint">a buyer pays this SOL straight to your wallet; the plot transfers to them.</div>`;
+    }
+  }else{
+    if(listing)html+=`<button id="buyBtn">BUY — ${fmtSol(+listing.price)}</button>
+      <div class="imghint">you pay the owner directly in SOL; the plot then transfers to you.</div>`;
+    else html+=`<div class="demo-note">not for sale — only the owner can list it.</div>`;
+  }
+  html+=`<div id="buyMsg"></div>`;
+  bd.innerHTML=html;
+  const q=id=>document.getElementById(id);
+  if(q('buyBtn'))q('buyBtn').onclick=()=>buyPlot(p.i);
+  if(q('listBtn'))q('listBtn').onclick=()=>{
+    const v=parseFloat(q('listPrice').value);
+    if(!v||v<=0){$('buyMsg').textContent='enter a price in SOL';return;}
+    act('/api/list',{plot:p.i,price:v});};
+  if(q('unlistBtn'))q('unlistBtn').onclick=()=>act('/api/unlist',{plot:p.i});
+  if(q('imgFile'))q('imgFile').onchange=e=>{
+    const f=e.target.files&&e.target.files[0];if(!f)return;
+    const m=$('buyMsg');
+    if(!/^image\//.test(f.type||'')){if(m)m.textContent='pick an image file';return;}
+    if(f.size>25*1024*1024){if(m)m.textContent='file too large (max 25 MB)';return;}
+    if(m)m.textContent='processing…';
+    prepareImage(f).then(url=>uploadImg(p.i,url))
+      .catch(()=>{if(m)m.textContent='could not read that image';});};
+  if(q('imgDel'))q('imgDel').onclick=()=>act('/api/remove_img',{plot:p.i});
+}
+async function act(path,payload){
+  const msg=$('buyMsg');if(msg)msg.textContent='';
+  const r=await fetch(path,{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({wallet,...payload})});
+  const j=await r.json();
+  if(!r.ok){const m=$('buyMsg');if(m)m.textContent=j.err||'failed';return;}
+  OWNED=j.owned;LISTINGS=j.listings||{};BIDS=j.bids||{};STATS=j.stats;IMAGES=j.images||{};MARKET=j.market||MARKET;
+  syncImages();baseDirty=true;drawBase();
+  renderPlotPanel();renderLegends();renderStats();renderYourLand();renderMarket();kickFx();
+}
+/* load / drop owner pictures to match server state, redraw on arrival */
+function syncImages(){
+  let dirty=false;
+  for(const pid in IMAGES){
+    if(!IMG[pid]||IMG[pid].url!==IMAGES[pid]){
+      const im=new Image();
+      im.onload=()=>{baseDirty=true;requestDraw();};
+      im.src='/uploads/'+IMAGES[pid];
+      IMG[pid]={url:IMAGES[pid],img:im};
+      dirty=true;
+    }
+  }
+  for(const pid in IMG){if(!(pid in IMAGES)){delete IMG[pid];dirty=true;}}
+  if(dirty){baseDirty=true;requestDraw();}
+}
+/* shrink any picture in-browser so uploads stay tiny and plot-sized;
+   webp keeps transparency (logos), jpeg fallback if the browser lacks webp */
+function prepareImage(file){
+  return new Promise((resolve,reject)=>{
+    const url=URL.createObjectURL(file);
+    const im=new Image();
+    im.onload=()=>{
+      URL.revokeObjectURL(url);
+      const MAX=640;
+      let w=im.naturalWidth||1, h=im.naturalHeight||1;
+      const sc=Math.min(1,MAX/Math.max(w,h));
+      w=Math.max(1,Math.round(w*sc)); h=Math.max(1,Math.round(h*sc));
+      const cv=document.createElement('canvas');cv.width=w;cv.height=h;
+      const g=cv.getContext('2d');g.imageSmoothingEnabled=true;g.imageSmoothingQuality='high';
+      g.drawImage(im,0,0,w,h);
+      let out=cv.toDataURL('image/webp',0.85);
+      if(out.slice(0,15)!=='data:image/webp')out=cv.toDataURL('image/jpeg',0.85);
+      resolve(out);
+    };
+    im.onerror=()=>{URL.revokeObjectURL(url);reject();};
+    im.src=url;
+  });
+}
+async function uploadImg(pid,dataurl){
+  const msg=$('buyMsg');if(msg)msg.textContent='uploading…';
+  try{
+    const r=await fetch('/api/upload_img',{method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({wallet,plot:pid,data:dataurl})});
+    const j=await r.json();
+    if(!r.ok){if(msg)msg.textContent=j.err||'upload failed';return;}
+    OWNED=j.owned;LISTINGS=j.listings||{};BIDS=j.bids||{};STATS=j.stats;IMAGES=j.images||{};
+    syncImages();baseDirty=true;drawBase();
+    renderPlotPanel();renderStats();renderYourLand();renderMarket();kickFx();
+  }catch(e){if(msg)msg.textContent='upload failed';}
+}
+function ago(ts){
+  const d=Math.max(0,Date.now()/1000-ts);
+  if(d<60)return Math.floor(d)+'s ago';
+  if(d<3600)return Math.floor(d/60)+'m ago';
+  if(d<86400)return Math.floor(d/3600)+'h ago';
+  return Math.floor(d/86400)+'d ago';
+}
+function renderMarket(){
+  const el=$('mktList');
+  const q=($('mktSearch').value||'').trim().toLowerCase();
+  const rf=$('mktRegion').value;
+  const sort=$('mktSort').value;
+  let rows=Object.entries(LISTINGS)
+    .map(([pid,l])=>({p:byId[pid],l,owner:(OWNED[pid]||{}).owner||'?'}))
+    .filter(x=>x.p);
+  $('mktCount').textContent=rows.length;
+  if(rf!=='')rows=rows.filter(x=>String(x.p.r)===rf);
+  if(q)rows=rows.filter(x=>
+    x.p.label.toLowerCase().includes(q)||
+    REG[x.p.r].name.toLowerCase().includes(q)||
+    REG[x.p.r].key.includes(q)||
+    x.owner.toLowerCase().includes(q));
+  rows.sort((a,b)=>
+    sort==='price-desc' ? b.l.price-a.l.price :
+    sort==='size-desc'  ? b.p.cells-a.p.cells :
+    sort==='new'        ? b.l.ts-a.l.ts :
+                          a.l.price-b.l.price);
+  if(!rows.length){
+    el.innerHTML=`<div style="color:var(--dimmer);font-size:11px;padding:6px 2px">${
+      Object.keys(LISTINGS).length?'no listings match your search_':'nothing for sale yet_ own land? list it.'}</div>`;
+    return;
+  }
+  el.innerHTML=rows.map(({p,l,owner})=>`<div class="mitem" data-p="${p.i}">
+    <div class="r1"><span style="color:${REG[p.r].color}">${p.label}</span>
+      <span class="pr">${fmtSol(+l.price)}</span></div>
+    <div class="r2"><span>${p.cells} cells &middot; ${sizeClass(p.cells)} &middot; ${REG[p.r].key}</span>
+      <span>by ${owner===wallet?'you':short(owner)} &middot; ${ago(l.ts)}</span></div>
+  </div>`).join('');
+  el.querySelectorAll('.mitem').forEach(e2=>e2.onclick=()=>focusPlot(+e2.dataset.p));
+}
+$('mktSearch').addEventListener('input',renderMarket);
+$('mktSort').addEventListener('change',renderMarket);
+$('mktRegion').addEventListener('change',renderMarket);
+function focusPlot(pid){
+  const p=byId[pid];if(!p)return;
+  selId=pid;
+  const cw=baseC.width/dpr, ch=baseC.height/dpr;
+  s=Math.max(s,fitS*2.2);
+  ox=cw/2-p.cx*s; oy=ch/2-p.cy*s; clampView();
+  requestDraw(); renderPlotPanel();
+}
+function renderYourLand(){
+  const mine=PLOTS.filter(p=>OWNED[p.i]&&OWNED[p.i].owner===wallet);
+  const bd=$('yourBd');
+  if(!mine.length){bd.innerHTML='<div class="none">you own nothing yet. buy a plot._</div>';return;}
+  bd.innerHTML=mine.map(p=>`<div class="row" data-p="${p.i}">
+    <span style="color:${REG[p.r].color}">${p.label}</span>
+    <span style="color:var(--dim)">${p.cells} cells</span></div>`).join('');
+  bd.querySelectorAll('.row').forEach(el=>el.onclick=()=>{
+    selId=+el.dataset.p;renderPlotPanel();kickFx();});
+}
+function legendHtml(){
+  return REG.map((rg,ri)=>{
+    const claimed=PLOTS.filter(q=>q.r===ri&&OWNED[q.i]).length;
+    return `<div class="row" data-r="${ri}">
+      <span class="sw" style="background:${rg.color};color:${rg.color}"></span>
+      <span class="nm">${rg.name.replace(' CORTEX','').replace(' CORE','')}</span>
+      <span class="pc">${rg.pct_actual}%</span>
+      <span class="ct">${claimed}/${rg.max_plots}</span></div>`;
+  }).join('');
+}
+function renderLegends(){
+  const lg=$('legend');lg.innerHTML=legendHtml();
+  lg.querySelectorAll('.row').forEach(el=>{
+    el.onmouseenter=()=>{focusReg=+el.dataset.r;kickFx();};
+    el.onmouseleave=()=>{focusReg=-1;kickFx();};
+    el.onclick=()=>{pinReg=(pinReg===+el.dataset.r)?-1:+el.dataset.r;kickFx();};
+  });
+  const ls=$('legendSite');ls.innerHTML=legendHtml();
+  ls.querySelectorAll('.row').forEach(el=>{
+    el.onclick=()=>{openBrain();pinReg=+el.dataset.r;kickFx();};
+    el.title='open the brain, isolate this region';
+  });
+}
+function renderStats(){
+  const st=STATS;if(!st)return;
+  $('hPlots').textContent=st.plots_sold+'/'+st.plots_total;
+  $('hCells').textContent=fmt(st.cells_sold);
+  $('sPlots').textContent=fmt(st.plots_total);
+  $('sCells').textContent=fmt(st.cells_total);
+  $('sSold').textContent=fmt(st.plots_sold);
+  $('sCellsSold').textContent=fmt(st.cells_sold);
+  $('sPct').textContent=(100*st.cells_sold/st.cells_total).toFixed(2)+'%';
+  $('sListed').textContent=fmt(st.plots_listed||0);
+  $('brainStats').innerHTML=`<b>${st.plots_sold}</b>/${st.plots_total} plots claimed &middot; <b>${fmt(st.cells_sold)}</b> cells owned &middot; SOL`;
+}
+async function pollState(){
+  try{const st=await fetch('/api/state').then(r=>r.json());
+    const changed=JSON.stringify([st.owned,st.listings,st.bids,st.images])
+                !==JSON.stringify([OWNED,LISTINGS,BIDS,IMAGES]);
+    OWNED=st.owned;LISTINGS=st.listings||{};BIDS=st.bids||{};STATS=st.stats;IMAGES=st.images||{};MARKET=st.market||MARKET;
+    if(changed){syncImages();baseDirty=true;drawBase();renderLegends();renderYourLand();renderPlotPanel();renderMarket();}
+    renderStats();
+  }catch(e){}
+}
+
+/* ========================= curtain open/close ====================== */
+function openBrain(){document.documentElement.classList.add('open');localStorage.synapse_view='brain';resize();}
+function closeBrain(){document.documentElement.classList.remove('open');localStorage.synapse_view='site';pinReg=-1;}
+$('pull').onclick=openBrain;
+$('closeBrain').onclick=closeBrain;
+addEventListener('keydown',e=>{if(e.key==='Escape')closeBrain();});
+window.openMap=openBrain; window.closeMap=closeBrain;
+
+init();
+</script>
+</body>
+</html>
