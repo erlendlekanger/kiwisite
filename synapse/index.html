@@ -1424,14 +1424,9 @@ async function buyPlot(pid){
     const rv=await fetch('/api/reserve',{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({wallet,plot:pid})}).then(r=>r.json());
     if(rv.err){set(rv.err);return;}
-    let sig;
-    if(rv.free){                       // local test mode: no payment
-      set('claiming (free · local test)…'); sig='FREE-LOCAL';
-    }else{
-      set('approve '+rv.sol+' SOL in your wallet…');
-      sig=await paySol(rv.recipient,rv.lamports);
-      set('verifying payment on-chain…');
-    }
+    set('approve '+rv.sol+' SOL in your wallet…');
+    const sig=await paySol(rv.recipient,rv.lamports);
+    set('verifying payment on-chain…');
     for(let attempt=0;attempt<4;attempt++){
       const r=await fetch('/api/buy',{method:'POST',headers:{'Content-Type':'application/json'},
         body:JSON.stringify({wallet,plot:pid,signature:sig})});
