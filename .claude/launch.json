@@ -1,0 +1,222 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "cortex",
+      "runtimeExecutable": "py",
+      "runtimeArgs": [
+        "-u",
+        "cortex/cortex.py"
+      ],
+      "env": {
+        "PYTHONUTF8": "1"
+      },
+      "port": 8990
+    },
+    {
+      "name": "cortex-demo",
+      "runtimeExecutable": "py",
+      "runtimeArgs": [
+        "-u",
+        "cortex/cortex.py"
+      ],
+      "env": {
+        "PYTHONUTF8": "1",
+        "CORTEX_TEST": "1",
+        "CORTEX_STATE_DIR": "C:/Users/erlen/AppData/Local/Temp/claude/C--Users-erlen-OneDrive-Desktop-scraper/3b0dbf63-de8e-465f-8ca4-c894160a0777/scratchpad/cx_state",
+        "CORTEX_SITE_PORT": "18990",
+        "CORTEX_DESK_PORT": "18989"
+      },
+      "port": 18990
+    },
+    {
+      "name": "profile",
+      "runtimeExecutable": "py",
+      "runtimeArgs": [
+        "-u",
+        "profile/profile.py"
+      ],
+      "env": {
+        "PYTHONUTF8": "1"
+      },
+      "port": 8996
+    },
+    {
+      "name": "profile-demo",
+      "runtimeExecutable": "py",
+      "runtimeArgs": [
+        "-u",
+        "profile/profile.py"
+      ],
+      "env": {
+        "PYTHONUTF8": "1",
+        "PROFILE_TEST": "1",
+        "PROFILE_STATE_DIR": "C:/Users/erlen/AppData/Local/Temp/claude/C--Users-erlen-OneDrive-Desktop-scraper/d44e3086-39a9-420b-bdbe-11bdd22247df/scratchpad/profile_demo_state",
+        "PROFILE_KEY_FILE": "C:/Users/erlen/AppData/Local/Temp/claude/C--Users-erlen-OneDrive-Desktop-scraper/d44e3086-39a9-420b-bdbe-11bdd22247df/scratchpad/profile_demo_key.txt",
+        "PROFILE_SITE_PORT": "18996",
+        "PROFILE_DESK_PORT": "18997"
+      },
+      "port": 18996
+    },
+    {
+      "name": "shill",
+      "runtimeExecutable": "py",
+      "runtimeArgs": [
+        "-u",
+        "shill/shill.py"
+      ],
+      "env": {
+        "PYTHONUTF8": "1"
+      },
+      "port": 8995
+    },
+    {
+      "name": "rogue",
+      "runtimeExecutable": "py",
+      "runtimeArgs": [
+        "rogue/rogue.py"
+      ],
+      "port": 8992
+    },
+    {
+      "name": "darkweb",
+      "runtimeExecutable": "py",
+      "runtimeArgs": [
+        "darkweb/darkweb.py"
+      ],
+      "port": 8993
+    },
+    {
+      "name": "slabs",
+      "runtimeExecutable": "py",
+      "runtimeArgs": [
+        "-u",
+        "slabs/slabs.py"
+      ],
+      "env": {
+        "PYTHONUTF8": "1"
+      },
+      "port": 8994
+    },
+    {
+      "name": "standin",
+      "runtimeExecutable": "py",
+      "runtimeArgs": [
+        "-u",
+        "standin/standin.py"
+      ],
+      "port": 8998,
+      "env": {
+        "PYTHONUTF8": "1"
+      }
+    },
+    {
+      "name": "casemint",
+      "runtimeExecutable": "py",
+      "runtimeArgs": [
+        "casemint/casemint.py"
+      ],
+      "port": 8991,
+      "env": {
+        "PYTHONUTF8": "1",
+        "CASEMINT_LIVE": "1"
+      }
+    },
+    {
+      "name": "strike-design",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": [
+        "serve",
+        "-l",
+        "4173",
+        "strike-design"
+      ],
+      "port": 4173
+    },
+    {
+      "name": "tilt",
+      "runtimeExecutable": "py",
+      "runtimeArgs": [
+        "-u",
+        "tilt/tilt.py"
+      ],
+      "env": {
+        "PYTHONUTF8": "1"
+      },
+      "port": 8955
+    },
+    {
+      "name": "tilt-test",
+      "runtimeExecutable": "py",
+      "runtimeArgs": [
+        "-u",
+        "tilt/tilt.py"
+      ],
+      "env": {
+        "PYTHONUTF8": "1",
+        "TILT_TEST_LEDGER": "1",
+        "TILT_PORT": "18955",
+        "TILT_STATE_FILE": "C:/Users/erlen/AppData/Local/Temp/claude/C--Users-erlen-OneDrive-Desktop-scraper/ed4befaf-a417-4e9d-8a13-68c49bf4fad7/scratchpad/tilt_test_state.json",
+        "TILT_VAULT_KEYPAIR_PATH": "C:/Users/erlen/AppData/Local/Temp/claude/C--Users-erlen-OneDrive-Desktop-scraper/ed4befaf-a417-4e9d-8a13-68c49bf4fad7/scratchpad/vault_test.json"
+      },
+      "port": 18955
+    },
+    {
+      "name": "graded",
+      "runtimeExecutable": "py",
+      "runtimeArgs": [
+        "-u",
+        "graded/graded.py"
+      ],
+      "port": 8954
+    },
+    {
+      "name": "graded-test",
+      "runtimeExecutable": "py",
+      "runtimeArgs": [
+        "-u",
+        "graded/graded.py"
+      ],
+      "port": 18954,
+      "env": {
+        "GRADED_PORT": "18954",
+        "GRADED_CLUSTER": "devnet",
+        "GRADED_TEST_LEDGER": "1",
+        "GRADED_STATE_FILE": "C:/Users/erlen/AppData/Local/Temp/claude/graded_test_state.json",
+        "PYTHONUTF8": "1"
+      }
+    },
+    {
+      "name": "feedswap",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "feedswap/dev.js"
+      ],
+      "port": 8949
+    },
+    {
+      "name": "tvhead",
+      "runtimeExecutable": "py",
+      "runtimeArgs": [
+        "-u",
+        "tvhead/dev.py"
+      ],
+      "env": {
+        "PYTHONUTF8": "1"
+      },
+      "port": 8979
+    },
+    {
+      "name": "fomocard-web",
+      "runtimeExecutable": "py",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "4180",
+        "--directory",
+        "fomocard/web"
+      ],
+      "port": 4180
+    }
+  ]
+}
