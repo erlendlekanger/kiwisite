@@ -15,6 +15,8 @@ from urllib.parse import parse_qs, urlparse
 
 WEB = Path(__file__).resolve().parent / "web"
 sys.path.insert(0, str(WEB))
+# local test data lives next to this script, never inside web/ (which is deployed)
+os.environ.setdefault("OP_STATE_FILE", str(Path(__file__).resolve().parent / "dev_state.json"))
 from op import core  # noqa: E402
 
 PORT = int(os.environ.get("PORT", "4181"))

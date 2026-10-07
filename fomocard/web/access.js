@@ -193,44 +193,72 @@ async function claim(){
   if (!d.ok){ toast(d.error || 'Could not claim, try again.'); if (b){ b.disabled = false; b.textContent = 'Claim card'; } return; }
   S.card = d.card;
   rememberMe();
-  await reveal(d.card);
+  // the page under the overlay is drawn first, so nothing swaps when it lifts
   paintClaim();
+  await reveal(d.card);
 }
 
-/* The moment: the card flies in from the dark, turns over and lands. */
+/* The moment: the card flies in from the dark, turns over and lands. On
+   "Start spending" it glides down into its place on the page while the dark
+   lifts, and then the page moves on to the shops. Only transform and opacity
+   are animated, so nothing repaints the page underneath. */
 function reveal(c){
   return new Promise(done => {
     const r = $('#reveal');
     r.innerHTML = `<div class="ax-rv-glow"></div>
       <div class="ax-rv-card">
-        <div class="ax-rv-face ax-rv-front">${myCard(c)}</div>
+        <div class="ax-rv-face ax-rv-front">${myCard(c)}<div class="ax-rv-sweep"><i></i></div></div>
         <div class="ax-rv-face ax-rv-back"><img src="assets/mark.svg" alt=""></div>
       </div>
       <div class="ax-rv-text"><h2>Your card<br>is ready</h2><p>${esc(short(c.wallet))} · •••• ${esc(c.last4)}</p>
         <button class="btn btn-light" type="button">Start spending</button></div>`;
     r.hidden = false;
+    document.documentElement.style.overflow = 'hidden';
+    scrollTo({top: 0, behavior: 'instant'});
     requestAnimationFrame(() => r.classList.add('on'));
     const card = r.querySelector('.ax-rv-card'), glow = r.querySelector('.ax-rv-glow'), text = r.querySelector('.ax-rv-text');
     const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const ease = 'cubic-bezier(.16,.84,.24,1)';
     const fly = card.animate(reduced ? [{opacity: 0}, {opacity: 1}] : [
       {transform: 'translate3d(0, 60vh, -900px) rotateX(70deg) rotateY(180deg) rotateZ(-14deg)', opacity: 0},
       {transform: 'translate3d(0, 8vh, -300px) rotateX(24deg) rotateY(320deg) rotateZ(-4deg)', opacity: 1, offset: .45},
       {transform: 'translate3d(0, -1vh, 40px) rotateX(-6deg) rotateY(372deg) rotateZ(1deg)', offset: .8},
       {transform: 'translate3d(0, 0, 0) rotateX(0deg) rotateY(360deg) rotateZ(0deg)', opacity: 1}
-    ], {duration: reduced ? 300 : 2100, easing: 'cubic-bezier(.16,.84,.24,1)', fill: 'forwards'});
+    ], {duration: reduced ? 300 : 2100, easing: ease, fill: 'forwards'});
     glow.animate([{opacity: 0, transform: 'scale(.6)'}, {opacity: 1, transform: 'scale(1)'}], {duration: 1600, delay: 700, fill: 'forwards', easing: 'ease-out'});
     fly.finished.then(() => {
-      const sweep = document.createElement('div');
-      sweep.className = 'ax-shine';
-      r.querySelector('.ax-mycard').appendChild(sweep);
-      sweep.animate([{background: 'linear-gradient(105deg, rgba(255,255,255,0) 30%, rgba(255,255,255,.35) 50%, rgba(255,255,255,0) 70%) -150% 0 / 200% 100% no-repeat'},
-                     {background: 'linear-gradient(105deg, rgba(255,255,255,0) 30%, rgba(255,255,255,.35) 50%, rgba(255,255,255,0) 70%) 250% 0 / 200% 100% no-repeat'}],
-                    {duration: 1100, easing: 'ease-in-out', fill: 'forwards'});
+      if (!reduced) r.querySelector('.ax-rv-sweep i').animate(
+        [{transform: 'translateX(-120%) skewX(-18deg)'}, {transform: 'translateX(320%) skewX(-18deg)'}],
+        {duration: 1100, easing: 'ease-in-out', fill: 'forwards'});
       text.classList.add('on');
     });
-    const close = () => {
+    const close = async () => {
+      text.querySelector('button').disabled = true;
+      const target = document.querySelector('#claim .ax-mycard');
+      const from = card.getBoundingClientRect();
+      const to = target ? target.getBoundingClientRect() : null;
+      const dur = reduced ? 200 : 750;
+      // fade the dark, the glow and the words; the card itself stays solid and lands
       r.classList.remove('on');
-      setTimeout(() => { r.hidden = true; r.innerHTML = ''; done(); const s = $('#shop'); if (s) s.scrollIntoView({behavior: 'smooth'}); }, 450);
+      text.animate([{opacity: 1}, {opacity: 0, transform: 'translateY(12px)'}], {duration: dur * .5, fill: 'forwards'});
+      glow.animate([{opacity: 1}, {opacity: 0}], {duration: dur * .6, fill: 'forwards'});
+      if (to && to.width && !reduced){
+        if (target) target.style.visibility = 'hidden';
+        const dx = (to.left + to.width / 2) - (from.left + from.width / 2);
+        const dy = (to.top + to.height / 2) - (from.top + from.height / 2);
+        const k = to.width / from.width;
+        fly.cancel();
+        await card.animate([{transform: 'translate3d(0,0,0) scale(1)'}, {transform: `translate3d(${dx}px, ${dy}px, 0) scale(${k})`}],
+          {duration: dur, easing: 'cubic-bezier(.65,0,.25,1)', fill: 'forwards'}).finished;
+        if (target) target.style.visibility = '';
+      } else {
+        await card.animate([{opacity: 1}, {opacity: 0}], {duration: dur, fill: 'forwards'}).finished;
+      }
+      r.hidden = true; r.innerHTML = '';
+      document.documentElement.style.overflow = '';
+      done();
+      // a short beat on the landed card, then on to the shops
+      setTimeout(() => { const s = $('#shop'); if (s && !s.hidden) s.scrollIntoView({behavior: 'smooth', block: 'start'}); }, reduced ? 0 : 350);
     };
     text.querySelector('button').onclick = close;
   });

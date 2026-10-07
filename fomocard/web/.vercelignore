@@ -1,3 +1,4 @@
 op/__pycache__/
 **/__pycache__/
 .env*
+local_state*.json
