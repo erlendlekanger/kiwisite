@@ -110,6 +110,7 @@ async function setWallet(pk){
   paintWallet();
   const d = await J('/api/fomocard/card?wallet=' + encodeURIComponent(pk));
   S.card = d.card || null;
+  rememberMe();
   loadTokens();
   if (location.hash === '#virtual') paintClaim();
   if (location.hash === '#physical') paintLinked();
@@ -117,7 +118,13 @@ async function setWallet(pk){
 function disconnect(){
   S.wallet = null; S.card = null; S.tokens = []; S.payMint = USDC;
   try { sessionStorage.removeItem('fc.w'); } catch (e) {}
+  rememberMe();
   paintWallet(); view();
+}
+function rememberMe(){
+  if (S.wallet && S.card) store.set('fc.me', {wallet: S.wallet, last4: S.card.last4});
+  else try { localStorage.removeItem('fc.me'); } catch (e) {}
+  const m = $('#mypage'); if (m) m.hidden = !(S.wallet && S.card);
 }
 function paintWallet(){
   const b = $('#wallet');
@@ -185,6 +192,7 @@ async function claim(){
   const d = await post('/api/fomocard/claim', {wallet: S.wallet});
   if (!d.ok){ toast(d.error || 'Could not claim, try again.'); if (b){ b.disabled = false; b.textContent = 'Claim card'; } return; }
   S.card = d.card;
+  rememberMe();
   await reveal(d.card);
   paintClaim();
 }
@@ -577,6 +585,7 @@ view();
 (async () => {
   let pk = null;
   try { pk = sessionStorage.getItem('fc.w'); } catch (e) {}
+  if (!pk) pk = (store.get('fc.me', null) || {}).wallet || null;
   if (!pk) return;
   // only reuse a session the wallet still trusts, silently
   await new Promise(r => setTimeout(r, 300));
@@ -584,5 +593,6 @@ view();
   if (!w) return;
   try { await w.features['standard:connect'].connect({silent: true}); } catch (e) { return; }
   if ((w.accounts || []).some(a => a.address === pk)) setWallet(pk);
+  else { try { localStorage.removeItem('fc.me'); } catch (e) {} const m = $('#mypage'); if (m) m.hidden = true; }
 })();
 })();

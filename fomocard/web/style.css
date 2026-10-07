@@ -31,6 +31,10 @@ p { color: var(--muted); font-size: 15px; line-height: 1.45; }
 .nav { position: fixed; inset: 0 0 auto 0; z-index: 10; display: flex; justify-content: space-between; align-items: center; padding: 18px 28px; mix-blend-mode: difference; }
 .nav .brand { font-weight: 800; letter-spacing: .22em; font-size: 14px; }
 .nav .btn { mix-blend-mode: normal; }
+.nav-r { display: flex; align-items: center; gap: 10px; mix-blend-mode: normal; }
+.btn[hidden] { display: none; }
+.btn-line { border: 1px solid rgba(255,255,255,.4); color: #f2f2f2; background: rgba(8,8,8,.35); }
+.btn-line:hover { border-color: rgba(255,255,255,.7); }
 
 /* hero */
 .hero { position: relative; height: 100vh; overflow: hidden; }

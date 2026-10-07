@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>FOMOCARD · Spend your wallet anywhere</title>
-<meta name="description" content="FOMOCARD by fomo.family. Top up your balance at real shops, straight from your Solana wallet.">
+<meta name="description" content="FOMOCARD. Spend your FOMO balance anywhere, with a virtual card today or a physical card in your pocket.">
 <link rel="icon" href="assets/favicon.png">
 <link rel="stylesheet" href="style.css">
 <script type="importmap">{ "imports": { "three": "./vendor/three.module.js" } }</script>
@@ -12,7 +12,11 @@
 <body>
 <header class="nav">
   <a class="brand" href="#top">FOMOCARD</a>
-  <a class="btn btn-light" href="/access">Get access</a>
+  <div class="nav-r">
+    <a class="btn btn-line" id="mypage" href="/access#virtual" hidden>My page</a>
+    <a class="btn btn-light" href="/access">Get access</a>
+  </div>
+  <script>try { if (JSON.parse(localStorage.getItem("fc.me") || "null")) document.getElementById("mypage").hidden = false; } catch (e) {}</script>
 </header>
 
 <main id="top">
@@ -73,7 +77,7 @@
 </main>
 
 <footer class="foot">
-  <span>fomo.family · <a href="/docs" style="text-decoration:underline;text-underline-offset:3px">Docs and terms</a></span>
+  <span>fomocard.io · <a href="/docs" style="text-decoration:underline;text-underline-offset:3px">Docs and terms</a></span>
   <span class="credits">Earth textures © Solar System Scope (CC BY 4.0) · Shop names and logos belong to their owners and show where your balance can be topped up</span>
 </footer>
 

@@ -38,7 +38,11 @@
 <body class="ax-body">
 <header class="nav ax-nav">
   <a class="brand" href="/">FOMOCARD</a>
-  <a class="btn btn-light" href="/access">Get access</a>
+  <div class="nav-r">
+    <a class="btn btn-line" id="mypage" href="/access#virtual" hidden>My page</a>
+    <a class="btn btn-light" href="/access">Get access</a>
+  </div>
+  <script>try { if (JSON.parse(localStorage.getItem("fc.me") || "null")) document.getElementById("mypage").hidden = false; } catch (e) {}</script>
 </header>
 
 <main class="dx">
@@ -252,7 +256,7 @@
         <li>You may not transfer your rights under these terms. We may transfer ours.</li>
         <li>Nothing on this site is financial, legal or tax advice.</li>
       </ul>
-      <p class="dx-foot">FOMOCARD · fomo.family</p>
+      <p class="dx-foot">FOMOCARD · fomocard.io</p>
     </section>
   </article>
 </main>

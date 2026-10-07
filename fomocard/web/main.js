@@ -189,7 +189,7 @@ const faceMat = (url) => {
   });
 };
 const cardFrontMat = faceMat("assets/card_front.png");
-const cardBackMat = faceMat("assets/card_back.png");
+const cardBackMat = faceMat("assets/card_back.png?v=2");
 const cardBodyMat = new THREE.MeshPhysicalMaterial({ color: 0x0c0c0e, metalness: 0.9, roughness: 0.3 });
 const cardEdgeMat = new THREE.MeshStandardMaterial({ color: 0x9aa0aa, metalness: 1, roughness: 0.25 });
 const card = new THREE.Group();
