@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FOMOCARD · Spend your wallet anywhere</title>
+<meta name="description" content="FOMOCARD by fomo.family. Top up your balance at real shops, straight from your Solana wallet.">
+<link rel="icon" href="assets/favicon.png">
+<link rel="stylesheet" href="style.css">
+<script type="importmap">{ "imports": { "three": "./vendor/three.module.js" } }</script>
+</head>
+<body>
+<header class="nav">
+  <a class="brand" href="#top">FOMOCARD</a>
+  <a class="btn btn-light" href="https://spend.family">Get access</a>
+</header>
+
+<main id="top">
+  <!-- 1. hero: the vault film -->
+  <section class="hero">
+    <!-- intro plays once and holds its last frame; hero-loop.mp4, if present, takes over on repeat -->
+    <video class="hero-video" id="hero-intro" autoplay muted playsinline preload="auto">
+      <source src="assets/hero.mp4?v=3" type="video/mp4">
+      <source src="assets/hero.webm?v=3" type="video/webm">
+    </video>
+    <video class="hero-video" id="hero-loop" muted loop playsinline preload="none" hidden></video>
+    <div class="hero-shade"></div>
+    <div class="hero-copy">
+      <h1>Built for<br>the fomo family</h1>
+      <a class="btn btn-light" href="https://spend.family">Get access</a>
+    </div>
+  </section>
+
+  <!-- 2. earth: pinned while the card section slides over it -->
+  <section class="earth">
+    <canvas id="earth-canvas" aria-hidden="true"></canvas>
+    <div class="earth-header">
+      <h2>Infrastructure<br>for how you spend</h2>
+      <p>At home, abroad and everywhere in between.<br>Your wallet pays the shop directly.</p>
+      <a class="btn btn-light" href="https://spend.family">Get access</a>
+    </div>
+    <ul class="earth-points">
+      <li style="--x:22%;--y:70%">Uber Eats · New York</li>
+      <li style="--x:62%;--y:64%">Wolt · Oslo</li>
+      <li style="--x:78%;--y:78%">Nike · London</li>
+      <li style="--x:38%;--y:84%">Netflix · Berlin</li>
+    </ul>
+  </section>
+
+  <!-- 3. the card, circled by the shops it pays at -->
+  <section class="card">
+    <div class="card-sticky">
+      <canvas id="card-canvas" aria-hidden="true"></canvas>
+      <div class="card-header">
+        <h2>The card is only<br>the beginning</h2>
+        <a class="btn btn-light" href="https://spend.family">Get access</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. close -->
+  <section class="close">
+    <h2>A quieter way<br>to spend what you hold</h2>
+    <p>No account. No ID. Nothing held for you.</p>
+    <a class="btn btn-dark" href="https://spend.family">Open spend.family</a>
+  </section>
+</main>
+
+<footer class="foot">
+  <span>fomo.family</span>
+  <span class="credits">Earth textures © Solar System Scope (CC BY 4.0) · Shop names and logos belong to their owners and show where your balance can be topped up</span>
+</footer>
+
+<script src="vendor/gsap.min.js"></script>
+<script src="vendor/ScrollTrigger.min.js"></script>
+<script src="vendor/lenis.min.js"></script>
+<script type="module" src="main.js"></script>
+</body>
+</html>

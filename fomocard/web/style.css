@@ -1,0 +1,59 @@
+:root {
+  --bg: #080808;
+  --ink: #f2f2f2;
+  --muted: #9a9a9a;
+  --paper: #eceef0;
+  --sans: "Inter", "Helvetica Neue", Arial, sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { background: var(--bg); }
+body { background: var(--bg); color: var(--ink); font-family: var(--sans); -webkit-font-smoothing: antialiased; }
+a { color: inherit; text-decoration: none; }
+
+h1, h2 { font-weight: 500; text-transform: uppercase; letter-spacing: -0.01em; line-height: 0.95; }
+h1 { font-size: clamp(40px, 6.4vw, 96px); }
+h2 { font-size: clamp(34px, 4.6vw, 72px); }
+p { color: var(--muted); font-size: 15px; line-height: 1.45; }
+
+.btn { display: inline-block; padding: 11px 22px; border-radius: 999px; font-size: 14px; font-weight: 500; transition: transform .2s, opacity .2s; }
+.btn:hover { transform: translateY(-1px); opacity: .9; }
+.btn-light { background: #f2f2f2; color: #0a0a0a; }
+.btn-dark { background: #0a0a0a; color: #f2f2f2; }
+
+/* nav */
+.nav { position: fixed; inset: 0 0 auto 0; z-index: 10; display: flex; justify-content: space-between; align-items: center; padding: 18px 28px; mix-blend-mode: difference; }
+.nav .brand { font-weight: 800; letter-spacing: .22em; font-size: 14px; }
+.nav .btn { mix-blend-mode: normal; }
+
+/* hero */
+.hero { position: relative; height: 100vh; overflow: hidden; }
+.hero-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.hero-shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(8,8,8,0) 55%, rgba(8,8,8,.85) 100%); }
+.hero-copy { position: absolute; left: 0; right: 0; bottom: 9vh; text-align: center; display: grid; gap: 22px; justify-items: center; }
+
+/* earth: pinned by ScrollTrigger for 2.5 screens without spacing */
+.earth { position: relative; height: 100vh; margin-top: 15vh; overflow: hidden; z-index: 1; }
+#earth-canvas, #card-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.earth-header { position: absolute; top: 15vh; left: 0; right: 0; text-align: center; display: grid; gap: 18px; justify-items: center; padding: 0 16px; }
+.earth-points { list-style: none; }
+.earth-points li { position: absolute; left: var(--x); top: var(--y); font-size: 12px; color: #d8dce4; padding: 6px 10px; border-radius: 999px; background: rgba(20,20,24,.55); border: 1px solid rgba(255,255,255,.12); backdrop-filter: blur(6px); white-space: nowrap; }
+.earth-points li::before { content: ""; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #fff; margin-right: 8px; vertical-align: 1px; box-shadow: 0 0 10px #fff; }
+
+/* card: transparent, so the card rises through the pinned earth */
+.card { position: relative; z-index: 2; height: 250vh; }
+.card-sticky { position: sticky; top: 0; height: 100vh; overflow: hidden; }
+.card-header { position: absolute; left: 0; right: 0; bottom: 5vh; text-align: center; display: grid; gap: 22px; justify-items: center; padding: 0 16px; }
+
+.card-header h2 { font-size: clamp(28px, 3.6vw, 56px); }
+
+/* close */
+.close { position: relative; z-index: 3; background: var(--paper); color: #0a0a0a; min-height: 90vh; display: grid; align-content: center; justify-items: center; gap: 22px; text-align: center; padding: 18vh 16px; }
+.close p { color: #555; }
+
+.foot { position: relative; z-index: 3; display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding: 28px; font-size: 12px; color: var(--muted); background: var(--bg); }
+
+@media (max-width: 640px) {
+  .nav { padding: 14px 16px; }
+  .earth-points li:nth-child(n+3) { display: none; }
+  .foot { padding: 20px 16px; }
+}
