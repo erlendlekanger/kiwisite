@@ -299,7 +299,7 @@ if (cue) {
 const intro = document.getElementById("hero-intro");
 const heroLoop = document.getElementById("hero-loop");
 // same rule as the intro: 4K only where the screen has the pixels for it
-const loopSrc = "assets/" + (Math.max(screen.width, screen.height) * (devicePixelRatio || 1) > 2600 ? "hero-loop.mp4" : "hero-loop_2560.mp4") + "?v=6";
+const loopSrc = "assets/" + (Math.max(screen.width, screen.height) * (devicePixelRatio || 1) > 2600 ? "film_loop_4k.mp4" : "film_loop_2560.mp4");
 fetch(loopSrc, { method: "HEAD" }).then((r) => {
   if (!r.ok) return;
   heroLoop.src = loopSrc;
