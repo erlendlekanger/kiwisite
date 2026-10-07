@@ -29,6 +29,9 @@ ap.add_argument("--frames", nargs=2, type=int, default=None)
 ap.add_argument("--samples", type=int, default=16)
 ap.add_argument("--still", type=int, default=None)
 ap.add_argument("--gpu", action="store_true")
+ap.add_argument("--fps", type=int, default=24, help="output frame rate; the animation keeps its timing")
+ap.add_argument("--bounces", type=int, default=6)
+ap.add_argument("--fast-denoise", action="store_true", help="denoise on the GPU, without the slow prefilter")
 ap.add_argument("--front", default=None, help="card front image, default ../fomocard_front_black.png")
 args = ap.parse_args(sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else sys.argv[1:])
 
@@ -379,16 +382,23 @@ if args.gpu:
 scene.cycles.samples = args.samples
 scene.cycles.use_denoising = True
 scene.cycles.denoiser = "OPENIMAGEDENOISE"
-scene.cycles.denoising_prefilter = "ACCURATE"
+scene.cycles.denoising_prefilter = "FAST" if args.fast_denoise else "ACCURATE"
 scene.cycles.denoising_quality = "HIGH"
+scene.cycles.denoising_use_gpu = bool(args.gpu)
 scene.cycles.adaptive_threshold = 0.006
-scene.cycles.max_bounces = 6
+scene.cycles.max_bounces = args.bounces
 scene.render.use_persistent_data = True
 scene.view_settings.view_transform = "AgX"
 scene.view_settings.look = "AgX - Punchy"
 scene.render.resolution_x, scene.render.resolution_y = args.res
-scene.render.fps = 24
+# Keyframes are authored at 24 fps. Blender's time stretch maps them onto any other
+# rate, so 30 fps is the same film with more frames, not a faster one.
+g = math.gcd(24, args.fps)
+scene.render.fps = args.fps
+scene.render.frame_map_old, scene.render.frame_map_new = 24 // g, args.fps // g
 scene.render.image_settings.file_format = "PNG"
+if args.frames is None:
+    frames = [1, round(frames[1] * args.fps / 24)]
 scene.frame_start, scene.frame_end = frames
 os.makedirs(args.out, exist_ok=True)
 if args.still is not None:
