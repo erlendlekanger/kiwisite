@@ -265,9 +265,9 @@ cTL.to(CS, { progress: 1, ease: "none", duration: 1 }, 0)
 // intro once, then the seamless loop clip if one has been uploaded
 const intro = document.getElementById("hero-intro");
 const heroLoop = document.getElementById("hero-loop");
-fetch("assets/hero-loop.mp4?v=3", { method: "HEAD" }).then((r) => {
+fetch("assets/hero-loop.mp4?v=4", { method: "HEAD" }).then((r) => {
   if (!r.ok) return;
-  heroLoop.src = "assets/hero-loop.mp4?v=3";
+  heroLoop.src = "assets/hero-loop.mp4?v=4";
   heroLoop.preload = "auto";
   intro.addEventListener("ended", () => {
     heroLoop.hidden = false;

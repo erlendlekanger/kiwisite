@@ -28,6 +28,7 @@ ap.add_argument("--res", nargs=2, type=int, default=[1280, 800])
 ap.add_argument("--frames", nargs=2, type=int, default=None)
 ap.add_argument("--samples", type=int, default=16)
 ap.add_argument("--still", type=int, default=None)
+ap.add_argument("--gpu", action="store_true")
 args = ap.parse_args(sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else sys.argv[1:])
 
 INTRO_LEN, LOOP_LEN = 240, 96
@@ -367,8 +368,19 @@ world.color = (0, 0, 0)
 scene.world = world
 scene.render.engine = "CYCLES"
 scene.cycles.device = "CPU"
+if args.gpu:
+    cprefs = bpy.context.preferences.addons["cycles"].preferences
+    cprefs.compute_device_type = "OPTIX"
+    cprefs.get_devices()
+    for d in cprefs.devices:
+        d.use = d.type == "OPTIX"
+    scene.cycles.device = "GPU"
 scene.cycles.samples = args.samples
 scene.cycles.use_denoising = True
+scene.cycles.denoiser = "OPENIMAGEDENOISE"
+scene.cycles.denoising_prefilter = "ACCURATE"
+scene.cycles.denoising_quality = "HIGH"
+scene.cycles.adaptive_threshold = 0.006
 scene.cycles.max_bounces = 6
 scene.render.use_persistent_data = True
 scene.view_settings.view_transform = "AgX"
