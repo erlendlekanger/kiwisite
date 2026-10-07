@@ -1,5 +1,5 @@
 /* FOMOCARD · get access.
-   Virtual card: connect Phantom, claim (stored against the wallet), then shop
+   Virtual card: connect a wallet, claim (stored against the wallet), then shop
    through the SPEND checkout (Bitrefill balances paid from the wallet).
    Physical card: delivery details, stored for the operator.
    Every /api call goes to the SPEND backend (proxied by vercel.json). */
@@ -91,9 +91,9 @@ async function connect(){
       location.href = `https://phantom.app/ul/browse/${encodeURIComponent(location.href)}?ref=${encodeURIComponent(location.origin)}`;
       return false;
     }
-    sheet('Phantom not found', `<div class="ax-sheet-b">
-      <p>Install Phantom in this browser, then come back to this page. Any wallet that supports the Solana wallet standard works too.</p>
-      <a class="btn btn-light ax-block" href="https://phantom.com/download" target="_blank" rel="noopener">Get Phantom</a></div>`);
+    sheet('No wallet found', `<div class="ax-sheet-b">
+      <p>Install a Solana wallet in this browser, then come back to this page.</p>
+      <a class="btn btn-light ax-block" href="https://phantom.com/download" target="_blank" rel="noopener">Get a wallet</a></div>`);
     return false;
   }
   try {
@@ -121,7 +121,7 @@ function disconnect(){
 }
 function paintWallet(){
   const b = $('#wallet');
-  b.innerHTML = S.wallet ? `<span class="dot"></span>${esc(short(S.wallet))}` : 'Connect Phantom';
+  b.innerHTML = S.wallet ? `<span class="dot"></span>${esc(short(S.wallet))}` : 'Connect wallet';
 }
 $('#wallet').addEventListener('click', () => S.wallet ? disconnect() : connect());
 async function loadTokens(){
@@ -168,8 +168,8 @@ function paintClaim(){
         <span class="ax-k">01 · Virtual</span>
         <h2>Claim your<br>virtual card</h2>
         <p>${S.wallet ? 'Your wallet is connected. Claim the card and it is tied to this wallet for good.'
-                      : 'Connect Phantom to claim. The card is tied to the wallet that claims it, and you shop with it right away.'}</p>
-        <button class="btn btn-light" id="claim-btn" type="button">${S.wallet ? 'Claim card' : 'Connect Phantom'}</button>
+                      : 'Connect your wallet to claim. The card is tied to the wallet that claims it, and you shop with it right away.'}</p>
+        <button class="btn btn-light" id="claim-btn" type="button">${S.wallet ? 'Claim card' : 'Connect wallet'}</button>
         <span class="ax-hint">Free to claim. 4% fee per purchase. By claiming you accept the <a href="/docs">terms</a>.</span>
       </div>`;
     $('#shop').hidden = true;
@@ -393,7 +393,7 @@ function paintQuote(q){
       <div class="ax-row big"><span>You pay</span><span>${err ? '–' : esc(pay)}</span></div>
     </div>
     ${err ? `<div class="ax-note bad" style="margin-top:12px">No route from that token right now: ${esc(err)}</div>` : ''}
-    <button class="btn btn-light ax-block" style="margin-top:16px" id="pay" type="button" ${err ? 'disabled' : ''}>${S.wallet ? 'Pay ' + esc(pay) : 'Connect Phantom to pay'}</button>
+    <button class="btn btn-light ax-block" style="margin-top:16px" id="pay" type="button" ${err ? 'disabled' : ''}>${S.wallet ? 'Pay ' + esc(pay) : 'Connect wallet to pay'}</button>
     <p class="ax-small" style="margin-top:10px">One signature. Your wallet pays the shop and the card fee in the same transaction. All sales are final, see the <a href="/docs#payments">terms</a>.${S.cfg && S.cfg.dry ? ' Test mode is on, so nothing leaves your wallet.' : ''}</p>`;
   $('#pay').onclick = startPay;
 }
@@ -407,7 +407,7 @@ async function startPay(){
     set('Getting an invoice…', true);
     const p = await post('/api/checkout/prepare', {wallet: S.wallet, product_id: S.product.id, country: S.country, value: S.value, mint: S.payMint});
     if (!p.ok) throw new Error(p.error);
-    set('Confirm in Phantom…', true);
+    set('Confirm in your wallet…', true);
     const signed = await signAll(p.txs);
     set('Sending…', true);
     const r = await post('/api/checkout/send', {ref: p.ref, signed: signed.map(b64)});
@@ -417,7 +417,7 @@ async function startPay(){
     store.set('fc.orders', all.slice(0, 100));
     openOrder(p.ref);
   } catch (e) {
-    toast(/reject|cancel|denied/i.test(e.message || '') ? 'Cancelled in Phantom' : (e.message || 'Something went wrong'));
+    toast(/reject|cancel|denied/i.test(e.message || '') ? 'Cancelled in your wallet' : (e.message || 'Something went wrong'));
     if (S.quote) paintQuote(S.quote);
   } finally { S.busy = false; }
 }
@@ -542,7 +542,7 @@ function paintLinked(){
   if (!l) return;
   l.innerHTML = S.wallet
     ? `<div class="ax-linked"><span>Linked to ${esc(short(S.wallet))}</span></div>`
-    : `<div class="ax-linked"><span>Link your wallet so you can top up the card from it</span><button type="button" id="plink">Connect Phantom</button></div>`;
+    : `<div class="ax-linked"><span>Link your wallet so you can top up the card from it</span><button type="button" id="plink">Connect wallet</button></div>`;
   const b = $('#plink'); if (b) b.onclick = connect;
 }
 async function sendPhys(e){
