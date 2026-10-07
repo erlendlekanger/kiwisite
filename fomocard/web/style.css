@@ -44,7 +44,7 @@ p { color: var(--muted); font-size: 15px; line-height: 1.45; }
 #earth-canvas, #card-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 .earth-header { position: absolute; top: 15vh; left: 0; right: 0; text-align: center; display: grid; gap: 18px; justify-items: center; padding: 0 16px; }
 .earth-points { list-style: none; }
-.earth-points li { position: absolute; left: var(--x); top: var(--y); font-size: 12px; color: #d8dce4; padding: 6px 10px; border-radius: 999px; background: rgba(20,20,24,.55); border: 1px solid rgba(255,255,255,.12); backdrop-filter: blur(6px); white-space: nowrap; }
+.earth-points li { position: absolute; left: var(--x); top: var(--y); font-size: 12px; color: #d8dce4; padding: 6px 10px; border-radius: 999px; background: rgba(16,16,20,.86); border: 1px solid rgba(255,255,255,.12); white-space: nowrap; }
 .earth-points li::before { content: ""; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #fff; margin-right: 8px; vertical-align: 1px; box-shadow: 0 0 10px #fff; }
 
 /* card: transparent, so the card rises through the pinned earth */

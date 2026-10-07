@@ -1,0 +1,250 @@
+{
+ "adidas-norway": {
+  "face": "#000000",
+  "light": false
+ },
+ "adidas-uk": {
+  "face": "#000000",
+  "light": false
+ },
+ "adidas-usa": {
+  "face": "#000000",
+  "light": false
+ },
+ "airbnb-usa": {
+  "face": "#ff375c",
+  "light": false
+ },
+ "amazon-uk": {
+  "face": "#222f3e",
+  "light": false
+ },
+ "amazon-usa": {
+  "face": "#222f3e",
+  "light": false
+ },
+ "amc-theatres-usa": {
+  "face": "#ffffff",
+  "light": true
+ },
+ "apple-usa": {
+  "face": "#000000",
+  "light": false
+ },
+ "applebees-usa": {
+  "face": "#ffffff",
+  "light": true
+ },
+ "argos-uk": {
+  "face": "#ed3324",
+  "light": false
+ },
+ "asos-uk": {
+  "face": "#ffffff",
+  "light": true
+ },
+ "atandt-usa": {
+  "face": "#009ede",
+  "light": false
+ },
+ "autozone-usa": {
+  "face": "#ffffff",
+  "light": true
+ },
+ "barnes-and-noble-usa": {
+  "face": "#ffffff",
+  "light": true
+ },
+ "baskin-robbins-usa": {
+  "face": "#ea83be",
+  "light": true
+ },
+ "bass-pro-shops-usa": {
+  "face": "#ffffff",
+  "light": true
+ },
+ "bath-and-body-works-usa": {
+  "face": "#ffffff",
+  "light": true
+ },
+ "best-buy-usa": {
+  "face": "#0038b5",
+  "light": false
+ },
+ "blizzard-usa": {
+  "face": "#0275e2",
+  "light": false
+ },
+ "burlington-usa": {
+  "face": "#ffffff",
+  "light": true
+ },
+ "california-pizza-kitchen": {
+  "face": "#ffffff",
+  "light": true
+ },
+ "columbia-sportswear-usa": {
+  "face": "#0093ce",
+  "light": false
+ },
+ "cracker-barrel-usa": {
+  "face": "#ffffff",
+  "light": true
+ },
+ "currys-uk": {
+  "face": "#ffffff",
+  "light": true
+ },
+ "deliveroo-uk": {
+  "face": "#00cbbb",
+  "light": true
+ },
+ "delta-air-lines-usa": {
+  "face": "#ffffff",
+  "light": true
+ },
+ "doordash-usa": {
+  "face": "#eb1700",
+  "light": false
+ },
+ "famous-footwear-usa": {
+  "face": "#c40b0e",
+  "light": false
+ },
+ "fanatics-usa": {
+  "face": "#ffffff",
+  "light": true
+ },
+ "fandango-usa": {
+  "face": "#ffffff",
+  "light": true
+ },
+ "foodora-norway": {
+  "face": "#e01069",
+  "light": false
+ },
+ "foot-locker-usa": {
+  "face": "#000000",
+  "light": false
+ },
+ "gamestop-usa": {
+  "face": "#ffffff",
+  "light": true
+ },
+ "gap-usa": {
+  "face": "#001044",
+  "light": false
+ },
+ "groupon-usa": {
+  "face": "#ffffff",
+  "light": true
+ },
+ "hellofresh-norway": {
+  "face": "#ffffff",
+  "light": true
+ },
+ "home-depot-usa": {
+  "face": "#f96302",
+  "light": false
+ },
+ "ikea-norway": {
+  "face": "#ffdb00",
+  "light": true
+ },
+ "lowes-usa": {
+  "face": "#ffffff",
+  "light": true
+ },
+ "lyft-usa": {
+  "face": "#1e0a18",
+  "light": false
+ },
+ "macys-usa": {
+  "face": "#ffffff",
+  "light": true
+ },
+ "netflix-uk": {
+  "face": "#000000",
+  "light": false
+ },
+ "netflix-usa": {
+  "face": "#000000",
+  "light": false
+ },
+ "nike-uk": {
+  "face": "#000000",
+  "light": false
+ },
+ "nike-usa": {
+  "face": "#000000",
+  "light": false
+ },
+ "nordstrom-usa": {
+  "face": "#fae445",
+  "light": true
+ },
+ "old-navy-usa": {
+  "face": "#ffffff",
+  "light": true
+ },
+ "primark-uk": {
+  "face": "#1cafda",
+  "light": false
+ },
+ "sephora-usa": {
+  "face": "#ffffff",
+  "light": true
+ },
+ "southwest-airlines-usa": {
+  "face": "#1b2d82",
+  "light": false
+ },
+ "spotify-uk": {
+  "face": "#111111",
+  "light": false
+ },
+ "spotify-usa": {
+  "face": "#111111",
+  "light": false
+ },
+ "starbucks-usa": {
+  "face": "#007041",
+  "light": false
+ },
+ "steam-usa": {
+  "face": "#191817",
+  "light": false
+ },
+ "target-usa": {
+  "face": "#ffffff",
+  "light": true
+ },
+ "tesco-uk": {
+  "face": "#ffffff",
+  "light": true
+ },
+ "uber-eats-uk": {
+  "face": "#241d22",
+  "light": false
+ },
+ "uber-eats-usa": {
+  "face": "#3fc165",
+  "light": true
+ },
+ "ulta-beauty-usa": {
+  "face": "#ff741f",
+  "light": false
+ },
+ "walmart-usa": {
+  "face": "#0072dd",
+  "light": false
+ },
+ "wolt-norway": {
+  "face": "#00bbde",
+  "light": false
+ },
+ "zalando-norway": {
+  "face": "#ffffff",
+  "light": true
+ }
+}

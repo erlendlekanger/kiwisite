@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Get access · FOMOCARD</title>
+<meta name="description" content="Claim a virtual FOMOCARD with Phantom and spend from your Solana wallet, or request the physical card.">
+<link rel="icon" href="assets/favicon.png">
+<link rel="preload" href="assets/fonts/NeueMontreal-Medium.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="access.css">
+</head>
+<body class="ax-body">
+<header class="nav ax-nav">
+  <a class="brand" href="/">FOMOCARD</a>
+  <button class="btn btn-light ax-wallet" id="wallet" type="button">Connect Phantom</button>
+</header>
+
+<main class="ax" id="app">
+
+  <!-- choose a card -->
+  <section class="ax-view" data-view="choose">
+    <div class="ax-head">
+      <span class="ax-k">Get access</span>
+      <h1>Choose<br>your card</h1>
+    </div>
+    <div class="ax-pair">
+      <article class="ax-opt" data-go="virtual">
+        <div class="ax-stage"><div class="ax-tilt"><img src="assets/card_virtual.png" alt="FOMOCARD Virtual" draggable="false"></div></div>
+        <div class="ax-meta">
+          <span class="ax-k">01 · Virtual</span>
+          <h2>FOMOCARD<br>Virtual</h2>
+          <ul class="ax-list">
+            <li>Claim it in seconds with Phantom</li>
+            <li>Spend at shops in your country</li>
+            <li>Pay with SOL, USDC or any token you hold</li>
+          </ul>
+          <div class="ax-price"><b>Free</b><span>4% fee per purchase</span></div>
+          <a class="btn btn-light ax-cta" href="#virtual">Claim virtual card</a>
+        </div>
+      </article>
+      <article class="ax-opt" data-go="physical">
+        <div class="ax-stage"><div class="ax-tilt"><img src="assets/card_front.png" alt="FOMOCARD Physical" draggable="false"></div></div>
+        <div class="ax-meta">
+          <span class="ax-k">02 · Physical</span>
+          <h2>FOMOCARD<br>Physical</h2>
+          <ul class="ax-list">
+            <li>Posted to your door</li>
+            <li>Top it up from this site</li>
+            <li>Pay in any shop that takes cards</li>
+          </ul>
+          <div class="ax-price"><b>1% fee</b><span>on every top-up</span></div>
+          <a class="btn btn-light ax-cta" href="#physical">Request physical card</a>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- virtual: claim, then shop -->
+  <section class="ax-view" data-view="virtual" hidden>
+    <a class="ax-back" href="#">All cards</a>
+    <div class="ax-claim" id="claim"></div>
+    <div class="ax-shop" id="shop" hidden>
+      <div class="ax-shop-head">
+        <div>
+          <span class="ax-k">Spend it</span>
+          <h2>Shop with<br>your card</h2>
+          <p>Pick a country and a shop, choose an amount and pay from your wallet. The balance lands on your account at the shop in seconds.</p>
+        </div>
+        <button class="ax-ghost" id="orders-btn" type="button">Your orders</button>
+      </div>
+      <div class="ax-tools">
+        <button class="ax-country" id="country" type="button"></button>
+        <label class="ax-search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="q" placeholder="Search shops" autocomplete="off"></label>
+      </div>
+      <div class="ax-chips" id="chips"></div>
+      <div class="ax-grid" id="grid"></div>
+      <p class="ax-powered">Shop balances supplied by <a href="https://www.bitrefill.com" target="_blank" rel="noopener">Bitrefill</a></p>
+    </div>
+  </section>
+
+  <!-- physical: delivery details -->
+  <section class="ax-view" data-view="physical" hidden>
+    <a class="ax-back" href="#">All cards</a>
+    <div class="ax-phys">
+      <div class="ax-phys-l">
+        <div class="ax-tilt ax-phys-card"><img src="assets/card_front.png" alt="FOMOCARD Physical" draggable="false"></div>
+        <span class="ax-k">02 · Physical</span>
+        <h2>Request your<br>physical card</h2>
+        <p>Tell us where to send it. Once it arrives you move funds to it from this site and pay with it in any shop that takes cards.</p>
+        <div class="ax-price"><b>1% fee</b><span>on every top-up to the card</span></div>
+      </div>
+      <div class="ax-panel" id="phys"></div>
+    </div>
+  </section>
+</main>
+
+<footer class="ax-foot"><span>fomo.family</span><a href="/docs">Docs and terms</a></footer>
+
+<div class="ax-reveal" id="reveal" hidden></div>
+<div class="ax-sheet-wrap" id="sheet" hidden></div>
+<div class="ax-toast" id="toast"></div>
+
+<script src="access.js"></script>
+</body>
+</html>

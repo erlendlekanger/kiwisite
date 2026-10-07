@@ -12,21 +12,28 @@
 <body>
 <header class="nav">
   <a class="brand" href="#top">FOMOCARD</a>
-  <a class="btn btn-light" href="https://spend.family">Get access</a>
+  <a class="btn btn-light" href="/access">Get access</a>
 </header>
 
 <main id="top">
   <!-- 1. hero: the vault film -->
   <section class="hero">
     <!-- intro plays once and holds its last frame; hero-loop.mp4, if present, takes over on repeat -->
-    <video class="hero-video" id="hero-intro" autoplay muted playsinline preload="auto">
-      <source src="assets/hero.mp4?v=4" type="video/mp4">
-    </video>
+    <video class="hero-video" id="hero-intro" autoplay muted playsinline preload="auto"></video>
+    <script>
+      // 4K only where the screen has the pixels for it; decoding 3840px on a smaller
+      // screen costs frames and shows nothing more
+      (function () {
+        var v = document.getElementById("hero-intro");
+        var px = Math.max(screen.width, screen.height) * (window.devicePixelRatio || 1);
+        v.src = "assets/" + (px > 2600 ? "hero.mp4" : "hero_2560.mp4") + "?v=5";
+      })();
+    </script>
     <video class="hero-video" id="hero-loop" muted loop playsinline preload="none" hidden></video>
     <div class="hero-shade"></div>
     <div class="hero-copy">
       <h1>Built for<br>the fomo family</h1>
-      <a class="btn btn-light" href="https://spend.family">Get access</a>
+      <a class="btn btn-light" href="/access">Get access</a>
     </div>
   </section>
 
@@ -34,15 +41,15 @@
   <section class="earth">
     <canvas id="earth-canvas" aria-hidden="true"></canvas>
     <div class="earth-header">
-      <h2>Infrastructure<br>for how you spend</h2>
-      <p>At home, abroad and everywhere in between.<br>Your wallet pays the shop directly.</p>
-      <a class="btn btn-light" href="https://spend.family">Get access</a>
+      <h2>Spend it<br>around the world</h2>
+      <p>Pick a country and a shop, then pay from your Solana wallet.<br>The balance lands on your account at the shop in seconds.</p>
+      <a class="btn btn-light" href="/access">Get access</a>
     </div>
     <ul class="earth-points">
       <li style="--x:22%;--y:70%">Uber Eats · New York</li>
       <li style="--x:62%;--y:64%">Wolt · Oslo</li>
-      <li style="--x:78%;--y:78%">Nike · London</li>
-      <li style="--x:38%;--y:84%">Netflix · Berlin</li>
+      <li style="--x:78%;--y:78%">Deliveroo · London</li>
+      <li style="--x:38%;--y:84%">IKEA · Berlin</li>
     </ul>
   </section>
 
@@ -51,22 +58,22 @@
     <div class="card-sticky">
       <canvas id="card-canvas" aria-hidden="true"></canvas>
       <div class="card-header">
-        <h2>The card is only<br>the beginning</h2>
-        <a class="btn btn-light" href="https://spend.family">Get access</a>
+        <h2>Your shops<br>on one card</h2>
+        <a class="btn btn-light" href="/access">Get access</a>
       </div>
     </div>
   </section>
 
-  <!-- 4. close -->
+  <!-- 4. close: the way in -->
   <section class="close">
-    <h2>A quieter way<br>to spend what you hold</h2>
-    <p>No account. No ID. Nothing held for you.</p>
-    <a class="btn btn-dark" href="https://spend.family">Open spend.family</a>
+    <h2>Get your<br>FOMOCARD</h2>
+    <p>Claim the virtual card with Phantom in seconds,<br>or request the physical card and we send it to you.</p>
+    <a class="btn btn-dark" href="/access">Get access</a>
   </section>
 </main>
 
 <footer class="foot">
-  <span>fomo.family</span>
+  <span>fomo.family · <a href="/docs" style="text-decoration:underline;text-underline-offset:3px">Docs and terms</a></span>
   <span class="credits">Earth textures © Solar System Scope (CC BY 4.0) · Shop names and logos belong to their owners and show where your balance can be topped up</span>
 </footer>
 

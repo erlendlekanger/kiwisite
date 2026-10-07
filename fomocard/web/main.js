@@ -28,8 +28,13 @@ function makeRenderer(canvas, exposure, transparent = false) {
   r.toneMappingExposure = exposure;
   return r;
 }
+// every texture, so the warm-up below can wait for all of them
+const texReady = [];
 function tex(renderer, url, srgb = true, onLoad) {
-  const t = loader.load(url, onLoad, undefined, onLoad);
+  let done;
+  texReady.push(new Promise((r) => (done = r)));
+  const fin = () => { done(); if (onLoad) onLoad(); };
+  const t = loader.load(url, fin, undefined, fin);
   if (srgb) t.colorSpace = THREE.SRGBColorSpace;
   t.anisotropy = renderer.capabilities.getMaxAnisotropy();
   return t;
@@ -227,7 +232,26 @@ function bakeTubeEnv() {
   const env = pmrem.fromScene(envScene, 0.015).texture;
   for (const m of glossy) { m.envMap = env; m.needsUpdate = true; }
 }
-Promise.all(tilePromises).then(() => requestAnimationFrame(bakeTubeEnv));
+// WARM-UP. A WebGL scene is cheap to draw but expensive the first time: shaders
+// compile and every texture is uploaded to the GPU on its first frame. Left alone,
+// that happens the moment a section scrolls into view, which is the lag spike.
+// So it all happens here, while the hero film is on screen and nothing is moving.
+// The tube reflection is baked first because it changes the materials, and a
+// changed material would compile again.
+Promise.all(texReady).then(async () => {
+  bakeTubeEnv();
+  const upload = (r, t) => { if (t && t.isTexture) r.initTexture(t); };
+  for (const [r, s, c] of [[eR, eScene, eCam], [cR, cScene, cCam]]) {
+    s.traverse((o) => {
+      for (const m of [].concat(o.material || [])) for (const k of ["map", "bumpMap", "envMap"]) upload(r, m[k]);
+    });
+    try { await r.compileAsync(s, c); } catch (e) { r.compile(s, c); }
+  }
+  for (const u of [eU.uDay, eU.uNight, eU.uClouds]) upload(eR, u.value);
+  // one real frame of each scene, off screen, so the first visible frame has nothing left to do
+  eR.render(eScene, eCam);
+  cR.render(cScene, cCam);
+});
 
 // card-section animation state, driven by the scroll timeline below
 const CS = { progress: 0.25, y: CARD_Y - 2, rotY: -1.5 * Math.PI, tubeAlpha: 0 };
@@ -251,14 +275,15 @@ eTL.fromTo(ES, { rotY: -Math.PI / 1.4 }, { rotY: -Math.PI / 5, ease: "none", dur
   .set({}, {}, 1);
 
 // card: from 10% above its top to 90% of its bottom
-gsap.set(".card-header", { opacity: 0, yPercent: 8, filter: "blur(16px)" });
+// opacity and transform only: an animated blur filter repaints the whole block every frame
+gsap.set(".card-header", { opacity: 0, yPercent: 8 });
 const cTL = gsap.timeline({
   scrollTrigger: { trigger: ".card", start: "top 10%", end: "bottom 90%", scrub: 1, invalidateOnRefresh: true },
 });
 cTL.to(CS, { progress: 1, ease: "none", duration: 1 }, 0)
   .fromTo(CS, { y: CARD_Y - 2 }, { y: CARD_Y, duration: 0.5, ease: "power3.out" }, 0)
   .fromTo(CS, { rotY: -1.5 * Math.PI }, { rotY: 0, duration: 0.7, ease: "power1.out" }, 0)
-  .to(".card-header", { opacity: 1, yPercent: 0, filter: "blur(0px)", duration: 0.2 }, 0.4)
+  .to(".card-header", { opacity: 1, yPercent: 0, duration: 0.2 }, 0.4)
   .fromTo(CS, { tubeAlpha: 0 }, { tubeAlpha: 1, duration: 0.2, ease: "none" }, 0.075);
 
 // ============================================================ HERO FILM
@@ -280,9 +305,13 @@ function sizeOf(canvas) {
   const b = canvas.getBoundingClientRect();
   return { w: Math.max(1, Math.round(b.width)), h: Math.max(1, Math.round(b.height)) };
 }
+// a phone's address bar fires resize while scrolling; reallocating the buffers for a
+// size that has not changed is a spike, so only a real change does anything
 function resize() {
   for (const [r, cam, cv] of [[eR, eCam, earthCanvas], [cR, cCam, cardCanvas]]) {
     const { w, h } = sizeOf(cv);
+    if (cv.__w === w && cv.__h === h) continue;
+    cv.__w = w; cv.__h = h;
     r.setSize(w, h, false);
     cam.aspect = w / h;
     cam.updateProjectionMatrix();
@@ -293,7 +322,13 @@ function resize() {
 resize();
 addEventListener("resize", resize);
 
-const onScreen = (el) => { const b = el.getBoundingClientRect(); return b.bottom > -50 && b.top < innerHeight + 50; };
+// visibility from an observer, not a getBoundingClientRect per frame: reading layout
+// right after GSAP has written styles forces a full layout on every frame
+const visible = new Map();
+const io = new IntersectionObserver((es) => es.forEach((e) => visible.set(e.target, e.isIntersecting)), { rootMargin: "50px 0px" });
+io.observe(earthCanvas);
+io.observe(cardCanvas);
+const onScreen = (el) => visible.get(el) === true;
 const clock = new THREE.Clock();
 let idle = 0;
 function tick() {

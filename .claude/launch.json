@@ -207,16 +207,16 @@
       "port": 8979
     },
     {
-      "name": "fomocard-web",
+      "name": "fomocard-dev",
       "runtimeExecutable": "py",
       "runtimeArgs": [
-        "-m",
-        "http.server",
-        "4180",
-        "--directory",
-        "fomocard/web"
+        "fomocard/dev.py"
       ],
-      "port": 4180
+      "port": 4181,
+      "env": {
+        "FOMOCARD_DRY": "1",
+        "PYTHONUTF8": "1"
+      }
     }
   ]
 }

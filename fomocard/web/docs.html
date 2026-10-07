@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Docs · FOMOCARD</title>
+<meta name="description" content="How FOMOCARD works, its fees, and the terms, disclaimers and limits of liability that apply to the site, the virtual card and the physical card.">
+<link rel="icon" href="assets/favicon.png">
+<link rel="preload" href="assets/fonts/NeueMontreal-Medium.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="access.css">
+<style>
+  .dx { max-width: 1240px; margin: 0 auto; padding: 130px 28px 100px; display: grid; grid-template-columns: 240px 1fr; gap: 72px; }
+  .dx-toc { position: sticky; top: 110px; align-self: start; display: grid; gap: 4px; max-height: calc(100vh - 140px); overflow-y: auto; padding-right: 8px; }
+  .dx-toc a { color: var(--muted); font-size: 14px; padding: 6px 0; transition: color .2s; }
+  .dx-toc a:hover, .dx-toc a.on { color: var(--ink); }
+  .dx-toc .ax-k { margin-bottom: 10px; }
+  .dx-body { max-width: 720px; }
+  .dx-body > header { display: grid; gap: 18px; margin-bottom: 56px; }
+  .dx-body h1 { font-size: 64px; }
+  .dx-body section { padding-top: 28px; margin-top: 28px; border-top: 1px solid var(--line); scroll-margin-top: 100px; }
+  .dx-body h2 { font-size: 30px; margin-bottom: 16px; }
+  .dx-body h3 { font-family: var(--title); font-weight: 500; font-size: 17px; margin: 22px 0 8px; color: #e1e5e5; }
+  .dx-body p, .dx-body li { color: #b9b9be; font-size: 15px; line-height: 1.7; }
+  .dx-body p + p { margin-top: 12px; }
+  .dx-body ul { padding-left: 20px; display: grid; gap: 6px; margin-top: 10px; }
+  .dx-body strong { color: var(--ink); font-weight: 500; }
+  .dx-caps { text-transform: uppercase; font-size: 13px !important; letter-spacing: .02em; line-height: 1.75 !important; }
+  .dx-foot { margin-top: 60px; font-size: 13px; color: var(--muted); }
+  @media (max-width: 900px) {
+    .dx { grid-template-columns: 1fr; gap: 0; padding: 100px 16px 70px; }
+    .dx-toc { display: none; }
+    .dx-body h1 { font-size: 40px; }
+    .dx-body h2 { font-size: 24px; }
+  }
+</style>
+</head>
+<body class="ax-body">
+<header class="nav ax-nav">
+  <a class="brand" href="/">FOMOCARD</a>
+  <a class="btn btn-light" href="/access">Get access</a>
+</header>
+
+<main class="dx">
+  <nav class="dx-toc" aria-label="Contents">
+    <span class="ax-k">Contents</span>
+    <a href="#overview">Overview</a>
+    <a href="#virtual">The virtual card</a>
+    <a href="#physical">The physical card</a>
+    <a href="#shops">Shop balances</a>
+    <a href="#fees">Fees</a>
+    <a href="#payments">Payments and finality</a>
+    <a href="#no-guarantee">No guarantees</a>
+    <a href="#liability">Limitation of liability</a>
+    <a href="#risks">Risks</a>
+    <a href="#wallet">Your wallet</a>
+    <a href="#eligibility">Eligibility and local law</a>
+    <a href="#prohibited">Prohibited use</a>
+    <a href="#privacy">Privacy</a>
+    <a href="#third-parties">Third parties</a>
+    <a href="#ip">Intellectual property</a>
+    <a href="#indemnity">Indemnity</a>
+    <a href="#termination">Suspension and termination</a>
+    <a href="#changes">Changes</a>
+    <a href="#general">General</a>
+  </nav>
+
+  <article class="dx-body">
+    <header>
+      <span class="ax-k">Docs · Last updated October 7, 2026</span>
+      <h1>Terms and<br>disclaimers</h1>
+      <p>This page explains how FOMOCARD works and the terms that apply when you use the site, the virtual card or the physical card. By using any part of FOMOCARD you agree to everything on this page. If you do not agree, do not use it.</p>
+    </header>
+
+    <section id="overview">
+      <h2>Overview</h2>
+      <p>FOMOCARD ("FOMOCARD", "we", "us", "our") is a website that lets you buy balances for shops with funds from your own Solana wallet, and request a physical card. "You" means the person using the site.</p>
+      <p>FOMOCARD is not a bank, not an e-money institution, not a payment institution, not a card issuer and not a financial adviser. Nothing on the site is an offer of a deposit account, credit, investment or any regulated financial product. We do not hold your funds. Payments go directly from your wallet in a transaction you approve yourself.</p>
+      <p>Everything on the site is provided for convenience. Features can change, stop working or be removed at any time without notice.</p>
+    </section>
+
+    <section id="virtual">
+      <h2>The virtual card</h2>
+      <p>The virtual card is claimed by connecting a Solana wallet, such as Phantom, and pressing claim. The card is recorded against the wallet address that claimed it.</p>
+      <ul>
+        <li><strong>It is a visual representation only.</strong> The virtual card has no card number, expiry date, security code or balance of its own. It cannot be used at a card terminal or in a card field at any checkout. The digits shown on it are decorative.</li>
+        <li>Shopping with the virtual card means buying a balance for a specific shop through this site, paid from your wallet. See <a href="#shops">Shop balances</a>.</li>
+        <li>A claim is tied to one wallet address. We cannot move it to another wallet, and losing access to your wallet means losing access to the card.</li>
+        <li>We may change, reset, suspend or remove virtual cards at any time, for any reason, including technical reasons.</li>
+      </ul>
+    </section>
+
+    <section id="physical">
+      <h2>The physical card</h2>
+      <p>You can request a physical card by entering your name, email address and delivery address. Submitting the form is a request, not an order, a purchase or a contract for delivery.</p>
+      <ul>
+        <li><strong>There is no guarantee that you will receive a physical card.</strong> We may decline, delay or cancel any request, in any country, for any reason or none, and we are not obliged to explain why.</li>
+        <li>Any delivery time we mention is an estimate. Post can be delayed, lost, damaged, held by customs or returned. We are not responsible for the postal service, couriers or customs authorities, or for any duty, tax or fee they charge.</li>
+        <li>Check your details carefully. A card sent to an address you entered wrongly is your responsibility.</li>
+        <li>When a card is on its way, we contact you at the email address you gave. We never ask for your wallet's secret recovery phrase or private key. Anyone who does is not us.</li>
+        <li>Top-ups to the physical card are made from this site and carry a fee of 1% of the amount topped up. Whether a shop, terminal or website accepts the card is outside our control. A card can be declined at any time, by anyone in the payment chain, without notice.</li>
+        <li>The physical card remains subject to the terms of whichever provider operates it. Those terms apply in addition to these.</li>
+      </ul>
+    </section>
+
+    <section id="shops">
+      <h2>Shop balances</h2>
+      <p>The shops listed on the site, and the balances you buy for them, are supplied by a third party, Bitrefill. When you buy, an invoice is created with the supplier and paid from your wallet together with our fee.</p>
+      <ul>
+        <li>What you receive is a balance, code, voucher or link issued by the supplier or the shop, for the shop and country shown. It is redeemed with that shop, under that shop's own terms.</li>
+        <li>Each balance only works in the country it is listed for. Choosing the wrong country or shop is your responsibility.</li>
+        <li>Some shops have their own limits, such as one top-up per account per day. Shops can refuse, freeze or cancel a balance under their own rules, and we cannot overrule them.</li>
+        <li>Prices are shown before you pay. Amounts in other currencies are converted at a rate set when the invoice is created, which can differ from the figure shown a moment earlier.</li>
+        <li>Delivery is usually quick but is not guaranteed. A supplier can be slow, out of stock or unavailable.</li>
+        <li>Keep your code private. Anyone who has it can use it, and a used or shared code cannot be replaced.</li>
+      </ul>
+    </section>
+
+    <section id="fees">
+      <h2>Fees</h2>
+      <ul>
+        <li><strong>Virtual card:</strong> free to claim. Each shop purchase carries a fee of 4% of the supplier price, with a minimum of $0.25, shown in full before you sign.</li>
+        <li><strong>Physical card:</strong> 1% of every top-up to the card.</li>
+        <li><strong>Network fees:</strong> every Solana transaction costs a small network fee, paid to the network and not to us. Paying with a token other than USDC includes a swap, which can carry price impact.</li>
+      </ul>
+      <p>Fees can change at any time. The fee that applies is the one shown at the moment you approve the transaction. Fees are not refunded.</p>
+    </section>
+
+    <section id="payments">
+      <h2>Payments and finality</h2>
+      <p>Transactions on the Solana blockchain cannot be reversed. Once you approve a transaction in your wallet and it is confirmed, it is final, even if it was a mistake.</p>
+      <ul>
+        <li><strong>All sales are final.</strong> There are no refunds, returns, exchanges or chargebacks, except where the law that applies to you says otherwise and cannot be excluded.</li>
+        <li>If a payment goes through but a balance is not delivered, contact us with the order reference. We will look into it, but we cannot promise any particular outcome.</li>
+        <li>You are responsible for reading what your wallet asks you to sign before you approve it.</li>
+      </ul>
+    </section>
+
+    <section id="no-guarantee">
+      <h2>No guarantees</h2>
+      <p class="dx-caps">The site, the virtual card, the physical card, shop balances and everything else we offer are provided "as is" and "as available", with all faults and without any warranty of any kind, whether express, implied or statutory. To the fullest extent permitted by law we disclaim all warranties, including any warranty of merchantability, fitness for a particular purpose, title, non-infringement, accuracy, availability, security and uninterrupted or error-free operation.</p>
+      <p>In plain words:</p>
+      <ul>
+        <li>We do not guarantee that the site works, that it is available, or that it is free of errors, bugs, delays or interruptions.</li>
+        <li>We do not guarantee that the virtual card works, that it can be claimed, or that it stays available.</li>
+        <li>We do not guarantee that you will ever receive a physical card, that it arrives on time, or that it works when it does.</li>
+        <li>We do not guarantee that any shop, supplier, wallet, blockchain, network or other third party behaves as expected.</li>
+        <li>Errors can always happen. Prices, balances, catalogues and information on the site can be wrong, out of date or incomplete.</li>
+      </ul>
+    </section>
+
+    <section id="liability">
+      <h2>Limitation of liability</h2>
+      <p class="dx-caps">To the fullest extent permitted by law, FOMOCARD and its operators, contributors, partners and suppliers are not liable for any indirect, incidental, special, consequential, exemplary or punitive damages, or for any loss of profits, revenue, funds, tokens, data, goodwill or opportunity, arising out of or in connection with the site, the cards or these terms, however caused and on any theory of liability, even if advised of the possibility of such damages.</p>
+      <p class="dx-caps">To the fullest extent permitted by law, our total liability for any claim is limited to the fees you paid to us in the thirty days before the event giving rise to the claim, or fifty US dollars, whichever is lower.</p>
+      <p>This includes, without limitation, losses caused by:</p>
+      <ul>
+        <li>errors, bugs or outages on the site or in its code;</li>
+        <li>a failed, delayed, lost or wrongly delivered physical card;</li>
+        <li>a virtual card that does not work or is removed;</li>
+        <li>a shop or supplier refusing, cancelling or failing to deliver a balance;</li>
+        <li>blockchain congestion, failed transactions, forks, network fees or price movements;</li>
+        <li>wallet software, browser extensions or devices, including Phantom;</li>
+        <li>mistakes you make, such as choosing the wrong shop, country or amount, or entering wrong details;</li>
+        <li>hacks, phishing, malware or anyone gaining access to your wallet or email;</li>
+        <li>anything outside our reasonable control.</li>
+      </ul>
+      <p>Some jurisdictions do not allow certain limits on liability. Where that is the case, our liability is limited to the smallest amount the law allows.</p>
+    </section>
+
+    <section id="risks">
+      <h2>Risks</h2>
+      <p>Using crypto assets carries real risk. By using FOMOCARD you confirm that you understand and accept these risks, including:</p>
+      <ul>
+        <li>the value of tokens can fall sharply, including to zero;</li>
+        <li>transactions are irreversible and can fail while still costing a network fee;</li>
+        <li>smart contracts, exchanges and swap routes can contain bugs or be exploited;</li>
+        <li>laws and regulations on crypto assets change and can affect whether a service is available to you;</li>
+        <li>third-party services can stop working, change their terms or close.</li>
+      </ul>
+    </section>
+
+    <section id="wallet">
+      <h2>Your wallet</h2>
+      <p>You are solely responsible for your wallet, your device and your keys. We never have access to your private key or recovery phrase and we can never recover them. We will never ask for them. A lost key means lost funds and a lost virtual card, and we cannot help.</p>
+    </section>
+
+    <section id="eligibility">
+      <h2>Eligibility and local law</h2>
+      <ul>
+        <li>You must be at least 18 years old, or the age of majority where you live if that is higher.</li>
+        <li>You may only use FOMOCARD where doing so is legal. It is your responsibility to know and follow the laws that apply to you, including tax laws. We do not give tax advice.</li>
+        <li>You may not use FOMOCARD if you are subject to sanctions, or if you are in, or ordinarily resident in, a country or region subject to comprehensive sanctions.</li>
+      </ul>
+    </section>
+
+    <section id="prohibited">
+      <h2>Prohibited use</h2>
+      <p>You agree not to use FOMOCARD:</p>
+      <ul>
+        <li>for money laundering, terrorist financing, fraud or any other illegal activity;</li>
+        <li>with funds that are not yours or that come from illegal activity;</li>
+        <li>to resell balances or cards commercially without our written permission;</li>
+        <li>to interfere with, overload, scrape, reverse engineer or attack the site;</li>
+        <li>to request a physical card with someone else's details or false details.</li>
+      </ul>
+    </section>
+
+    <section id="privacy">
+      <h2>Privacy</h2>
+      <p>We keep what we need to run the service and nothing more:</p>
+      <ul>
+        <li><strong>Virtual card:</strong> the wallet address that claimed it and the time of the claim.</li>
+        <li><strong>Shop purchases:</strong> the order reference, shop, country, amount, wallet address and transaction signatures, kept for up to 30 days. Wallet addresses and transactions are public on the blockchain by nature.</li>
+        <li><strong>Physical card requests:</strong> your name, email address, phone number if given, delivery address and linked wallet if given. These are used to send the card and to contact you about it.</li>
+      </ul>
+      <p>We do not sell your personal data. We share it only with the providers needed to deliver what you asked for, such as the shop balance supplier, card provider and postal service, or when the law requires it. Your browser stores a few preferences locally, such as your country and your recent orders. You can ask us to delete your delivery details at any time.</p>
+    </section>
+
+    <section id="third-parties">
+      <h2>Third parties</h2>
+      <p>FOMOCARD relies on services we do not control, including Bitrefill, Solana, Jupiter, wallet providers such as Phantom, hosting providers and postal services. Their own terms and privacy policies apply to your use of them. We are not responsible for their acts, omissions, outages or errors.</p>
+      <p>Shop names and logos shown on the site belong to their owners. They are shown only to identify where a balance can be used, and do not mean that any shop endorses, sponsors or is affiliated with FOMOCARD.</p>
+    </section>
+
+    <section id="ip">
+      <h2>Intellectual property</h2>
+      <p>The FOMOCARD name, logo, card designs, site design and content are ours or used with permission. You may not copy, modify or use them without our written permission, except for normal personal use of the site.</p>
+    </section>
+
+    <section id="indemnity">
+      <h2>Indemnity</h2>
+      <p>You agree to defend, indemnify and hold harmless FOMOCARD and its operators, contributors and partners from any claim, loss, liability, damage or expense, including reasonable legal fees, arising out of your use of the site or cards, your breach of these terms, or your breach of any law or the rights of anyone else.</p>
+    </section>
+
+    <section id="termination">
+      <h2>Suspension and termination</h2>
+      <p>We may suspend, restrict or end your access to any part of FOMOCARD, cancel a physical card request, or remove a virtual card at any time, with or without notice, for any reason, including suspected misuse, legal requirements or technical reasons. We may also discontinue FOMOCARD entirely. Sections on fees, finality, no guarantees, limitation of liability, indemnity and general terms survive any termination.</p>
+    </section>
+
+    <section id="changes">
+      <h2>Changes</h2>
+      <p>We may update this page at any time. The date at the top shows when it last changed. Continuing to use FOMOCARD after a change means you accept the updated terms.</p>
+    </section>
+
+    <section id="general">
+      <h2>General</h2>
+      <ul>
+        <li>These terms are the entire agreement between you and us about FOMOCARD.</li>
+        <li>If any part of these terms is found unenforceable, the rest stays in effect, and the unenforceable part is applied to the greatest extent allowed.</li>
+        <li>Our failure to enforce any part of these terms is not a waiver of it.</li>
+        <li>You may not transfer your rights under these terms. We may transfer ours.</li>
+        <li>Nothing on this site is financial, legal or tax advice.</li>
+      </ul>
+      <p class="dx-foot">FOMOCARD · fomo.family</p>
+    </section>
+  </article>
+</main>
+
+<script>
+  // highlight the section being read
+  (function () {
+    var links = [].slice.call(document.querySelectorAll('.dx-toc a'));
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        links.forEach(function (a) { a.classList.toggle('on', a.getAttribute('href') === '#' + e.target.id); });
+      });
+    }, { rootMargin: '-30% 0px -60% 0px' });
+    document.querySelectorAll('.dx-body section').forEach(function (s) { io.observe(s); });
+  })();
+</script>
+</body>
+</html>

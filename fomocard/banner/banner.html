@@ -1,0 +1,41 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+@font-face { font-family: "Neue Montreal"; src: url("NeueMontreal-Medium.woff2") format("woff2"); font-weight: 500; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 1500px; height: 500px; overflow: hidden; background: #070708; }
+.b { position: relative; width: 1500px; height: 500px; overflow: hidden;
+  background:
+    radial-gradient(520px 360px at 1120px 250px, rgba(58,86,200,.42), rgba(58,86,200,0) 70%),
+    radial-gradient(420px 300px at 1280px 330px, rgba(200,210,230,.10), rgba(200,210,230,0) 70%),
+    radial-gradient(700px 500px at 420px 230px, rgba(255,255,255,.045), rgba(255,255,255,0) 70%),
+    linear-gradient(180deg, #0b0b0e, #050506); perspective: 1600px; }
+.grain { position: absolute; inset: 0; opacity: .07; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"); }
+/* speed streaks: the air the cards cut through */
+.streak { position: absolute; height: 2px; border-radius: 2px; transform-origin: right center;
+  background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.55)); filter: blur(.4px); }
+.card { position: absolute; width: 470px; aspect-ratio: 3370 / 2125; transform-style: preserve-3d; }
+.card img { width: 100%; height: 100%; display: block; border-radius: 4.2% / 6.6%;
+  box-shadow: 0 50px 80px rgba(0,0,0,.65), 0 0 0 1px rgba(255,255,255,.07); }
+.card .sheen { position: absolute; inset: 0; border-radius: 4.2% / 6.6%;
+  background: linear-gradient(115deg, rgba(255,255,255,0) 38%, rgba(255,255,255,.22) 48%, rgba(255,255,255,0) 58%); }
+.c1 { left: 880px; top: 92px; width: 360px; transform: rotateZ(-13deg) rotateY(-22deg) rotateX(12deg); }
+.c2 { left: 1115px; top: 185px; width: 320px; transform: rotateZ(10deg) rotateY(-28deg) rotateX(-10deg); }
+.logo { position: absolute; left: 130px; top: 155px; display: flex; align-items: center; gap: 30px; }
+.logo img { width: 150px; height: 150px; }
+.logo h1 { font-family: "Neue Montreal", Arial, sans-serif; font-weight: 500; font-size: 68px; letter-spacing: -.01em; line-height: .9;
+  background: linear-gradient(180deg, #f4f6fb, #c9cfdc 55%, #9aa3b8); -webkit-background-clip: text; color: transparent; }
+.logo small { display: block; margin-top: 14px; font-family: "Neue Montreal", Arial, sans-serif; font-size: 20px; letter-spacing: .02em; color: #8d93a1; -webkit-text-fill-color: #8d93a1; }
+</style></head>
+<body><div class="b">
+  <div class="grain"></div>
+              <div class="streak" style="left:700px;top:150px;width:220px;transform:rotate(-13deg)"></div>
+  <div class="streak" style="left:745px;top:205px;width:150px;opacity:.55;transform:rotate(-13deg)"></div>
+  <div class="streak" style="left:760px;top:300px;width:170px;opacity:.4;transform:rotate(-13deg)"></div>
+  <div class="streak" style="left:980px;top:395px;width:190px;opacity:.45;transform:rotate(10deg)"></div>
+  <div class="streak" style="left:1010px;top:440px;width:130px;opacity:.3;transform:rotate(10deg)"></div>
+  <div class="card c2"><img src="card_front.png"><div class="sheen"></div></div>
+  <div class="card c1"><img src="card_virtual.png"><div class="sheen"></div></div>
+  <div class="logo"><img src="mark.svg"><div><h1>FOMOCARD</h1><small>Spend your wallet anywhere</small></div></div>
+</div></body></html>
