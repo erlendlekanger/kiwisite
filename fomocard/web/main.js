@@ -286,6 +286,14 @@ cTL.to(CS, { progress: 1, ease: "none", duration: 1 }, 0)
   .to(".card-header", { opacity: 1, yPercent: 0, duration: 0.2 }, 0.4)
   .fromTo(CS, { tubeAlpha: 0 }, { tubeAlpha: 1, duration: 0.2, ease: "none" }, 0.075);
 
+// ============================================================ SCROLL CUE
+// fades once the visitor has started scrolling; a click glides to the next section
+const cue = document.querySelector(".scroll-cue");
+if (cue) {
+  lenis.on("scroll", ({ scroll }) => cue.classList.toggle("gone", scroll > 40));
+  cue.addEventListener("click", (e) => { e.preventDefault(); lenis.scrollTo("#earth", { duration: 1.4 }); });
+}
+
 // ============================================================ HERO FILM
 // intro once, then the seamless loop clip if one has been uploaded
 const intro = document.getElementById("hero-intro");
