@@ -25,6 +25,13 @@ html, body { width: 1024px; height: 1024px; overflow: hidden; }
 .v3 .floor { position: absolute; width: 640px; height: 70px; left: 192px; top: 760px; border-radius: 50%;
   background: radial-gradient(closest-side, rgba(0,0,0,.30), rgba(0,0,0,0)); filter: blur(8px); }
 
+/* 6 beige, floating with a floor shadow (variant 3 on beige) */
+.v6 { background: radial-gradient(80% 70% at 50% 30%, #f6f0e6, #e2d7c4); }
+.v6 .card { width: 780px; transform: rotateY(-22deg) rotateX(10deg) rotateZ(4deg) translateY(-50px); }
+.v6 .card img { box-shadow: 0 30px 50px rgba(70,55,35,.28); }
+.v6 .floor { position: absolute; width: 640px; height: 70px; left: 192px; top: 760px; border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(80,60,35,.32), rgba(80,60,35,0)); filter: blur(8px); }
+
 /* 4 beige, front and back fanned */
 .v4 { background: radial-gradient(70% 60% at 50% 45%, #efe7da, #ddd2bf); }
 .v4 .back { width: 720px; transform: rotateZ(-16deg) translate(-40px, -40px); }
@@ -41,7 +48,8 @@ html, body { width: 1024px; height: 1024px; overflow: hidden; }
 const n = new URLSearchParams(location.search).get('v') || '1';
 const s = document.getElementById('v'); s.classList.add('v' + n);
 const card = (src, cls = '') => `<div class="card ${cls}"><img src="${src}"><div class="sheen"></div></div>`;
-s.innerHTML = n === '3' ? '<div class="floor"></div>' + card('card_front.png')
+s.innerHTML = n === '6' ? '<div class="floor"></div>' + card('card_front_io.png')
+            : n === '3' ? '<div class="floor"></div>' + card('card_front.png')
             : n === '4' ? card('card_back.png', 'back') + card('card_front.png', 'front')
             : card('card_front.png');
 </script></body></html>

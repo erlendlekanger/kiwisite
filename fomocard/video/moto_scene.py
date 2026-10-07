@@ -29,6 +29,7 @@ ap.add_argument("--frames", nargs=2, type=int, default=None)
 ap.add_argument("--samples", type=int, default=16)
 ap.add_argument("--still", type=int, default=None)
 ap.add_argument("--gpu", action="store_true")
+ap.add_argument("--front", default=None, help="card front image, default ../fomocard_front_black.png")
 args = ap.parse_args(sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else sys.argv[1:])
 
 INTRO_LEN, LOOP_LEN = 240, 96
@@ -278,7 +279,7 @@ body = mesh_obj("card_body", [(x, y, 0) for x, y in pts] + [(x, y, -CT) for x, y
 body.data.materials.append(card_edge)
 uvs = [((x + CW / 2) / CW, (y + CH / 2) / CH) for x, y in pts]
 front = mesh_obj("card_front", [(x, y, 0.0003) for x, y in pts], [list(range(n))], uvs)
-front.data.materials.append(card_face_mat("front", FRONT))
+front.data.materials.append(card_face_mat("front", args.front or FRONT))
 back = mesh_obj("card_back", [(-x, y, -CT - 0.0003) for x, y in pts], [list(range(n))[::-1]], uvs)
 back.data.materials.append(card_face_mat("back", BACK))
 for ob in (body, front, back):
