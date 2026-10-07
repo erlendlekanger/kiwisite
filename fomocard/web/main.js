@@ -290,9 +290,11 @@ cTL.to(CS, { progress: 1, ease: "none", duration: 1 }, 0)
 // intro once, then the seamless loop clip if one has been uploaded
 const intro = document.getElementById("hero-intro");
 const heroLoop = document.getElementById("hero-loop");
-fetch("assets/hero-loop.mp4?v=4", { method: "HEAD" }).then((r) => {
+// same rule as the intro: 4K only where the screen has the pixels for it
+const loopSrc = "assets/" + (Math.max(screen.width, screen.height) * (devicePixelRatio || 1) > 2600 ? "hero-loop.mp4" : "hero-loop_2560.mp4") + "?v=5";
+fetch(loopSrc, { method: "HEAD" }).then((r) => {
   if (!r.ok) return;
-  heroLoop.src = "assets/hero-loop.mp4?v=4";
+  heroLoop.src = loopSrc;
   heroLoop.preload = "auto";
   intro.addEventListener("ended", () => {
     heroLoop.hidden = false;
