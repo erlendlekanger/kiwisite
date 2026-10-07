@@ -697,7 +697,8 @@ def public_config() -> dict:
             "categories": CONFIG["categories"], "markup_pct": markup_pct(),
             "treasury": treasury_wallet(), "dry": DRY, "supplier": "bitrefill",
             "supplier_live": bitrefill.configured(), "usdc": USDC,
-            "live_sales": can_sell()[0], "blocked_by": can_sell()[1] or None}
+            "live_sales": can_sell()[0], "blocked_by": can_sell()[1] or None,
+            "physical_price_sol": fomocard.physical_price_sol()}
 
 
 def storage_ok() -> bool:
@@ -798,8 +799,11 @@ def dispatch(method: str, path: str, query: dict, headers, body: bytes | None):
         if path == "/api/fomocard/claim":
             d = fomocard.claim(payload)
             return J(d, 200 if d.get("ok") else 400)
-        if path == "/api/fomocard/physical":
-            d = fomocard.request_physical(payload)
+        if path == "/api/fomocard/physical/prepare":
+            d = fomocard.physical_prepare(payload)
+            return J(d, 200 if d.get("ok") else 400)
+        if path == "/api/fomocard/physical/send":
+            d = fomocard.physical_send(payload)
             return J(d, 200 if d.get("ok") else 400)
         return J({"error": "not found"}, 404)
 

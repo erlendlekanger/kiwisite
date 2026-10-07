@@ -565,8 +565,8 @@ async function paintPhys(){
     </div>
     <div class="ax-sec">Wallet</div>
     <div id="linked"></div>
-    <button class="btn btn-light ax-block" type="submit" id="psend">Request card</button>
-    <p class="ax-small">1% fee on every top-up to the card. We only use these details to send your card. By requesting you accept the <a href="/docs">terms</a>, including that delivery is not guaranteed.</p>
+    <button class="btn btn-light ax-block" type="submit" id="psend">${PAY_LABEL()}</button>
+    <p class="ax-small">Ordering costs ${PRICE()} SOL, paid from your wallet, then 1% on every top-up to the card. We only use these details to send your card. By ordering you accept the <a href="/docs">terms</a>, including that delivery is not guaranteed and the order fee is not refunded.</p>
   </form>`;
   paintLinked();
   const f = $('#pform');
@@ -578,9 +578,12 @@ function paintLinked(){
   if (!l) return;
   l.innerHTML = S.wallet
     ? `<div class="ax-linked"><span>Linked to ${esc(short(S.wallet))}</span></div>`
-    : `<div class="ax-linked"><span>Link your wallet so you can top up the card from it</span><button type="button" id="plink">Connect wallet</button></div>`;
+    : `<div class="ax-linked"><span>Connect the wallet that pays for the card and tops it up later</span><button type="button" id="plink">Connect wallet</button></div>`;
   const b = $('#plink'); if (b) b.onclick = connect;
+  const pay = $('#psend'); if (pay && !pay.disabled) pay.textContent = PAY_LABEL();
 }
+const PRICE = () => (S.cfg && S.cfg.physical_price_sol) || 0.1;
+const PAY_LABEL = () => S.wallet ? `Pay ${PRICE()} SOL and order` : 'Connect wallet to order';
 async function sendPhys(e){
   e.preventDefault();
   const f = $('#pform'), data = Object.fromEntries(new FormData(f));
@@ -592,19 +595,34 @@ async function sendPhys(e){
     toast(miss.includes('email') && data.email ? 'Check your email address.' : 'Please fill in the highlighted fields.');
     return;
   }
-  const b = $('#psend'); b.disabled = true; b.textContent = 'Sending…';
-  const d = await post('/api/fomocard/physical', {...data, wallet: S.wallet || ''});
-  if (!d.ok){
-    b.disabled = false; b.textContent = 'Request card';
-    if (d.field){ const x = $(`#pform .ax-in[data-f="${d.field}"]`); if (x) x.classList.add('err'); }
-    toast(d.error || 'Could not send, try again.');
-    return;
+  // the card is paid for before the order exists: one transfer of the order price
+  if (!S.wallet && !(await connect())) return;
+  const b = $('#psend');
+  const set = (t, dis) => { b.textContent = t; b.disabled = !!dis; };
+  const fail = (msg, field) => {
+    set(PAY_LABEL(), false);
+    if (field){ const x = $(`#pform .ax-in[data-f="${field}"]`); if (x) x.classList.add('err'); }
+    toast(msg);
+  };
+  set('Preparing payment…', true);
+  const p = await post('/api/fomocard/physical/prepare', {...data, wallet: S.wallet});
+  if (!p.ok) return fail(p.error || 'Could not prepare the payment, try again.', p.field);
+  let signed;
+  try {
+    set('Confirm in your wallet…', true);
+    [signed] = await signAll([p.tx]);
+  } catch (err) {
+    return fail(/reject|cancel|denied/i.test(err.message || '') ? 'Cancelled in your wallet' : (err.message || 'Could not sign'));
   }
+  set('Confirming payment…', true);
+  const d = await post('/api/fomocard/physical/send', {id: p.id, signed: b64(signed)});
+  if (!d.ok) return fail(d.error || 'The payment did not go through, try again.');
   physDone = true;
   store.set('fc.phys.draft', {});
   $('#phys').innerHTML = `<div class="ax-done"><div class="ax-tick"></div><h2>Card requested</h2>
     <p>You will be contacted on email when your card is on the way.</p>
-    <span class="ax-k">Request ${esc(d.id)}</span></div>`;
+    <span class="ax-k">Request ${esc(d.id)}</span>
+    ${d.signature && d.signature !== 'simulated' ? `<a class="ax-small" href="https://solscan.io/tx/${esc(d.signature)}" target="_blank" rel="noopener" style="text-decoration:underline">View the payment</a>` : ''}</div>`;
 }
 
 /* ------------------------------------------------------------ start */
