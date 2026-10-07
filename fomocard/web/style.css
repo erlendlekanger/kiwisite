@@ -32,9 +32,21 @@ p { color: var(--muted); font-size: 15px; line-height: 1.45; }
 .nav .brand { font-weight: 800; letter-spacing: .22em; font-size: 14px; }
 .nav .btn { mix-blend-mode: normal; }
 .nav-r { display: flex; align-items: center; gap: 10px; mix-blend-mode: normal; }
+.nav-r > * { white-space: nowrap; flex: none; }
 .btn[hidden] { display: none; }
 .btn-line { border: 1px solid rgba(255,255,255,.4); color: #f2f2f2; background: rgba(8,8,8,.35); }
 .btn-line:hover { border-color: rgba(255,255,255,.7); }
+/* contract address, copied whole on click */
+.ca-chip { display: inline-flex; align-items: center; gap: 8px; height: 38px; padding: 0 14px; border-radius: 999px; cursor: pointer;
+  border: 1px solid rgba(255,255,255,.22); background: rgba(8,8,8,.45); color: #e1e5e5; font: inherit; font-size: 13px;
+  -webkit-backdrop-filter: blur(8px); transition: border-color .2s; }
+.ca-chip:hover { border-color: rgba(255,255,255,.5); }
+.ca-chip b { font-weight: 600; font-size: 11px; letter-spacing: .12em; color: #9a9a9a; }
+.ca-chip .ca-v { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 12.5px; }
+.ca-chip svg { width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 2; opacity: .7; }
+.ca-chip .ca-ok { display: none; }
+.ca-chip.done .ca-v, .ca-chip.done svg { display: none; }
+.ca-chip.done .ca-ok { display: inline; color: #7ee2a8; }
 
 /* hero */
 .hero { position: relative; height: 100vh; overflow: hidden; }
@@ -85,6 +97,15 @@ p { color: var(--muted); font-size: 15px; line-height: 1.45; }
 }
 @media (max-width: 640px) {
   .nav { padding: 14px 16px; }
+  .nav-r { gap: 6px; }
+  .ca-chip { height: 34px; padding: 0 10px; }
+  .ca-chip b, .ca-chip svg { display: none; }
+  .nav .btn { padding: 9px 14px; font-size: 13px; }
+  /* a signed-in visitor has My page; Get access would only crowd the bar */
+  .nav-r:has(#mypage:not([hidden])) .btn-light:not(.ax-wallet) { display: none; }
+  /* on the access page you are already on your own page */
+  .nav-access #mypage { display: none; }
+  .nav .brand { font-size: 12px; letter-spacing: .16em; }
   .earth-points li:nth-child(n+3) { display: none; }
   .foot { padding: 20px 16px; }
 }
