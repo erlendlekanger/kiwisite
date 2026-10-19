@@ -445,6 +445,10 @@ onScroll();
 
 headline();
 boot();
-nums().catch(() => {});
+/* stonked.app svarer tregt eller ikke i det hele tatt paa tallene. Da skjules de i
+   stedet for at plassholderne blinker for alltid; neste runde proever igjen. */
+const numsOr = () => nums().then(() => { $('strip').hidden = false; $('nums').closest('.sect').hidden = false; })
+  .catch(() => { if ($('strip').querySelector('.sk')) { $('strip').hidden = true; $('nums').closest('.sect').hidden = true; } });
+numsOr();
 loadCoins();
-setInterval(() => { loadCoins(); nums().catch(() => {}); }, 30000);
+setInterval(() => { loadCoins(); numsOr(); }, 30000);
