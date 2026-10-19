@@ -66,7 +66,7 @@ h1 em { font-style: normal; color: transparent; background: linear-gradient(90de
 .cta { display: flex; gap: 12px; margin-top: 30px; flex-wrap: wrap; }
 .trust { display: flex; gap: 22px; flex-wrap: wrap; margin-top: 34px; font-size: 13px; color: var(--muted); }
 .trust span { display: inline-flex; align-items: center; gap: 8px; } .trust i { width: 6px; height: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 10px var(--green); }
-.hero-art { position: relative; width: min(820px, 100%); margin: 26px auto 10px; }
+.hero-art { position: relative; width: min(700px, 100%); margin: 22px auto 6px; }
 .hero-art img { width: 100%; height: auto; filter: drop-shadow(0 50px 70px rgba(0,0,12,.75)); animation: float 9s ease-in-out infinite; }
 @keyframes float { 0%, 100% { transform: translateY(0) rotate(-.5deg); } 50% { transform: translateY(-16px) rotate(.5deg); } }
 .hero-art::before { content: ""; position: absolute; left: 50%; top: 50%; width: 70%; height: 70%; transform: translate(-50%,-50%); border-radius: 50%; background: radial-gradient(closest-side, rgba(81,106,246,.28), transparent); filter: blur(50px); z-index: -1; }
