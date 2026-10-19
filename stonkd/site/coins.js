@@ -482,7 +482,7 @@ function pageStage() {
     M.want(hMain, 0, bob(0, 0.05 * R), 0, R, 0.02, 0.3 + sway(0), 0);
     M.want(hPair, 1.85 * R, 0.18 * R + bob(1, 0.05 * R), -1.4, 0.74 * R, 0, -0.55 + sway(1), 0.02);
     M.want(hWho, -1.85 * R, 0.12 * R + bob(3, 0.05 * R), -1.4, 0.66 * R, 0, 0.55 + sway(3), 0);
-    M.want(hSol, -1.05 * R, -0.62 * R + bob(2, 0.04 * R), 1.3, 0.42 * R, -1.0, 0.15 + sway(2, 0.15), 0.35);
+    M.want(hSol, -1.08 * R, -0.5 * R + bob(2, 0.04 * R), 1.3, 0.46 * R, 0.04, 0.42 + sway(2, 0.18), 0);   // staar oppreist foran
 
     /* ---- How it works: staar fast midt paa skjermen mens stegene scroller forbi */
     const p = THREE.MathUtils.clamp((innerHeight * 0.5 - lr.top) / lr.height, 0, 0.999);
