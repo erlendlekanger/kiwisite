@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>FOMOINDEX</title>
+<meta name="description" content="Own the moves of fomo's best traders. Pick traders from the fomo leaderboard, set weights, fund with SOL, and your index mirrors what they hold, around the clock.">
+<meta name="theme-color" content="#060510">
+<meta property="og:title" content="FOMOINDEX · own the moves of fomo's best traders">
+<meta property="og:description" content="Pick traders, set weights, fund with SOL. Your index mirrors what they hold, rebalanced every 30 minutes.">
+<meta property="og:image" content="https://fomoindex.family/assets/og.jpg">
+<meta property="og:url" content="https://fomoindex.family/">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://fomoindex.family/">
+<link rel="icon" href="assets/logo-tile.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="preload" href="assets/astronaut.png" as="image">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<canvas id="space" aria-hidden="true"></canvas>
+<div class="nebula" aria-hidden="true"><i></i><i></i><i></i></div>
+
+<nav class="nav"><div class="nav-in">
+  <a class="lockup" href="/"><img src="assets/logo-tile.svg" alt=""><span><b>fomo</b><i>index</i></span></a>
+  <div class="nav-links"><a href="#how">How it works</a><a href="#traders">Traders</a><a href="#safety">Safety</a><a href="#faq">FAQ</a></div>
+  <div class="sp"></div>
+  <a class="btn ghost sm" href="https://fomo.family" target="_blank" rel="noopener">fomo.family ↗</a>
+  <a class="btn primary" href="/app">Open app</a>
+</div></nav>
+
+<main class="page">
+  <section class="hero">
+    <div class="horizon-wrap" aria-hidden="true"><div class="horizon"></div></div>
+    <div>
+      <div class="eyebrow"><img src="assets/logo-tile.svg" alt="">Built on the fomo leaderboard</div>
+      <h1>Own the moves of <em>fomo's best traders.</em></h1>
+      <p class="lead">Pick the traders you believe in, set the weights, fund it with SOL. Your index mirrors what they hold on-chain and rebalances itself every 30 minutes. One basket, many legends.</p>
+      <div class="cta"><a class="btn primary lg" href="/app">Build your index</a><a class="btn ghost lg" href="#how">See how it works</a></div>
+      <div class="trust"><span><i></i>Withdraw to your wallet any time</span><span><i></i>Routed through Jupiter</span><span><i></i>Rebalanced every 30 min</span></div>
+    </div>
+    <div class="hero-art"><div class="pulse"></div><img src="assets/astronaut.png" alt="An astronaut holding a phone with the FOMOINDEX app" width="1920" height="1080"></div>
+  </section>
+
+  <section class="block" id="how">
+    <div class="sec-head"><div class="kicker">How it works</div><h2>Three choices. Then it runs itself.</h2><p>No charts to read, no entries to time. You decide who to follow and how much. The index does the trading.</p></div>
+    <div class="grid3">
+      <div class="card"><div class="step">01</div><h3>Pick traders</h3><p>Choose from the fomo leaderboard. See what each trader holds right now, their 7-day PnL and rank, and add up to ten of them to your index.</p></div>
+      <div class="card"><div class="step">02</div><h3>Set weights</h3><p>Equal split by default, or lean into your favourites with a slider. Each trader's holdings count toward your index in proportion to their weight.</p></div>
+      <div class="card"><div class="step">03</div><h3>Fund with SOL</h3><p>Send SOL to your index's own wallet. Within minutes it buys what your traders hold. From then on it sells what they sell and buys what they buy.</p></div>
+    </div>
+  </section>
+
+  <section class="block" id="mechanics">
+    <div class="sec-head"><div class="kicker">Under the hood</div><h2>Positions, not tips.</h2><p>Every 30 minutes the index reads each trader's wallet on-chain, blends their holdings by your weights, and trades your basket to match. Dust, airdrops and illiquid tokens are left out automatically.</p></div>
+    <div class="diagram">
+      <div class="col">
+        <div class="trader-chip"><div class="ava eyes"><img src="assets/mark-navy.svg" alt="" style="filter:invert(1)"></div><div><b>Trader A</b><small>SOL 40% · TOK1 40% · TOK2 20%</small></div><span class="w">50%</span></div>
+        <div class="trader-chip"><div class="ava eyes"><img src="assets/mark-navy.svg" alt="" style="filter:invert(1)"></div><div><b>Trader B</b><small>SOL 50% · TOK1 20% · TOK3 30%</small></div><span class="w">30%</span></div>
+        <div class="trader-chip"><div class="ava eyes"><img src="assets/mark-navy.svg" alt="" style="filter:invert(1)"></div><div><b>Trader C</b><small>SOL 20% · TOK3 60% · TOK4 20%</small></div><span class="w">20%</span></div>
+      </div>
+      <div class="arrow"><svg viewBox="0 0 24 24"><path d="M4 12h16M14 6l6 6-6 6"/></svg></div>
+      <div class="mix"><div class="t">Blended by weight</div>
+        <div class="bar-row"><span>SOL</span><div class="bar"><i class="sol" style="width:39%"></i></div><small>39%</small></div>
+        <div class="bar-row"><span>TOK1</span><div class="bar"><i style="width:26%"></i></div><small>26%</small></div>
+        <div class="bar-row"><span>TOK3</span><div class="bar"><i style="width:21%"></i></div><small>21%</small></div>
+        <div class="bar-row"><span>TOK2</span><div class="bar"><i style="width:10%"></i></div><small>10%</small></div>
+        <div class="bar-row"><span>TOK4</span><div class="bar"><i style="width:4%"></i></div><small>4%</small></div>
+      </div>
+      <div class="arrow"><svg viewBox="0 0 24 24"><path d="M4 12h16M14 6l6 6-6 6"/></svg></div>
+      <div class="basket"><div class="kicker">Your index</div><div class="nav-big">1.00 SOL<small>funded</small></div>
+        <div class="chips"><span class="chip"><i></i>SOL <b>39%</b></span><span class="chip"><i></i>TOK1 <b>26%</b></span><span class="chip"><i></i>TOK3 <b>21%</b></span><span class="chip"><i></i>TOK2 <b>10%</b></span><span class="chip"><i></i>TOK4 <b>4%</b></span></div>
+        <p class="note" style="margin-top:14px">When Trader A sells TOK1, your TOK1 weight drops and the index sells to match. When Trader C buys something new, the index buys it next round.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="traders">
+    <div class="sec-head"><div class="kicker">The leaderboard</div><h2>Traders you can put in an index.</h2><p>Live from fomo. Each card shows what the trader holds right now, read straight from the chain.</p></div>
+    <div class="traders-grid" id="tradersPreview"></div>
+    <div class="cta" style="justify-content:center;margin-top:26px"><a class="btn ghost" href="/app">See everyone in the app →</a></div>
+  </section>
+
+  <section class="block" id="safety">
+    <div class="sec-head"><div class="kicker">Safety</div><h2>Rules the index never breaks.</h2></div>
+    <div class="rules">
+      <div class="rule"><b>Liquidity floor</b><p>A token needs at least $50k of liquidity before the index will touch it. Thin tokens are skipped even if a trader holds them.</p></div>
+      <div class="rule"><b>Dust is ignored</b><p>Anything under 2% of a trader's wallet is treated as noise: airdrops, leftovers, lottery tickets.</p></div>
+      <div class="rule"><b>At most 12 tokens</b><p>The index keeps its largest positions and leaves the long tail, so fees and slippage stay small.</p></div>
+      <div class="rule"><b>Threshold rebalancing</b><p>It only trades when a position is more than 2.5% off target. No churn, no death by a thousand swaps.</p></div>
+      <div class="rule"><b>Your money, your exit</b><p>Pause any time. Withdraw any time: everything is sold to SOL and sent to the wallet you signed in with.</p></div>
+      <div class="rule"><b>Encrypted keys</b><p>Each index has its own wallet. Its key is encrypted at rest with AES-256 and only ever used to swap through Jupiter.</p></div>
+    </div>
+  </section>
+
+  <section class="block faq" id="faq">
+    <div class="sec-head"><div class="kicker">FAQ</div><h2>Questions people ask.</h2></div>
+    <details open><summary>Is this copy trading?</summary><p>It is the calmer cousin. Copy trading chases every entry a trader makes. An index mirrors positions: what your traders hold, blended by weight, checked every 30 minutes. You get their conviction without racing their fills.</p></details>
+    <details><summary>Who holds the funds?</summary><p>Every index has its own Solana wallet. Its private key is generated on the server, encrypted with a master key and only decrypted for a swap or a withdrawal. You can see the wallet on Solscan at all times, and only the wallet you signed in with can withdraw.</p></details>
+    <details><summary>What if a trader I picked rugs or goes quiet?</summary><p>The liquidity floor and the dust rule keep the worst tokens out. If a trader stops trading, their weight simply sits in SOL. You can pause the index, remove it or withdraw at any time.</p></details>
+    <details><summary>How much does it cost?</summary><p>Swap fees and slippage on Solana are paid by the index, nothing else is charged during the beta. Fees, if any, will be shown here before they apply.</p></details>
+    <details><summary>Minimum deposit?</summary><p>0.2 SOL works. Below that, fees eat the rebalancing. 1 SOL and up is where it gets interesting.</p></details>
+    <details><summary>Can I change the traders later?</summary><p>Not yet. Withdraw, build a new index and fund it. Editing a live index is next on the list.</p></details>
+  </section>
+
+  <section class="cta-band">
+    <div class="kicker">Ready</div>
+    <h2>Build your first index in two minutes.</h2>
+    <div class="cta" style="justify-content:center"><a class="btn primary lg" href="/app">Open the app</a></div>
+  </section>
+
+  <footer class="foot">
+    <div>© 2026 FOMOINDEX · a community project, not affiliated with FOMO Labs Inc. · Not financial advice. Memecoins can go to zero.</div>
+    <div class="links"><a href="https://fomo.family" target="_blank" rel="noopener">fomo.family</a><a href="https://fomohub.family" target="_blank" rel="noopener">FOMOHUB</a><a href="https://x.com/fomo" target="_blank" rel="noopener">@fomo</a></div>
+  </footer>
+</main>
+<script src="space.js"></script>
+<script>
+(async () => {
+  const el = document.getElementById('tradersPreview');
+  const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const fmt = (n) => (n < 0 ? '-' : '+') + '$' + Math.abs(n).toLocaleString('en-US', { maximumFractionDigits: 0 });
+  try {
+    const r = await fetch('/api/traders'); const j = await r.json();
+    const list = (j.traders || []).filter((t) => t.has_wallet).slice(0, 8);
+    if (!list.length) throw new Error('none');
+    el.innerHTML = list.map((t) => `<a class="tcard" href="/app#build">
+      <span class="rank">#${t.rank || '–'}</span>
+      <div class="top"><div class="ava">${t.avatar ? `<img src="${esc(t.avatar)}" alt="">` : esc((t.name || t.handle).slice(0, 1).toUpperCase())}</div><div><b>${esc(t.name || t.handle)}</b><small>@${esc(t.handle)}</small></div></div>
+      <div class="pnl ${Number(t.pnl_7d) < 0 ? 'neg' : 'pos'}">${t.pnl_7d != null ? fmt(Number(t.pnl_7d)) : '—'}<small>7 day pnl</small></div>
+      <div class="holds">${(t.top || []).map((x) => `<span>${esc(x.symbol)} ${Math.round(x.weight * 100)}%</span>`).join('') || '<span>no open positions</span>'}</div></a>`).join('');
+  } catch (e) {
+    el.innerHTML = '<div class="empty" style="grid-column:1/-1">The leaderboard is syncing. Open the app to see the full list.</div>';
+  }
+})();
+</script>
+</body>
+</html>

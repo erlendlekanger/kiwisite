@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>FOMOINDEX app</title>
+<meta name="description" content="Build an index of fomo traders and fund it with SOL.">
+<meta name="theme-color" content="#060510">
+<meta name="robots" content="noindex">
+<link rel="icon" href="assets/logo-tile.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<canvas id="space" aria-hidden="true"></canvas>
+<div class="nebula" aria-hidden="true"><i></i><i></i><i></i></div>
+<nav class="nav"><div class="nav-in">
+  <a class="lockup" href="/"><img src="assets/logo-tile.svg" alt=""><span><b>fomo</b><i>index</i></span></a>
+  <div class="tabs" id="tabs"><a href="#build" data-tab="build">Build</a><a href="#mine" data-tab="mine">My indexes</a></div>
+  <div class="sp"></div>
+  <button class="btn ghost wallet-btn" id="walletBtn">Connect wallet</button>
+</div></nav>
+<main class="page app" id="view"></main>
+<div class="toast" id="toast"></div>
+<script src="https://cdn.jsdelivr.net/npm/@solana/web3.js@1.99.0/lib/index.iife.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<script src="space.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

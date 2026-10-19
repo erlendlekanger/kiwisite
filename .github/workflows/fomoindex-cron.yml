@@ -1,0 +1,20 @@
+# Drives FOMOINDEX's rebalancer and trader sync. Vercel's free plan only runs crons daily, so GitHub does the ticking.
+# Secrets needed on this repo: FOMOINDEX_URL (https://fomoindex.family) and FOMOINDEX_CRON_SECRET (same as CRON_SECRET on Vercel).
+name: fomoindex cron
+on:
+  schedule:
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+jobs:
+  tick:
+    runs-on: ubuntu-latest
+    steps:
+      - name: sync traders
+        run: curl -fsS -m 120 -H "Authorization: Bearer ${{ secrets.FOMOINDEX_CRON_SECRET }}" "${{ secrets.FOMOINDEX_URL }}/api/cron/sync-traders" || true
+      - name: rebalance (up to 6 indexes per tick)
+        run: |
+          for i in 1 2 3 4 5 6; do
+            out=$(curl -fsS -m 120 -H "Authorization: Bearer ${{ secrets.FOMOINDEX_CRON_SECRET }}" "${{ secrets.FOMOINDEX_URL }}/api/cron/rebalance") || break
+            echo "$out"
+            echo "$out" | grep -q '"remaining":0' && break
+          done

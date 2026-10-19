@@ -1,0 +1,13 @@
+{
+  "name": "fomoindex",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "FOMOINDEX: build an index of fomo traders and let it mirror them on-chain.",
+  "dependencies": {
+    "@solana/web3.js": "^1.99.0",
+    "bs58": "^6.0.0",
+    "pg": "^8.13.0",
+    "tweetnacl": "^1.0.3"
+  }
+}

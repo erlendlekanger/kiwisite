@@ -1,0 +1,54 @@
+{
+  "cleanUrls": true,
+  "functions": {
+    "api/**/*.mjs": {
+      "maxDuration": 60
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/api/index/:id/deposit",
+      "destination": "/api/index/deposit?id=:id"
+    },
+    {
+      "source": "/api/index/:id/withdraw",
+      "destination": "/api/index/withdraw?id=:id"
+    },
+    {
+      "source": "/api/index/:id/status",
+      "destination": "/api/index/status?id=:id"
+    },
+    {
+      "source": "/api/index/:id",
+      "destination": "/api/index/one?id=:id"
+    },
+    {
+      "source": "/api/traders/:handle/positions",
+      "destination": "/api/traders/positions?handle=:handle"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        }
+      ]
+    },
+    {
+      "source": "/assets/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=86400"
+        }
+      ]
+    }
+  ]
+}
