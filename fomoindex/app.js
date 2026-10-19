@@ -124,7 +124,7 @@
         <td class="hide-s"><div class="chips">${(t.top || []).slice(0, 3).map((x) => `<span>${esc(x.symbol)} ${pct(x.weight)}</span>`).join('') || `<span>${t.has_wallet ? 'all in SOL' : 'wallet pending'}</span>`}</div></td>
         <td class="r ${Number(t.pnl_7d) < 0 ? 'down' : 'up'}">${pnl(t.pnl_7d)}</td>
         <td style="width:40px"><div class="chk" title="Add to index"><svg viewBox="0 0 16 16"><path d="M3 8.5l3 3 7-7"/></svg></div></td></tr>`).join('')
-      : `<tr><td colspan="5"><div class="empty"><b>No trader called that</b>Try part of their fomo username.</div></td></tr>`;
+      : `<tr><td colspan="5"><div class="empty">${S.traders.length ? '<b>No trader called that</b>Try part of their fomo username.' : '<b>The leaderboard is syncing</b>Traders appear here as soon as their wallets are confirmed on fomo.'}</div></td></tr>`;
     grid.querySelectorAll('tr.row').forEach((r) => {
       r.addEventListener('click', () => focusTrader(r.dataset.h));
       const c = r.querySelector('.chk'); if (c) c.addEventListener('click', (e) => { e.stopPropagation(); toggle(r.dataset.h); });
