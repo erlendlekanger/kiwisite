@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>FOMOHUB</title>
+<meta name="description" content="FOMOHUB is everything fomo in one place: spend crypto at real shops, the leaderboard, fantasy leagues, predictions, quests and a radar for what the degens are buying.">
+<meta name="theme-color" content="#060510">
+<meta property="og:title" content="FOMOHUB · everything fomo">
+<meta property="og:description" content="Spend, leaderboard, fantasy, predict, quests and radar. One hub for fomo users.">
+<meta property="og:image" content="assets/og.jpg">
+<link rel="icon" href="assets/fomo-mark.svg" type="image/svg+xml">
+<link rel="preload" href="assets/mascot/body.png" as="image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<canvas id="stars" aria-hidden="true"></canvas>
+<div class="glow" aria-hidden="true"></div>
+<main id="view"></main>
+<footer class="foot" id="foot">
+  <a href="https://fomo.family" target="_blank" rel="noopener">fomo.family</a>
+  <span class="dot"></span>
+  <a href="https://x.com/fomo" target="_blank" rel="noopener">@fomo on X</a>
+  <span class="dot"></span>
+  <span class="muted">community hub, not affiliated with FOMO Labs</span>
+</footer>
+<div class="flood" id="flood" aria-hidden="true">
+  <svg viewBox="0 0 1200 48" preserveAspectRatio="none">
+    <g class="w"><path d="M-60 26C60 2 180 2 300 22S540 46 660 24 900 0 1020 20 1200 40 1320 22V60H-60Z"/></g>
+  </svg>
+</div>
+<script src="mascot.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
