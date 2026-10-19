@@ -1,7 +1,9 @@
 // Sign-in with a Solana wallet: the wallet signs a nonce, the server verifies and issues an HMAC session.
 import crypto from 'node:crypto';
-import nacl from 'tweetnacl';
-import bs58 from 'bs58';
+import { createRequire } from 'node:module';
+const require = createRequire(import.meta.url);
+const nacl = require('tweetnacl');
+const bs58pkg = require('bs58'); const bs58 = bs58pkg.default || bs58pkg;
 import { q } from './db.mjs';
 import { cookies, bearer, fail } from './http.mjs';
 

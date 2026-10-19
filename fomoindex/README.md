@@ -43,10 +43,10 @@ A trader can be mirrored once we know their wallet. Two sources:
 | --- | --- |
 | `POST /api/auth/nonce`, `POST /api/auth/verify`, `GET/DELETE /api/auth/me` | sign in with a wallet signature |
 | `GET /api/traders`, `GET /api/traders/:handle/positions` | leaderboard, live portfolio |
-| `GET/POST /api/index`, `GET /api/index/:id` | my indexes, create, detail |
-| `POST /api/index/:id/deposit {sig}` | record a SOL deposit |
-| `POST /api/index/:id/status {status}` | pause / resume |
-| `POST /api/index/:id/withdraw` | sell all and send SOL to the owner |
+| `GET/POST /api/ix`, `GET /api/ix/:id` | my indexes, create, detail |
+| `POST /api/ix/:id/deposit {sig}` | record a SOL deposit |
+| `POST /api/ix/:id/status {status}` | pause / resume |
+| `POST /api/ix/:id/withdraw` | sell all and send SOL to the owner |
 | `GET /api/cron/rebalance`, `GET /api/cron/sync-traders` | the ticker (CRON_SECRET) |
 | `POST /api/admin/traders` | add traders (ADMIN_KEY) |
 | `GET /api/health` | config check |

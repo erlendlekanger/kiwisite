@@ -205,7 +205,7 @@
     if (!S.selected.size) return toast('Pick at least one trader');
     const btn = document.getElementById('create'); btn.disabled = true; btn.textContent = 'Creating…';
     try {
-      const r = await api('/api/index', { method: 'POST', body: { name: S.name || 'My index', traders: weights() } });
+      const r = await api('/api/ix', { method: 'POST', body: { name: S.name || 'My index', traders: weights() } });
       S.selected.clear(); S.name = ''; S.preview = null;
       location.hash = 'ix/' + r.id;
       setTimeout(() => depositModal(r.id, r.deposit, S.amount), 300);
@@ -226,7 +226,7 @@
         try { const q = qrcode(0, 'M'); q.addData(url); q.make(); el.querySelector('#qr').innerHTML = q.createSvgTag({ cellSize: 4, margin: 0, scalable: true }); } catch (e) { /* no qr */ }
         el.querySelector('#addr').addEventListener('click', async () => { try { await navigator.clipboard.writeText(addr); toast('Address copied'); } catch (e) { /* ignore */ } });
         el.querySelector('#pay').addEventListener('click', () => pay(id, addr, +el.querySelector('#damt').value || 0, el.querySelector('#pay')));
-        el.querySelector('#sigbtn').addEventListener('click', async () => { const sig = el.querySelector('#sig').value.trim(); if (!sig) return; try { const r = await api(`/api/index/${id}/deposit`, { method: 'POST', body: { sig } }); toast(`Deposit of ${r.sol?.toFixed(3) || ''} SOL recorded`); closeModal(); renderIndex(id); } catch (e) { toast(e.message); } });
+        el.querySelector('#sigbtn').addEventListener('click', async () => { const sig = el.querySelector('#sig').value.trim(); if (!sig) return; try { const r = await api(`/api/ix/${id}/deposit`, { method: 'POST', body: { sig } }); toast(`Deposit of ${r.sol?.toFixed(3) || ''} SOL recorded`); closeModal(); renderIndex(id); } catch (e) { toast(e.message); } });
       });
   }
   async function pay(id, addr, amount, btn) {
@@ -242,7 +242,7 @@
       const sig = r.signature || r;
       btn.textContent = 'Confirming…';
       for (let i = 0; i < 30; i++) { const st = await conn.getSignatureStatuses([sig]); const s = st.value[0]; if (s && (s.confirmationStatus === 'confirmed' || s.confirmationStatus === 'finalized')) break; await new Promise((r2) => setTimeout(r2, 1500)); }
-      const rec = await api(`/api/index/${id}/deposit`, { method: 'POST', body: { sig } });
+      const rec = await api(`/api/ix/${id}/deposit`, { method: 'POST', body: { sig } });
       toast(`${rec.sol?.toFixed(3) || amount} SOL deposited`); closeModal(); renderIndex(id);
     } catch (e) { toast(e.message || 'Payment cancelled'); btn.disabled = false; btn.textContent = 'Send with wallet'; }
   }
@@ -252,7 +252,7 @@
     if (!S.wallet) { view.innerHTML = `<div class="app-head"><div><h1>My indexes</h1><p>Sign in with your wallet to see them.</p></div></div><div class="empty"><button class="btn primary" id="c2">Connect wallet</button></div>`; document.getElementById('c2').addEventListener('click', connect); return; }
     view.innerHTML = `<div class="app-head"><div><h1>My indexes</h1><p>Everything you have built, live.</p></div><a class="btn primary" href="#build">New index</a></div><div class="ix-grid" id="list"><div class="ix skel" style="height:140px"></div><div class="ix skel" style="height:140px"></div></div>`;
     try {
-      const { indexes } = await api('/api/index');
+      const { indexes } = await api('/api/ix');
       document.getElementById('list').innerHTML = indexes.length ? indexes.map((ix) => { const dep = Number(ix.deposited_sol) || 0; const nav = Number(ix.nav_sol) || 0; const chg = dep ? ((nav + Number(ix.withdrawn_sol || 0)) / dep - 1) : 0; return `<a class="ix" href="#ix/${esc(ix.id)}">
           <div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><h3>${esc(ix.name)}</h3><span class="pill ${esc(ix.status)}"><i></i>${esc(ix.status)}</span></div>
           <div class="navv">${nav ? sol(nav) : '—'}<small>${ix.nav_usd ? usd(ix.nav_usd, 0) : 'awaiting deposit'}</small></div>
@@ -268,7 +268,7 @@
     if (!S.wallet) return renderMine();
     if (!document.getElementById('ixroot')) view.innerHTML = `<div id="ixroot"><div class="app-head"><div><h1 class="skel">Loading index</h1></div></div></div>`;
     let d;
-    try { d = await api('/api/index/' + encodeURIComponent(id)); } catch (e) { view.innerHTML = `<div class="empty">${esc(e.message)}</div>`; return; }
+    try { d = await api('/api/ix/' + encodeURIComponent(id)); } catch (e) { view.innerHTML = `<div class="empty">${esc(e.message)}</div>`; return; }
     const dep = d.deposited_sol || 0; const chg = dep ? ((d.nav_sol + (d.withdrawn_sol || 0)) / dep - 1) : null;
     const targetOf = (mint) => d.target.find((t) => t.mint === mint)?.weight || 0;
     const rows = [...d.holdings];
@@ -315,8 +315,8 @@
     chart(document.getElementById('chart'), d.history);
     document.getElementById('addr2').addEventListener('click', async () => { try { await navigator.clipboard.writeText(d.deposit); toast('Address copied'); } catch (e) { /* ignore */ } });
     document.getElementById('depBtn')?.addEventListener('click', () => depositModal(d.id, d.deposit, 1));
-    document.getElementById('pauseBtn')?.addEventListener('click', async () => { try { await api(`/api/index/${d.id}/status`, { method: 'POST', body: { status: d.status === 'paused' ? 'active' : 'paused' } }); toast(d.status === 'paused' ? 'Index resumed' : 'Index paused'); renderIndex(id); } catch (e) { toast(e.message); } });
-    document.getElementById('wdBtn')?.addEventListener('click', () => modal(`<h3>Withdraw everything?</h3><p class="note">Every token is sold to SOL through Jupiter and the SOL is sent to ${short(S.wallet)}. This closes the index. It takes a minute.</p><button class="btn danger lg" id="wd2">Sell all and withdraw</button><button class="btn ghost" id="wd3">Keep it</button>`, (el) => { el.querySelector('#wd3').addEventListener('click', closeModal); el.querySelector('#wd2').addEventListener('click', async () => { el.querySelector('#wd2').disabled = true; el.querySelector('#wd2').textContent = 'Selling and sending…'; try { const r = await api(`/api/index/${d.id}/withdraw`, { method: 'POST' }); toast(`${r.sol?.toFixed(4) || 0} SOL sent to your wallet`); closeModal(); renderIndex(id); } catch (e) { toast(e.message); closeModal(); } }); }));
+    document.getElementById('pauseBtn')?.addEventListener('click', async () => { try { await api(`/api/ix/${d.id}/status`, { method: 'POST', body: { status: d.status === 'paused' ? 'active' : 'paused' } }); toast(d.status === 'paused' ? 'Index resumed' : 'Index paused'); renderIndex(id); } catch (e) { toast(e.message); } });
+    document.getElementById('wdBtn')?.addEventListener('click', () => modal(`<h3>Withdraw everything?</h3><p class="note">Every token is sold to SOL through Jupiter and the SOL is sent to ${short(S.wallet)}. This closes the index. It takes a minute.</p><button class="btn danger lg" id="wd2">Sell all and withdraw</button><button class="btn ghost" id="wd3">Keep it</button>`, (el) => { el.querySelector('#wd3').addEventListener('click', closeModal); el.querySelector('#wd2').addEventListener('click', async () => { el.querySelector('#wd2').disabled = true; el.querySelector('#wd2').textContent = 'Selling and sending…'; try { const r = await api(`/api/ix/${d.id}/withdraw`, { method: 'POST' }); toast(`${r.sol?.toFixed(4) || 0} SOL sent to your wallet`); closeModal(); renderIndex(id); } catch (e) { toast(e.message); closeModal(); } }); }));
     refreshT = setInterval(() => { if (location.hash === '#ix/' + id) renderIndex(id); }, 60000);
   }
   function chart(c, hist) {

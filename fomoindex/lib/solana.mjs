@@ -1,8 +1,11 @@
 // Everything on-chain: balances, prices, token metadata, Jupiter swaps, and the encrypted index wallets.
 import crypto from 'node:crypto';
-import { Connection, Keypair, PublicKey, LAMPORTS_PER_SOL, SystemProgram, Transaction, VersionedTransaction, sendAndConfirmTransaction } from '@solana/web3.js';
-import bs58 from 'bs58';
+import { createRequire } from 'node:module';
 import { q } from './db.mjs';
+// The CJS builds bundle their own dependencies, which keeps the serverless bundle self-contained.
+const require = createRequire(import.meta.url);
+const { Connection, Keypair, PublicKey, LAMPORTS_PER_SOL, SystemProgram, Transaction, VersionedTransaction, sendAndConfirmTransaction } = require('@solana/web3.js');
+const bs58pkg = require('bs58'); const bs58 = bs58pkg.default || bs58pkg;
 
 export const SOL = 'So11111111111111111111111111111111111111112';
 export const USDC = 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v';

@@ -7,20 +7,20 @@
   },
   "rewrites": [
     {
-      "source": "/api/index/:id/deposit",
-      "destination": "/api/index/deposit?id=:id"
+      "source": "/api/ix/:id/deposit",
+      "destination": "/api/ix/deposit?id=:id"
     },
     {
-      "source": "/api/index/:id/withdraw",
-      "destination": "/api/index/withdraw?id=:id"
+      "source": "/api/ix/:id/withdraw",
+      "destination": "/api/ix/withdraw?id=:id"
     },
     {
-      "source": "/api/index/:id/status",
-      "destination": "/api/index/status?id=:id"
+      "source": "/api/ix/:id/status",
+      "destination": "/api/ix/status?id=:id"
     },
     {
-      "source": "/api/index/:id",
-      "destination": "/api/index/one?id=:id"
+      "source": "/api/ix/:id",
+      "destination": "/api/ix/one?id=:id"
     },
     {
       "source": "/api/traders/:handle/positions",
