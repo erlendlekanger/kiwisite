@@ -5,22 +5,32 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>FOMOINDEX app</title>
 <meta name="description" content="Build an index of fomo traders and fund it with SOL.">
-<meta name="theme-color" content="#060510">
+<meta name="theme-color" content="#090813">
 <meta name="robots" content="noindex">
 <link rel="icon" href="assets/logo-tile.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..800&family=Geist+Mono:wght@400..600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<canvas id="space" aria-hidden="true"></canvas>
-<nav class="nav"><div class="nav-in">
-  <a class="lockup" href="/"><img src="assets/logo-tile.svg" alt=""><span><b>fomo</b><i>index</i></span></a>
-  <div class="tabs" id="tabs"><a href="#build" data-tab="build">Build</a><a href="#mine" data-tab="mine">My indexes</a></div>
-  <div class="sp"></div>
-  <button class="btn ghost wallet-btn" id="walletBtn">Connect wallet</button>
-</div></nav>
-<main class="page app" id="view"></main>
+<div id="spacebg"><div class="photo"></div><div class="scrim"></div></div>
+<header class="nav">
+  <div class="nav-in">
+    <a class="brand" href="/"><img src="assets/wordmark.png" alt="FOMOINDEX"></a>
+    <div class="tabs" id="tabs"><a href="#build" data-tab="build">Build</a><a href="#mine" data-tab="mine">My indexes</a></div>
+    <div class="nav-sp"></div>
+    <button class="btn btn-ink wallet-btn" id="walletBtn">Connect</button>
+  </div>
+  <div class="mtabs" id="mtabs"><a href="#build" data-tab="build">Build</a><a href="#mine" data-tab="mine">My indexes</a></div>
+</header>
+<main class="wrap app" id="view"></main>
+<footer>
+  <div class="wrap foot">
+    <div><a class="brand" href="/"><img src="assets/wordmark.png" alt="FOMOINDEX" style="height:18px"></a>
+      <p>FOMOINDEX is an independent product. It is not made by FOMO. Trader names and pictures are shown as they appear on fomo.family. Not financial advice.</p></div>
+    <nav><a href="/">Home</a><a href="#build">Build</a><a href="#mine">My indexes</a><a href="/#rules">Rules</a></nav>
+  </div>
+</footer>
 <div class="toast" id="toast"></div>
 <script src="https://cdn.jsdelivr.net/npm/@solana/web3.js@1.99.0/lib/index.iife.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
