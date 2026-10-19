@@ -43,6 +43,7 @@ sc.world.node_tree.nodes['Background'].inputs[1].default_value = 1.0
 def curve_obj(name, loops, extrude, bevel, res=8, z=0.0, round_corners=0):
     cu = bpy.data.curves.new(name, 'CURVE'); cu.dimensions = '2D'; cu.fill_mode = 'BOTH'
     cu.extrude = extrude; cu.bevel_depth = bevel; cu.bevel_resolution = res; cu.resolution_u = 6
+    cu.offset = -bevel   # the bevel grows the shape outward; pull the outline in so the silhouette stays the logo's
     for pts in loops:
         if round_corners:   # bezier with auto handles gives softly rounded corners on the pupils
             sp = cu.splines.new('BEZIER'); sp.bezier_points.add(len(pts) - 1)
@@ -57,7 +58,7 @@ def curve_obj(name, loops, extrude, bevel, res=8, z=0.0, round_corners=0):
     ob = bpy.data.objects.new(name, cu); F.link(ob); ob.location.z = z
     return ob
 
-BODY_T = 0.30; BODY_BEV = 0.13
+BODY_T = 0.17; BODY_BEV = 0.075
 body = curve_obj('body', [outer_px, hole_px], BODY_T - BODY_BEV, BODY_BEV, res=10, z=BODY_T)
 mb = F.mat('ivory', F.PAL['ivory'], rough=0.17, coat=0.6, sss=0.1)
 F.speckle(mb, 0.01, 170)
@@ -77,7 +78,7 @@ for i, c in (enumerate(CENTERS) if PUPILS else []):
     F.set_mat(pu, F.mat('pupil', '#1b1940', rough=0.14, coat=0.7))
     pupils.append((pu, c))
 
-cam = F.studio(cam_loc=(-1.7, -3.4, 15.0), cam_target=(0, 0, TOP / 2), lens=85, key=620, fill=190, rim=680, floor=False)
+cam = F.studio(cam_loc=(0, -0.9, 19.0), cam_target=(0, 0, TOP / 2), lens=110, key=620, fill=190, rim=680, floor=False)
 
 RW, RH = int(1600 * RES), int(1100 * RES)
 hull = cv2.convexHull(np.array(outer_px, np.float32).reshape(-1, 1, 2)).reshape(-1, 2).tolist()
