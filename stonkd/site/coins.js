@@ -12,6 +12,10 @@
    launch-skjemaet (parmynten, mottakermynten og gebyrene som flyr mellom dem).
    Siden snakker med scenene gjennom hendelsen «pick» paa window. */
 import * as THREE from 'three';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 
 const SHAPES = await fetch('/assets/coins/shapes.json').then((r) => r.json()).catch(() => ({}));
 const fine = matchMedia('(pointer: fine)').matches;
@@ -278,7 +282,7 @@ function mover() {
 const smooth = (a, b, x) => { const t = THREE.MathUtils.clamp((x - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
 
 /* ------------------------------------------------------------- rendrer og studio */
-function stage(canvas, { opaque = null, shadows = false, camZ = 11 } = {}) {
+function stage(canvas, { opaque = null, shadows = false, camZ = 11, envSize = 256, bloom = false, budget = 0 } = {}) {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: !opaque, powerPreference: 'high-performance' });
   renderer.setPixelRatio(DPR);
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -309,7 +313,7 @@ function stage(canvas, { opaque = null, shadows = false, camZ = 11 } = {}) {
   panel('rect', '#cfe9f5', 0.35, [0, 0, 12], [14, 10]);
   panel('rect', '#ffffff', 1.6, [-3, 3.5, 9], [5, 2.5], [0, 0, -0.3]);
   panel('rect', '#8fd4f1', 0.9, [4, -3, 9], [4, 1.2], [0, 0, 0.4]);
-  const env = pmrem.fromScene(s, 0, 0.1, 100).texture;
+  const env = pmrem.fromScene(s, 0, 0.1, 100, { size: envSize }).texture;
 
   const scene = new THREE.Scene();
   scene.environment = env;
@@ -327,12 +331,25 @@ function stage(canvas, { opaque = null, shadows = false, camZ = 11 } = {}) {
 
   const camera = new THREE.PerspectiveCamera(28, 1, 0.1, 80);
   camera.position.set(0, 0, camZ);
-  const st = { renderer, scene, camera, w: 1, h: 1, halfW: 1, halfH: 1, visible: true };
+  let composer = null;
+  if (bloom) {
+    /* Svak gloed paa de sterkeste hoeylysene, som paa et produktfoto. */
+    composer = new EffectComposer(renderer);
+    composer.addPass(new RenderPass(scene, camera));
+    composer.addPass(new UnrealBloomPass(new THREE.Vector2(256, 256), 0.28, 0.45, 0.9));
+    composer.addPass(new OutputPass());
+  }
+  const st = { renderer, scene, camera, w: 1, h: 1, halfW: 1, halfH: 1, visible: true,
+    draw: () => (composer ? composer.render() : renderer.render(scene, camera)) };
   const fit = () => {
     const w = canvas.clientWidth || 1, h = canvas.clientHeight || 1;
     if (w === st.w && h === st.h) return;
     st.w = w; st.h = h;
+    /* Fullskjerm i full oppløsning blir tungt paa store skjermer: hold antall piksler under budsjettet. */
+    const dpr = budget ? Math.min(DPR, Math.sqrt(budget / (w * h))) : DPR;
+    renderer.setPixelRatio(Math.max(1, dpr));
     renderer.setSize(w, h, false);
+    if (composer) { composer.setPixelRatio(Math.max(1, dpr)); composer.setSize(w, h); }
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
     st.halfH = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * camera.position.z;
@@ -344,21 +361,23 @@ function stage(canvas, { opaque = null, shadows = false, camZ = 11 } = {}) {
   return st;
 }
 
-/* Glorie bak myntene: en heldekkende flate som gaar fra blaatt i midten til sidens
-   bakgrunnsfarge ute i kantene. Den er ugjennomsiktig med vilje, for glasset bryter
-   bare ugjennomsiktige ting, og slik faar STONKD-mynten farge fra den. */
-function backdrop(bg = '#050c10', color = '#1d5a75') {
-  const t = canvasTex(1024, 1024, (g) => {
-    g.fillStyle = bg;
-    g.fillRect(0, 0, 1024, 1024);
-    const gr = g.createRadialGradient(512, 512, 0, 512, 512, 330);
-    gr.addColorStop(0, color);
-    gr.addColorStop(0.45, '#0f3242');
-    gr.addColorStop(1, bg);
-    g.fillStyle = gr;
-    g.fillRect(0, 0, 1024, 1024);
-  }, true);
-  return new THREE.Mesh(new THREE.PlaneGeometry(9, 9), new THREE.MeshBasicMaterial({ map: t, toneMapped: false }));
+/* Glorie bak myntene: en ugjennomsiktig skive som gaar fra blaatt i midten til
+   sidens bakgrunnsfarge i kanten, saa den ikke synes som en form. Den er
+   ugjennomsiktig med vilje, for glasset bryter bare ugjennomsiktige ting, og slik
+   faar STONKD-mynten fargen sin fra den. */
+const glowTex = canvasTex(1024, 1024, (g) => {
+  g.fillStyle = '#050c10';
+  g.fillRect(0, 0, 1024, 1024);
+  const gr = g.createRadialGradient(512, 512, 0, 512, 512, 512);
+  gr.addColorStop(0, '#1d5a75');
+  gr.addColorStop(0.4, '#0f3242');
+  gr.addColorStop(0.75, '#08161d');
+  gr.addColorStop(1, '#050c10');
+  g.fillStyle = gr;
+  g.fillRect(0, 0, 1024, 1024);
+}, true);
+function glowDisc(r = 4.2) {
+  return new THREE.Mesh(new THREE.CircleGeometry(r, 96), new THREE.MeshBasicMaterial({ map: glowTex, toneMapped: false }));
 }
 
 /* ------------------------------------------------------------- tilstand fra siden */
@@ -378,101 +397,157 @@ addEventListener('pointermove', (e) => {
 
 const loops = [];
 
-/* ============================================================= How it works
-   Én mynt i fokus som staar fast mens stegene scroller forbi, vipper etter musen
-   og snur seg til motivet for steget: STONKD-coinen med paret, gebyrene i par-
-   tokenet, SOL, og til slutt mottakeren med aksjene holderne kan faa. */
-function howStage() {
-  const canvas = document.getElementById('hcanvas');
+/* ============================================================= forsiden
+   Ett lerret over hele skjermen, bak innholdet. Myntene i toppen og i «How it
+   works» ligger i hver sin gruppe som foelger seksjonen sin: toppen scroller med
+   siden, mens How-mynten blir staaende midt paa skjermen saa lenge stegene gaar
+   forbi. Da kuttes ingen mynt av en boks, bare av skjermkanten, som om de var ekte. */
+function pageStage() {
+  const canvas = document.getElementById('stage');
+  const heroEl = document.querySelector('.hero');
   const list = document.getElementById('hsteps');
-  if (!canvas || !list) return;
-  const st = stage(canvas, { opaque: 0x050c10 });
+  if (!canvas || !heroEl || !list) return;
+  /* Uten bloom: den loeftet bakgrunnen saa glorien fikk synlige kanter. */
+  const st = stage(canvas, { opaque: 0x050c10, envSize: 512, budget: 5.5e6 });
   const { scene } = st;
   const M = mover();
-  const rig = new THREE.Group();
-  scene.add(rig);
-  const halo = backdrop();
-  halo.position.z = -3;
-  scene.add(halo);
+  const mobile = () => st.w < 760;
 
+  /* ---- toppen */
+  const hero = new THREE.Group();
+  const heroGlow = glowDisc(4.6);
+  const hMain = coin('STONKD', { glassy: true });
+  const hPair = coin(pairKey(pick.pair));
+  const hSol = coin('SOL');
+  const hWho = coin(whoKey());
+  const hFees = Array.from({ length: 3 }, () => coin(pairKey(pick.pair)));
+  hero.add(heroGlow, hMain, hPair, hSol, hWho, ...hFees);
+
+  /* ---- How it works */
+  const how = new THREE.Group();
+  const howGlow = glowDisc(4.2);
   const main = coin('STONKD', { glassy: true });
   const pair = coin(pairKey(pick.pair));
   const sol = coin('SOL');
   const who = coin(whoKey());
-  const fees = Array.from({ length: 7 }, () => coin(pairKey(pick.pair)));
+  const fees = Array.from({ length: 8 }, () => coin(pairKey(pick.pair)));
   const pays = Array.from({ length: 3 }, (_, i) => coin(payKeys()[i] || DEFAULT_PAY[i]));
-  rig.add(main, pair, sol, who, ...fees, ...pays);
+  how.add(howGlow, main, pair, sol, who, ...fees, ...pays);
   fees.forEach((c, i) => { c.userData.seed = i / fees.length; c.userData.x = ((i * 0.618) % 1) * 2 - 1; });
-
-  let p = 0, step = 0;
-  const steps = [...list.children];
-  const measure = () => {
-    const r = list.getBoundingClientRect();
-    p = THREE.MathUtils.clamp((innerHeight * 0.5 - r.top) / r.height, 0, 0.999);
-    const s = Math.floor(p * steps.length);
-    if (s !== step) { step = s; }
-    steps.forEach((el, i) => el.classList.toggle('on', i === step));
-  };
-  addEventListener('scroll', measure, { passive: true });
-  addEventListener('resize', measure);
-  measure();
+  scene.add(hero, how);
 
   addEventListener('pick', () => {
-    setFace(pair, pairKey(pick.pair));
-    fees.forEach((c) => setFace(c, pairKey(pick.pair), false));
-    setFace(who, whoKey());
+    [hPair, pair].forEach((c) => setFace(c, pairKey(pick.pair)));
+    [...hFees, ...fees].forEach((c) => setFace(c, pairKey(pick.pair), false));
+    [hWho, who].forEach((c) => setFace(c, whoKey()));
     pays.forEach((c, i) => setFace(c, payKeys()[i] || DEFAULT_PAY[i]));
   });
 
+  /* Stegene: hvilket som er aktivt, og hvor myntene skal staa paa skjermen. */
+  const steps = [...list.children];
+  let step = 0, idle = false;
+  const px2y = (py) => (0.5 - py / innerHeight) * 2 * st.halfH;   // skjermpiksel -> verdens-y i z = 0
+
   loops.push((time, dt) => {
-    if (!st.visible) return;
-    const k = Math.min(1, st.halfW / 2.1);      // smal skjerm: alt litt mindre
-    const bob = (i) => Math.sin(time * 0.8 + i * 1.7) * 0.07;
+    const hr = heroEl.getBoundingClientRect();
+    const lr = list.getBoundingClientRect();
+    const heroOn = hr.bottom > -80;
+    const howOn = lr.top < innerHeight + 80 && lr.bottom > -80;
+    hero.visible = heroOn;
+    how.visible = howOn;
+    if (!heroOn && !howOn) {                       // ingenting aa vise: tegn en tom ramme, saa hvile
+      if (!idle) { st.draw(); idle = true; }
+      return;
+    }
+    idle = false;
+    const X = st.halfW, Y = st.halfH, mob = mobile();
+    const bob = (i, a = 0.07) => Math.sin(time * 0.8 + i * 1.7) * a;
     const sway = (i, a = 0.22) => Math.sin(time * 0.5 + i * 2.3) * a;
-    const on = (i) => step === i;
-
-    // steg 1: STONKD-coinen foran, paret bak
-    M.want(main, on(0) ? -0.55 * k : -2.6 * k, on(0) ? 0.1 + bob(0) : 1.6, on(0) ? 0 : -3, on(0) ? 1.3 * k : 0, 0, 0.28 + sway(0), 0);
-    const pairPos = on(0) ? [1.25 * k, 0.45 + bob(1), -1.3, 0.95 * k, -0.4 + sway(1)]
-      : on(1) ? [0, 0.35 + bob(1), 0, 1.25 * k, sway(1)]
-        : on(2) ? [-2.3 * k, 1.5, -3.2, 0.55 * k, 0.5]
-          : [-2.6 * k, 2, -4, 0, 0];
-    M.want(pair, pairPos[0], pairPos[1], pairPos[2], pairPos[3], 0, pairPos[4], 0);
-
-    // steg 2: gebyrmynter faller forbi parmynten; steg 3: de trekkes inn i SOL
-    fees.forEach((c, i) => {
-      const t = (time * 0.22 + c.userData.seed) % 1;
-      if (on(1)) {
-        const x = c.userData.x * 2.3 * k, y = 2.9 - t * 5.8, z = 0.9 + (i % 3) * 0.35;
-        const fade = smooth(0, 0.12, t) * (1 - smooth(0.85, 1, t));
-        M.want(c, x, y, z, 0.42 * k * fade, time * 1.3 + i, time * 1.9 + i * 2, 0.3);
-      } else if (on(2)) {
-        const a = c.userData.seed * Math.PI * 2 + time * 0.4, r = (1 - t) * 2.7 * k;
-        M.want(c, Math.cos(a) * r, 0.2 + Math.sin(a) * r * 0.6, 0.7 + (1 - t) * 0.6, 0.38 * k * (1 - smooth(0.75, 1, t)) * smooth(0, 0.1, t), 0.4, time * 2 + i, 0);
-      } else {
-        M.want(c, c.userData.x * 2 * k, 3.4, 0.5, 0, 0, 0, 0);
-      }
-    });
-
-    M.want(sol, on(2) ? 0 : on(3) ? -1.55 * k : 0, on(2) ? 0.2 + bob(2) : on(3) ? 0.15 * k + bob(2) : -2.8,
-      on(3) ? 0.4 : 0, on(2) ? 1.25 * k : on(3) ? 0.5 * k : 0, 0, on(3) ? 0.5 + sway(2) : sway(2), 0);
-
-    // steg 4: mottakeren i midten, aksjene holderne kan faa i en bue under
-    M.want(who, on(3) ? 0.15 * k : 1.8 * k, on(3) ? 0.6 * k + bob(3) : 2.6, on(3) ? 0 : -3, on(3) ? 1.05 * k : 0, 0, -0.15 + sway(3), 0);
-    pays.forEach((c, i) => {
-      const x = (i - 1) * 1.15 * k + 0.15 * k, y = -1.5 * k + Math.abs(i - 1) * 0.14 * k + bob(i + 5) * 0.5;
-      M.want(c, x, on(3) ? y : -3.4, on(3) ? 0.7 : 0, on(3) ? 0.5 * k : 0, 0.15, -0.3 + sway(i + 4, 0.35), (i - 1) * -0.08);
-    });
 
     pointer.sx += (pointer.x - pointer.sx) * Math.min(1, dt * 3);
     pointer.sy += (pointer.y - pointer.sy) * Math.min(1, dt * 3);
-    rig.rotation.y = fine ? pointer.sx * 0.42 : Math.sin(time * 0.3) * 0.15;
-    rig.rotation.x = fine ? -pointer.sy * 0.22 : 0;
+    const tiltY = fine ? pointer.sx * 0.42 : Math.sin(time * 0.3) * 0.18;
+    const tiltX = fine ? -pointer.sy * 0.22 : 0;
+
+    /* ---- toppen: scroller med siden */
+    hero.position.y = px2y(innerHeight * 0.5 + hr.top);
+    hero.rotation.set(tiltX * 0.8, tiltY * 0.8, 0);
+    if (mob) {
+      const k = Math.min(1, X / 1.35), cy = Y * 0.5;
+      heroGlow.position.set(0, cy, -3.5); heroGlow.scale.setScalar(0.7);
+      M.want(hMain, -0.12 * k, cy + bob(0), 0, 0.92 * k, 0, 0.32 + sway(0), 0);
+      M.want(hPair, 0.82 * k, cy + 0.55 + bob(1), -1.8, 0.62 * k, 0, -0.45 + sway(1), 0);
+      M.want(hSol, -0.52 * k, cy - 0.82 + bob(2), 1.0, 0.38 * k, -0.9, 0.2, 0.3);
+      M.want(hWho, 0, cy, -3, 0, 0, 0, 0);
+    } else {
+      const k = Math.min(1.1, X / 4.2);
+      heroGlow.position.set(0.5 * X, 0.05, -3.5); heroGlow.scale.setScalar(k);
+      M.want(hMain, 0.4 * X, 0.05 + bob(0), 0, 1.55 * k, 0.02, 0.3 + sway(0), 0);
+      M.want(hPair, 0.8 * X, 0.62 + bob(1), -1.7, 1.05 * k, 0, -0.5 + sway(1), 0.02);
+      M.want(hSol, 0.14 * X, -1.35 + bob(2), 1.3, 0.62 * k, -1.05, 0.15 + sway(2, 0.15), 0.35);
+      M.want(hWho, 0.88 * X, -1.05 + bob(3), -0.8, 0.62 * k, 0, -0.65 + sway(3), 0);
+    }
+    hFees.forEach((c, i) => {                       // smaa gebyrmynter i bane mellom paret og STONKD
+      const a = time * 0.45 + i * (Math.PI * 2 / hFees.length);
+      const cx = mob ? 0.35 : 0.6 * X, cy = mob ? Y * 0.5 + 0.25 : 0.35;
+      const rx = mob ? 1.1 : 1.7, ry = mob ? 0.35 : 0.5;
+      M.want(c, cx + Math.cos(a) * rx, cy + Math.sin(a) * ry, -0.8 + Math.sin(a) * 1.4, (mob ? 0.2 : 0.28) * Math.min(1, X / 4.2 + 0.4),
+        0.3, time * 2.2 + i, 0.2);
+    });
+
+    /* ---- How it works: staar fast midt paa skjermen mens stegene scroller forbi */
+    const p = THREE.MathUtils.clamp((innerHeight * 0.5 - lr.top) / lr.height, 0, 0.999);
+    const s = Math.floor(p * steps.length);
+    if (s !== step) step = s;
+    steps.forEach((el, i) => el.classList.toggle('on', i === step));
+    const center = Math.min(Math.max(innerHeight * 0.5, lr.top + innerHeight * 0.5), lr.bottom - innerHeight * 0.5);
+    how.position.set(mob ? 0 : 0.5 * X, px2y(center) + (mob ? Y * 0.5 : 0), 0);
+    how.rotation.set(tiltX, tiltY, 0);
+    const k = mob ? Math.min(0.56, X / 2.4) : Math.min(1.1, X / 4.2);
+    howGlow.position.set(0, 0, -3.5); howGlow.scale.setScalar(mob ? 0.62 : k);
+    const on = (i) => step === i;
+
+    // steg 1: STONKD-coinen foran, paret bak
+    M.want(main, on(0) ? -0.55 * k : -2.6 * k, on(0) ? 0.1 + bob(0) : 1.6, on(0) ? 0 : -3, on(0) ? 1.35 * k : 0, 0, 0.28 + sway(0), 0);
+    const pp = on(0) ? [1.3 * k, 0.5 * k + bob(1), -1.3, 0.98 * k, -0.4 + sway(1)]
+      : on(1) ? [0, 0.3 * k + bob(1), 0, 1.3 * k, sway(1)]
+        : on(2) ? [-2.4 * k, 1.5 * k, -3.2, 0.55 * k, 0.5]
+          : [-2.6 * k, 2.2, -4, 0, 0];
+    M.want(pair, pp[0], pp[1], pp[2], pp[3], 0, pp[4], 0);
+
+    // steg 2: gebyrmynter faller ned fra skjermkanten; steg 3: de trekkes inn i SOL
+    const top = Y + 0.6 - how.position.y, bottom = -Y - 0.6 - how.position.y;
+    fees.forEach((c, i) => {
+      const t = (time * 0.2 + c.userData.seed) % 1;
+      if (on(1)) {
+        const x = c.userData.x * (mob ? 1.6 : 1.9) * k;            // holder seg til myntens side av skjermen
+        const y = top + (bottom - top) * t, z = 0.9 + (i % 3) * 0.4;
+        M.want(c, x, y, z, 0.42 * k, time * 1.3 + i, time * 1.9 + i * 2, 0.3);
+        c.position.y = y;                                       // fallet styres direkte, uten gliding
+      } else if (on(2)) {
+        const a = c.userData.seed * Math.PI * 2 + time * 0.4, r = (1 - t) * 3.2 * k;
+        M.want(c, Math.cos(a) * r, 0.2 + Math.sin(a) * r * 0.6, 0.7 + (1 - t) * 0.6,
+          0.38 * k * (1 - smooth(0.75, 1, t)) * smooth(0, 0.1, t), 0.4, time * 2 + i, 0);
+      } else {
+        M.want(c, c.position.x, c.position.y, c.position.z, 0, 0, 0, 0);     // krymper der den er
+      }
+    });
+
+    M.want(sol, on(2) ? 0 : on(3) ? -1.6 * k : 0, on(2) ? 0.2 + bob(2) : on(3) ? 0.15 * k + bob(2) : -3,
+      on(3) ? 0.4 : 0, on(2) ? 1.3 * k : on(3) ? 0.52 * k : 0, 0, on(3) ? 0.5 + sway(2) : sway(2), 0);
+
+    // steg 4: mottakeren i midten, aksjene holderne kan faa i en bue under
+    M.want(who, on(3) ? 0.15 * k : 1.8 * k, on(3) ? 0.6 * k + bob(3) : 2.6, on(3) ? 0 : -3, on(3) ? 1.08 * k : 0, 0, -0.15 + sway(3), 0);
+    pays.forEach((c, i) => {
+      const x = (i - 1) * 1.15 * k + 0.15 * k, y = (mob ? -1.25 : -1.5) * k + Math.abs(i - 1) * 0.14 * k + bob(i + 5) * 0.5;
+      M.want(c, x, on(3) ? y : -3.4, on(3) ? 0.7 : 0, on(3) ? 0.5 * k : 0, 0.15, -0.3 + sway(i + 4, 0.35), (i - 1) * -0.08);
+    });
 
     M.glide(1 - Math.exp(-dt * 5));
-    [main, pair, sol, who, ...fees, ...pays].forEach((c) => stepFlip(c, dt));
-    st.renderer.render(scene, st.camera);
+    [hMain, hPair, hSol, hWho, ...hFees, main, pair, sol, who, ...fees, ...pays].forEach((c) => stepFlip(c, dt));
+    st.draw();
   });
+  document.documentElement.classList.add('gl');
 }
 
 /* ============================================================= kvitteringen
@@ -551,13 +626,13 @@ function receiptStage() {
     });
     M.glide(1 - Math.exp(-dt * 6));
     [pair, who, ...fees].forEach((c) => stepFlip(c, dt));
-    st.renderer.render(scene, st.camera);
+    st.draw();
   });
   canvas.closest('.rstage')?.classList.add('gl');
 }
 
 /* ------------------------------------------------------------- oppstart */
-try { howStage(); } catch (e) { console.warn('how stage', e); }
+try { pageStage(); } catch (e) { console.warn('page stage', e); document.documentElement.classList.add('nogl'); }
 try { receiptStage(); } catch (e) { console.warn('receipt stage', e); }
 
 const clock = new THREE.Clock();

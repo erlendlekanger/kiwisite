@@ -16,13 +16,16 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="preload" as="image" href="/img/hero.webp" imagesrcset="/img/hero-m.webp 1080w, /img/hero.webp 2560w" imagesizes="100vw">
 <link rel="stylesheet" href="/site.css">
 <script type="importmap">
-{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js" } }
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+} }
 </script>
 </head>
 <body>
+<canvas id="stage" aria-hidden="true"></canvas>
 
 <header class="nav" id="nav">
   <div class="wrap nav-in">
@@ -41,10 +44,7 @@
 
   <!-- ------------------------------------------------------------ hero -->
   <section class="hero">
-    <picture class="hero-img">
-      <source media="(max-width: 760px)" srcset="/img/hero-m.webp">
-      <img src="/img/hero.webp" alt="A frosted glass STONKD coin standing next to a steel Apple coin and a SOL coin" fetchpriority="high">
-    </picture>
+    <div class="hero-space" aria-hidden="true"></div>
     <div class="wrap hero-in">
       <p class="eyebrow"><i></i>Launches on StonkFun</p>
       <h1>Coins paired with stocks.<br><span>Fees paid to whoever you pick.</span></h1>
@@ -141,7 +141,6 @@
             <p>An X profile, a GitHub account or a wallet is paid in SOL. A coin can instead pay its holders,
               in SOL or in up to five stocks bought with the fees. The platform keeps a fixed share of every fee.</p></li>
         </ol>
-        <div class="how-stage"><canvas id="hcanvas" aria-hidden="true"></canvas></div>
       </div>
     </div>
   </section>

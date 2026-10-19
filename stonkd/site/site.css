@@ -26,7 +26,8 @@
 html { scroll-behavior: smooth; scroll-padding-top: 72px; }
 html, body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--sans);
   font-size: 15px; -webkit-font-smoothing: antialiased; }
-body { overflow-x: hidden; scrollbar-color: var(--line) var(--bg); scrollbar-width: thin; }
+/* Bakgrunnen ligger paa html; body er gjennomsiktig saa 3D-lerretet bak innholdet synes. */
+body { background: transparent; overflow-x: hidden; scrollbar-color: var(--line) var(--bg); scrollbar-width: thin; }
 a { color: inherit; text-decoration: none; }
 button, input { font: inherit; color: inherit; }
 img { display: block; max-width: 100%; }
@@ -67,14 +68,13 @@ p { margin: 0; }
 .ca:hover, .ca.on { border-color: var(--accent); color: var(--text); }
 
 /* ---------------------------------------------------------------- hero */
-.hero { position: relative; min-height: min(100vh, 980px); display: flex; align-items: center;
-  overflow: hidden; isolation: isolate; }
-/* Bildet ligger til hoeyre, saa teksten faar den moerke venstre halvdelen for seg selv. */
-.hero-img { position: absolute; inset: 0 0 0 34%; z-index: -1; }
-.hero-img img { width: 100%; height: 100%; object-fit: cover; object-position: 76% 50%; }
-.hero::after { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
-  background: linear-gradient(90deg, var(--bg) 0%, var(--bg) 34%, rgba(5, 12, 16, .5) 44%, rgba(5, 12, 16, 0) 58%),
-    linear-gradient(0deg, var(--bg) 0%, rgba(5, 12, 16, 0) 22%); }
+/* 3D-scenen ligger fast over hele skjermen, bak innholdet (coins.js). */
+#stage { position: fixed; inset: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; display: block; }
+
+.hero { position: relative; min-height: min(100vh, 980px); display: flex; align-items: center; }
+.hero-space { display: none; }
+/* Uten WebGL: det rendrede bildet i stedet for de levende myntene. */
+html.nogl .hero { background: url(/img/hero.webp) 76% 50% / cover no-repeat; }
 .hero-in { width: 100%; padding-top: 120px; padding-bottom: 96px; }
 .hero h1 { font-size: clamp(40px, 4.6vw, 68px); line-height: 1; font-weight: 800; max-width: 9.2em; }
 .hero h1 span { background: linear-gradient(90deg, var(--accent-3), var(--accent));
@@ -196,8 +196,9 @@ p { margin: 0; }
 
 /* ---------------------------------------------------------------- how */
 /* Ett steg per rad. Mynten staar fast ved siden av mens stegene scroller forbi. */
-.how-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 48px; align-items: start; }
-.hsteps { list-style: none; margin: 0; padding: 0 0 14vh; }
+/* Ett steg per rad i venstre halvdel; mynten staar fast til hoeyre (coins.js). */
+.how-grid { display: block; }
+.hsteps { list-style: none; margin: 0; padding: 0 0 14vh; width: 48%; }
 .hsteps li { min-height: 78vh; display: flex; flex-direction: column; justify-content: center;
   padding: 40px 0; border-top: 1px solid var(--line-soft); opacity: .3; transition: opacity .4s ease; }
 .hsteps li:first-child { border-top: 0; }
@@ -205,8 +206,6 @@ p { margin: 0; }
 .hsteps .n { font-family: var(--mono); font-size: 13px; letter-spacing: .14em; color: var(--accent-2); margin-bottom: 18px; }
 .hsteps h3 { font-size: clamp(26px, 2.8vw, 38px); line-height: 1.1; max-width: 13em; }
 .hsteps p { margin-top: 16px; max-width: 32em; color: var(--muted); font-size: 16px; line-height: 1.7; }
-.how-stage { position: sticky; top: 64px; height: calc(100vh - 64px); }
-.how-stage canvas { width: 100%; height: 100%; display: block; }
 
 /* ---------------------------------------------------------------- tall */
 .nums { display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid var(--line); border-radius: var(--r-lg);
@@ -281,9 +280,8 @@ p { margin: 0; }
   .wrap { padding: 0 16px; }
   .ca { display: none; }
   .hero { min-height: 0; display: block; }
-  .hero-img { position: relative; inset: auto; height: 64vw; }
-  .hero-img img { object-position: 78% 50%; }
-  .hero::after { background: linear-gradient(0deg, var(--bg) 0%, rgba(5, 12, 16, 0) 30%); height: 64vw; bottom: auto; }
+  .hero-space { display: block; height: 50vh; }
+  html.nogl .hero { background-position: 78% 0; background-size: auto 50vh; }
   .hero-in { padding-top: 8px; padding-bottom: 64px; }
   .strip { gap: 18px; margin-top: 40px; }
   .strip dd { font-size: 20px; }
@@ -295,9 +293,9 @@ p { margin: 0; }
   .lblrow { flex-direction: column; align-items: stretch; }
   .lblrow .search { width: 100%; }
   .kinds { grid-template-columns: 1fr 1fr; }
-  .how-grid { grid-template-columns: minmax(0, 1fr); gap: 0; }
-  .how-stage { order: -1; top: 64px; height: 44vh; z-index: 2; background: var(--bg); }
-  .hsteps li { min-height: 62vh; }
+  /* Mobil: mynten staar i oevre del av skjermen, teksten kommer under den. */
+  .hsteps { width: 100%; }
+  .hsteps li { min-height: 100vh; justify-content: flex-end; padding: 0 0 12vh; border-top: 0; }
   .grid { grid-template-columns: minmax(0, 1fr); }
   .pgrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .nums .v { font-size: 28px; }
