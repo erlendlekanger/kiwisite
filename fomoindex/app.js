@@ -133,7 +133,8 @@
     const n = S.selected.size;
     const step = !n ? 0 : S.name ? 2 : 1;
     document.querySelectorAll('#steps div').forEach((d, i) => { d.classList.toggle('on', i === step); d.classList.toggle('done', i < step); });
-    if (!n) { panel.innerHTML = `<div class="card"><div class="kicker">Your index</div><p class="note">Tap traders on the left to add them. Up to ten. You can weight them in the next step.</p></div>`; return; }
+    if (!n) { panel.innerHTML = `<div class="card"><div class="kicker">Your index</div><p class="note">Tap traders on the left to add them. Up to ten. You can weight them in the next step.</p>
+      <div class="hint-list"><span><b>1</b>Pick 3 to 6 traders with different styles</span><span><b>2</b>Weight the ones you trust most</span><span><b>3</b>Pick a tempo, 2 h is the sweet spot</span><span><b>4</b>Fund with 0.2 SOL or more</span></div></div>`; return; }
     const ws = weights();
     const tr = (h) => S.traders.find((t) => t.handle === h) || { handle: h };
     panel.innerHTML = `
@@ -170,11 +171,20 @@
     panel.querySelector('#create').addEventListener('click', create);
     if (S.preview) paintPreview();
   }
+  const COLS = ['#516af6', '#8a92ff', '#21c95e', '#ffc74f', '#ff622e', '#c084fc', '#38bdf8', '#f472b6', '#a3e635', '#fb923c', '#7c8aa8', '#e879f9'];
+  function donutSvg(parts, label) {
+    let off = 0;
+    return parts.map((p, i) => { const len = Math.max(0, Math.min(100, p.weight * 100)); const x = `<circle cx="21" cy="21" r="15.9" fill="none" stroke="${p.color || COLS[i % COLS.length]}" stroke-width="5" stroke-dasharray="${len} ${100 - len}" stroke-dashoffset="${25 - off}"/>`; off += len; return x; }).join('') + `<circle cx="21" cy="21" r="15.9" fill="none" stroke="rgba(203,208,235,.08)" stroke-width="5" stroke-dasharray="${Math.max(0, 100 - off)} ${Math.min(100, off)}" stroke-dashoffset="${25 - off}"/>` + (label == null ? '' : `<text x="21" y="22.5" text-anchor="middle" font-size="5" fill="#EAEDFF" font-family="Geist Mono">${esc(label)}</text>`);
+  }
   function donut(ws) {
     const el = document.getElementById('donut'); if (!el) return;
-    const cols = ['#516af6', '#8a92ff', '#21c95e', '#ffc74f', '#ff622e', '#c084fc', '#38bdf8', '#f472b6', '#a3e635', '#fb923c'];
-    let off = 0;
-    el.innerHTML = ws.map((w, i) => { const len = w.weight * 100; const s = `<circle cx="21" cy="21" r="15.9" fill="none" stroke="${cols[i % cols.length]}" stroke-width="5" stroke-dasharray="${len} ${100 - len}" stroke-dashoffset="${25 - off}"/>`; off += len; return s; }).join('') + `<text x="21" y="22.5" text-anchor="middle" font-size="5" fill="#EAEDFF" font-family="Geist Mono">${ws.length}</text>`;
+    el.innerHTML = donutSvg(ws, ws.length);
+  }
+  let countT;
+  function countdown(el, due) {
+    clearInterval(countT); if (!el) return;
+    const tick = () => { const left = due - Date.now(); if (left <= 0) { el.textContent = 'due now'; return; } const h = Math.floor(left / 3600e3), m = Math.floor((left % 3600e3) / 60e3), sec = Math.floor((left % 60e3) / 1e3); el.textContent = h ? `${h}:${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}` : `${m}:${String(sec).padStart(2, '0')}`; };
+    tick(); countT = setInterval(tick, 1000);
   }
   let previewT; const schedulePreview = () => { clearTimeout(previewT); previewT = setTimeout(loadPreview, 400); };
   async function loadPreview() {
@@ -228,6 +238,7 @@
       <div class="addr" id="addr" title="Click to copy">${esc(addr)}</div>
       <div class="field"><label>Amount</label><input class="input" id="damt" type="number" min="0.05" step="0.05" value="${amount || 1}"></div>
       <button class="btn accent lg" id="pay">Send with wallet</button>
+      <div class="mini-steps"><span><b>1</b>SOL lands in the index wallet</span><span><b>2</b>Next cycle buys the basket</span><span><b>3</b>It mirrors your traders from then on</span></div>
       <details><summary class="note" style="cursor:pointer">I sent it from another wallet</summary><div class="field" style="margin-top:10px"><label>Paste the transaction signature so the index can count it</label><input class="input" id="sig" placeholder="5Kd…"><button class="btn ghost sm" id="sigbtn" style="margin-top:8px">Record deposit</button></div></details>`,
       (el) => {
         try { const q = qrcode(0, 'M'); q.addData(url); q.make(); el.querySelector('#qr').innerHTML = q.createSvgTag({ cellSize: 4, margin: 0, scalable: true }); } catch (e) { /* no qr */ }
@@ -263,8 +274,8 @@
       document.getElementById('list').innerHTML = indexes.length ? indexes.map((ix) => { const dep = Number(ix.deposited_sol) || 0; const nav = Number(ix.nav_sol) || 0; const chg = dep ? ((nav + Number(ix.withdrawn_sol || 0)) / dep - 1) : 0; return `<a class="ix" href="#ix/${esc(ix.id)}">
           <div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><h3>${esc(ix.name)}</h3><span class="pill ${esc(ix.status)}"><i></i>${esc(ix.status)}</span></div>
           <div class="navv">${nav ? sol(nav) : '—'}<small>${ix.nav_usd ? usd(ix.nav_usd, 0) : 'awaiting deposit'}</small></div>
-          <div style="display:flex;justify-content:space-between;margin-top:10px;font-size:13px;color:var(--muted)"><span>${(ix.traders || []).length} traders</span><span class="${chg >= 0 ? 'pos' : 'neg'}" style="font-family:var(--mono)">${dep ? (chg >= 0 ? '+' : '') + (chg * 100).toFixed(1) + '%' : ''}</span></div></a>`; }).join('')
-        : `<div class="empty" style="grid-column:1/-1">No indexes yet. <a href="#build" style="color:var(--accent-hi)">Build your first one →</a></div>`;
+          <div style="display:flex;justify-content:space-between;margin-top:10px;font-size:13px;color:var(--muted)"><span>${(ix.traders || []).length} traders · every ${every(ix.interval_min || 120)}</span><span class="${chg >= 0 ? 'pos' : 'neg'}" style="font-family:var(--mono)">${dep ? (chg >= 0 ? '+' : '') + (chg * 100).toFixed(1) + '%' : ''}</span></div></a>`; }).join('')
+        : `<div class="empty-state" style="grid-column:1/-1"><div class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M12 9v6M9 12h6"/></svg></div><b>No indexes yet</b><p>Pick a few traders from the leaderboard, set the pace, and fund it with SOL. Takes about two minutes.</p><a class="btn accent" href="#build">Build your first index →</a></div>`;
     } catch (e) { document.getElementById('list').innerHTML = `<div class="empty">${esc(e.message)}</div>`; }
   }
 
@@ -294,12 +305,25 @@
               <div class="stat"><b>${sol(d.nav_sol)}</b><small>Index value</small></div>
               <div class="stat"><b>${usd(d.nav_usd, 0)}</b><small>In USD</small></div>
               <div class="stat"><b class="${chg == null ? '' : chg >= 0 ? 'pos' : 'neg'}">${chg == null ? '—' : (chg >= 0 ? '+' : '') + (chg * 100).toFixed(1) + '%'}</b><small>Since deposit</small></div>
-              <div class="stat"><b style="font-size:15px">${ago(d.last_rebalance)}</b><small>Last rebalance</small></div>
+              <div class="stat"><b id="nextRb" style="font-size:${d.status === 'active' && dep ? 20 : 15}px">${d.status !== 'active' ? d.status : !dep ? 'after deposit' : '…'}</b><small>Next rebalance</small></div>
             </div>
-            <p class="note" style="margin-top:12px">Mirrors every <b>${every(d.interval_min || 120)}</b> · fee ${(d.fee_bps || 0) / 100}% per trade · ${sol(d.fees_paid_sol || 0, 4)} paid in fees so far.</p>
-            <canvas class="chart" id="chart" width="800" height="220"></canvas>
+            <div class="meta-row"><span class="pill"><i></i>every ${every(d.interval_min || 120)}</span><span>Fee <b>${(d.fee_bps || 0) / 100}%</b> per trade</span><span><b>${sol(d.fees_paid_sol || 0, 4)}</b> paid in fees</span><span>Last cycle <b>${ago(d.last_rebalance)}</b></span></div>
+            ${dep ? `<canvas class="chart" id="chart" width="800" height="220"></canvas>` : `
+            <div class="next-steps">
+              <div class="ns-head"><b>Waiting for your first deposit</b><p>The index wallet is ready. Here is what happens once SOL lands in it.</p></div>
+              <ol>
+                <li><b>Send SOL</b><span>Any amount from 0.2 SOL, from any wallet, to the index wallet on the right.</span></li>
+                <li><b>First cycle buys the basket</b><span>Within ${every(d.interval_min || 120)} the index swaps into what your traders hold, blended by weight.</span></li>
+                <li><b>Then it mirrors</b><span>Every ${every(d.interval_min || 120)} it checks your traders and trades only what has drifted more than 2.5%.</span></li>
+              </ol>
+              ${d.status === 'closed' ? '' : '<button class="btn accent" id="depBtn2">Deposit SOL</button>'}
+            </div>`}
           </div>
-          <div class="card" style="margin-top:16px"><div class="kicker">Holdings</div>
+          <div class="card" style="margin-top:16px">
+            <div class="hold-head"><div><div class="kicker">Holdings</div><p class="note">${d.nav_usd > 0 ? `${d.holdings.filter((r) => r.mint !== SOL_MINT && r.usd > 0.5).length} tokens plus SOL as cash` : 'Target basket, bought on the first cycle'}</p></div>
+              <div class="comp"><svg viewBox="0 0 42 42">${donutSvg((d.holdings.length && d.nav_usd > 0 ? rows.filter((r) => r.weight > 0).map((r, i) => ({ weight: r.weight, color: r.mint === SOL_MINT ? '#7c8aa8' : COLS[i % COLS.length] })) : [...d.target.map((t, i) => ({ weight: t.weight, color: COLS[i % COLS.length] })), { weight: Math.max(0, 1 - d.target.reduce((s2, t) => s2 + t.weight, 0)), color: '#7c8aa8' }]), null)}</svg>
+                <div class="legend">${(d.holdings.length && d.nav_usd > 0 ? rows.filter((r) => r.weight > 0).map((r, i) => ({ s: r.symbol || short(r.mint), w: r.weight, c: r.mint === SOL_MINT ? '#7c8aa8' : COLS[i % COLS.length] })) : [...d.target.map((t, i) => ({ s: t.symbol || short(t.mint), w: t.weight, c: COLS[i % COLS.length] })), { s: 'SOL', w: Math.max(0, 1 - d.target.reduce((s2, t) => s2 + t.weight, 0)), c: '#7c8aa8' }]).slice(0, 6).map((l) => `<span><i style="background:${l.c}"></i>${esc(l.s)} ${pct(l.w)}</span>`).join('')}</div></div>
+            </div>
             ${rows.length ? `<table><thead><tr><th>Token</th><th class="r">Now</th><th class="r">Target</th><th class="r">Value</th></tr></thead><tbody>
             ${rows.map((r) => `<tr><td><div class="tok"><i>${r.icon ? `<img src="${esc(r.icon)}" alt="">` : ''}</i><b>${esc(r.symbol || r.mint.slice(0, 4))}</b><small>${r.mint === SOL_MINT ? 'cash' : short(r.mint)}</small></div></td><td class="r">${pct(r.weight)}</td><td class="r" style="color:var(--muted)">${r.mint === SOL_MINT ? pct(Math.max(0, 1 - d.target.reduce((s, t) => s + t.weight, 0))) : pct(targetOf(r.mint))}</td><td class="r">${usd(r.usd)}</td></tr>`).join('')}
             </tbody></table>` : `<div class="empty">Waiting for the first deposit.</div>`}
@@ -321,6 +345,8 @@
         </div>
       </div>`;
     chart(document.getElementById('chart'), d.history);
+    if (d.status === 'active' && dep) countdown(document.getElementById('nextRb'), (d.last_rebalance ? new Date(d.last_rebalance).getTime() : Date.now()) + (d.interval_min || 120) * 60e3);
+    document.getElementById('depBtn2')?.addEventListener('click', () => depositModal(d.id, d.deposit, 1));
     document.getElementById('addr2').addEventListener('click', async () => { try { await navigator.clipboard.writeText(d.deposit); toast('Address copied'); } catch (e) { /* ignore */ } });
     document.getElementById('depBtn')?.addEventListener('click', () => depositModal(d.id, d.deposit, 1));
     document.getElementById('pauseBtn')?.addEventListener('click', async () => { try { await api(`/api/ix/${d.id}/status`, { method: 'POST', body: { status: d.status === 'paused' ? 'active' : 'paused' } }); toast(d.status === 'paused' ? 'Index resumed' : 'Index paused'); renderIndex(id); } catch (e) { toast(e.message); } });

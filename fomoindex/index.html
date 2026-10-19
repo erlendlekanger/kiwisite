@@ -3,62 +3,139 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>FOMOINDEX</title>
-<meta name="description" content="Own the moves of fomo's best traders. Pick traders from the fomo leaderboard, set weights, fund with SOL, and your index mirrors what they hold, around the clock.">
+<title>FOMOINDEX · own the moves of fomo's best traders</title>
+<meta name="description" content="Pick traders from the fomo leaderboard, set weights, fund with SOL. Your index mirrors what they hold on-chain, rebalanced as often as you choose, from every minute to once a day.">
 <meta name="theme-color" content="#060510">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="FOMOINDEX">
 <meta property="og:title" content="FOMOINDEX · own the moves of fomo's best traders">
-<meta property="og:description" content="Pick traders, set weights, fund with SOL. Your index mirrors what they hold, rebalanced every 30 minutes.">
-<meta property="og:image" content="https://fomoindex.family/assets/og.jpg">
-<meta property="og:url" content="https://fomoindex.family/">
+<meta property="og:description" content="Pick traders, set weights, fund with SOL. Your index mirrors what they hold, rebalanced as often as you choose.">
+<meta property="og:image" content="https://fomoindex.app/assets/og.jpg">
+<meta property="og:url" content="https://fomoindex.app/">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="canonical" href="https://fomoindex.family/">
+<meta name="twitter:title" content="FOMOINDEX · own the moves of fomo's best traders">
+<meta name="twitter:description" content="Pick traders, set weights, fund with SOL. Your index mirrors what they hold, rebalanced as often as you choose.">
+<meta name="twitter:image" content="https://fomoindex.app/assets/og.jpg">
+<link rel="canonical" href="https://fomoindex.app/">
 <link rel="icon" href="assets/logo-tile.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
-<link rel="preload" href="assets/astronaut.png" as="image">
+<link rel="preload" href="assets/astronaut.png" as="image" fetchpriority="high">
 <link rel="preload" href="assets/space.webp" as="image">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"FOMOINDEX","url":"https://fomoindex.app/","applicationCategory":"FinanceApplication","operatingSystem":"Web","description":"Build an index of fomo traders. The index mirrors what they hold on Solana and rebalances on the interval you choose."}</script>
 </head>
 <body>
 <canvas id="space" aria-hidden="true"></canvas>
 
-<nav class="nav"><div class="nav-in">
-  <a class="lockup" href="/"><img src="assets/logo-tile.svg" alt=""><span><b>fomo</b><i>index</i></span></a>
-  <div class="nav-links"><a href="#how">How it works</a><a href="#traders">Traders</a><a href="#safety">Safety</a><a href="#faq">FAQ</a></div>
+<nav class="nav" id="nav"><div class="nav-in">
+  <a class="lockup" href="/"><img src="assets/logo-tile.svg" alt="" width="34" height="34"><span><b>fomo</b><i>index</i></span></a>
+  <div class="nav-links"><a href="#how">How it works</a><a href="#tempo">Tempo &amp; fees</a><a href="#traders">Traders</a><a href="#safety">Safety</a><a href="#faq">FAQ</a></div>
   <div class="sp"></div>
-  <a class="btn ghost sm" href="https://fomo.family" target="_blank" rel="noopener">fomo.family ↗</a>
+  <a class="btn ghost sm nav-ext" href="https://fomo.family" target="_blank" rel="noopener">fomo.family ↗</a>
   <a class="btn accent" href="/app">Open app</a>
-</div></nav>
+  <button class="burger" id="burger" aria-label="Menu" aria-expanded="false"><i></i><i></i></button>
+</div>
+<div class="nav-menu" id="navMenu"><a href="#how">How it works</a><a href="#tempo">Tempo &amp; fees</a><a href="#traders">Traders</a><a href="#safety">Safety</a><a href="#faq">FAQ</a><a href="https://fomo.family" target="_blank" rel="noopener">fomo.family ↗</a></div>
+</nav>
 
 <main class="page">
+  <!-- ========== HERO ========== -->
   <section class="hero">
-    <div class="hero-lockup"><img src="assets/logo-tile.svg" alt="FOMOINDEX"><span>Index</span></div>
+    <div class="eyebrow"><i class="dot"></i><span>Live on Solana mainnet</span><span class="sep"></span><span class="eb2">Mirrors every 1 min to 24 h</span></div>
+    <div class="hero-lockup"><img src="assets/logo-tile.svg" alt="FOMOINDEX" width="118" height="118"><span>Index</span></div>
     <p class="lead">Pick traders from the fomo leaderboard, set the weights, fund it with SOL. Your index mirrors what they hold on-chain, as often as you choose.</p>
-    <div class="hero-art"><img src="assets/astronaut.png" alt="An astronaut floating in space holding a phone with the FOMOINDEX app" width="1800" height="1511"></div>
+
+    <div class="hero-stage">
+      <div class="hero-art"><img src="assets/astronaut.png" alt="An astronaut floating in space holding a phone that shows the FOMOINDEX app" width="1800" height="1511" fetchpriority="high"></div>
+
+      <div class="float f1" aria-hidden="true">
+        <div class="fl-head"><span class="fl-name">Legends only</span><span class="pill"><i></i>active</span></div>
+        <div class="fl-nav">2.418 <small>SOL</small></div>
+        <div class="fl-row"><span class="pos">+14.6% since deposit</span><span class="muted">$412</span></div>
+        <svg class="spark" viewBox="0 0 160 40" preserveAspectRatio="none"><defs><linearGradient id="sg" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#21c95e" stop-opacity=".35"/><stop offset="1" stop-color="#21c95e" stop-opacity="0"/></linearGradient></defs><path d="M0 30 L14 28 L28 31 L42 24 L56 26 L70 18 L84 20 L98 14 L112 16 L126 9 L140 11 L160 4 L160 40 L0 40 Z" fill="url(#sg)"/><path d="M0 30 L14 28 L28 31 L42 24 L56 26 L70 18 L84 20 L98 14 L112 16 L126 9 L140 11 L160 4" fill="none" stroke="#21c95e" stroke-width="1.6" stroke-linejoin="round"/></svg>
+      </div>
+
+      <div class="float f2" aria-hidden="true">
+        <div class="fl-trader"><div class="ava">M</div><div><b>moonboi</b><small>@moonboi · #2</small></div><span class="w">40%</span></div>
+        <div class="fl-trader"><div class="ava">K</div><div><b>kira.sol</b><small>@kira · #5</small></div><span class="w">35%</span></div>
+        <div class="fl-trader"><div class="ava">D</div><div><b>degenpapi</b><small>@degenpapi · #11</small></div><span class="w">25%</span></div>
+      </div>
+
+      <div class="float f3" aria-hidden="true">
+        <div class="fl-label">Next rebalance</div>
+        <div class="fl-timer" id="heroTimer">01:42:10</div>
+        <div class="fl-sub">Every 2 h · 0.5% per trade</div>
+      </div>
+
+      <div class="float f4" aria-hidden="true">
+        <div class="fl-label">Activity</div>
+        <div class="fl-log"><time>4 min</time><span>Bought <b>WIF</b> for 0.120 SOL</span></div>
+        <div class="fl-log"><time>2 h</time><span>Sold <b>BONK</b> for 0.084 SOL</span></div>
+        <div class="fl-log"><time>2 h</time><span>Rebalanced · 3 trades</span></div>
+      </div>
+    </div>
+
     <div class="cta"><a class="btn accent lg" href="/app">Build your index →</a><a class="btn ghost lg" href="#how">How it works</a></div>
-    <div class="trust"><span><i></i>Withdraw to your wallet any time</span><span><i></i>Routed through Jupiter</span><span><i></i>Mirrors every 1 min to 24 h, you choose</span></div>
+    <div class="trust"><span><i></i>Withdraw to your wallet any time</span><span><i></i>Every swap routed through Jupiter</span><span><i></i>Keys encrypted, never shared</span></div>
   </section>
 
+  <!-- ========== SPECS STRIP ========== -->
+  <section class="specs reveal" aria-label="Key facts">
+    <div class="spec"><small>Rebalance interval</small><b>1 min → 24 h</b></div>
+    <div class="spec"><small>Fee per trade</small><b>0.3% → 2.5%</b></div>
+    <div class="spec"><small>Routing</small><b>Jupiter aggregator</b></div>
+    <div class="spec"><small>Positions</small><b>Up to 12 tokens</b></div>
+    <div class="spec"><small>Chain</small><b>Solana mainnet</b></div>
+  </section>
+
+  <!-- ========== HOW IT WORKS ========== -->
   <section class="block" id="how">
-    <div class="sec-head"><div class="kicker">How it works</div><h2>Three choices. Then it runs itself.</h2><p>No charts to read, no entries to time. You decide who to follow and how much. The index does the trading.</p></div>
+    <div class="sec-head reveal"><div class="kicker">How it works</div><h2>Three choices. Then it runs itself.</h2><p>No charts to read, no entries to time. You decide who to follow and how much. The index does the trading.</p></div>
     <div class="grid3">
-      <div class="card"><div class="step">01</div><h3>Pick traders</h3><p>Choose from the fomo leaderboard. See what each trader holds right now, their 7-day PnL and rank, and add up to ten of them to your index.</p></div>
-      <div class="card"><div class="step">02</div><h3>Set weights</h3><p>Equal split by default, or lean into your favourites with a slider. Each trader's holdings count toward your index in proportion to their weight.</p></div>
-      <div class="card"><div class="step">03</div><h3>Fund with SOL</h3><p>Send SOL to your index's own wallet. Within minutes it buys what your traders hold. From then on it sells what they sell and buys what they buy.</p></div>
+      <div class="card how reveal">
+        <div class="vig">
+          <div class="vig-trader on"><div class="ava">M</div><div><b>moonboi</b><small>WIF 42% · POPCAT 31%</small></div><span class="chk"><svg viewBox="0 0 16 16"><path d="M3 8.5l3 3 7-7"/></svg></span></div>
+          <div class="vig-trader on"><div class="ava">K</div><div><b>kira.sol</b><small>BONK 55% · WIF 20%</small></div><span class="chk"><svg viewBox="0 0 16 16"><path d="M3 8.5l3 3 7-7"/></svg></span></div>
+          <div class="vig-trader"><div class="ava">R</div><div><b>rektlord</b><small>all in SOL</small></div><span class="chk"></span></div>
+        </div>
+        <div class="step">01</div><h3>Pick traders</h3><p>Choose from the fomo leaderboard. See what each trader holds right now, their 7-day PnL and rank, and add up to ten of them.</p>
+      </div>
+      <div class="card how reveal" style="--d:.1s">
+        <div class="vig">
+          <div class="vig-w"><span>moonboi</span><div class="track"><i style="width:40%"></i><em style="left:40%"></em></div><b>40%</b></div>
+          <div class="vig-w"><span>kira.sol</span><div class="track"><i style="width:35%"></i><em style="left:35%"></em></div><b>35%</b></div>
+          <div class="vig-w"><span>degenpapi</span><div class="track"><i style="width:25%"></i><em style="left:25%"></em></div><b>25%</b></div>
+        </div>
+        <div class="step">02</div><h3>Set weights</h3><p>Equal split by default, or lean into your favourites with a slider. Each trader's holdings count toward your index in proportion to their weight.</p>
+      </div>
+      <div class="card how reveal" style="--d:.2s">
+        <div class="vig vig-fund">
+          <div class="vig-qr" id="vigQr"></div>
+          <div>
+            <div class="vig-addr">7xKq…m3Ed</div>
+            <div class="vig-amts"><span>0.5</span><span class="on">1 SOL</span><span>2</span></div>
+            <div class="vig-btn">Send with wallet</div>
+          </div>
+        </div>
+        <div class="step">03</div><h3>Fund with SOL</h3><p>Send SOL to your index's own wallet. On its first cycle it buys what your traders hold. From then on it sells what they sell and buys what they buy.</p>
+      </div>
     </div>
   </section>
 
+  <!-- ========== MECHANICS ========== -->
   <section class="block" id="mechanics">
-    <div class="sec-head"><div class="kicker">Under the hood</div><h2>Positions, not tips.</h2><p>On every cycle the index reads each trader's wallet on-chain, blends their holdings by your weights, and trades your basket to match. Dust, airdrops and illiquid tokens are left out automatically.</p></div>
-    <div class="diagram">
+    <div class="sec-head reveal"><div class="kicker">Under the hood</div><h2>Positions, not tips.</h2><p>On every cycle the index reads each trader's wallet on-chain, blends their holdings by your weights, and trades your basket to match. Dust, airdrops and illiquid tokens are left out automatically.</p></div>
+    <div class="diagram reveal">
       <div class="col">
-        <div class="trader-chip"><div class="ava eyes"><img src="assets/mark-navy.svg" alt="" style="filter:invert(1)"></div><div><b>Trader A</b><small>SOL 40% · TOK1 40% · TOK2 20%</small></div><span class="w">50%</span></div>
-        <div class="trader-chip"><div class="ava eyes"><img src="assets/mark-navy.svg" alt="" style="filter:invert(1)"></div><div><b>Trader B</b><small>SOL 50% · TOK1 20% · TOK3 30%</small></div><span class="w">30%</span></div>
-        <div class="trader-chip"><div class="ava eyes"><img src="assets/mark-navy.svg" alt="" style="filter:invert(1)"></div><div><b>Trader C</b><small>SOL 20% · TOK3 60% · TOK4 20%</small></div><span class="w">20%</span></div>
+        <div class="dg-label">Your traders</div>
+        <div class="trader-chip"><div class="ava">A</div><div><b>Trader A</b><small>SOL 40% · TOK1 40% · TOK2 20%</small></div><span class="w">50%</span></div>
+        <div class="trader-chip"><div class="ava">B</div><div><b>Trader B</b><small>SOL 50% · TOK1 20% · TOK3 30%</small></div><span class="w">30%</span></div>
+        <div class="trader-chip"><div class="ava">C</div><div><b>Trader C</b><small>SOL 20% · TOK3 60% · TOK4 20%</small></div><span class="w">20%</span></div>
       </div>
       <div class="arrow"><svg viewBox="0 0 24 24"><path d="M4 12h16M14 6l6 6-6 6"/></svg></div>
-      <div class="mix"><div class="t">Blended by weight</div>
+      <div class="mix"><div class="dg-label">Blended by weight</div>
         <div class="bar-row"><span>SOL</span><div class="bar"><i class="sol" style="width:39%"></i></div><small>39%</small></div>
         <div class="bar-row"><span>TOK1</span><div class="bar"><i style="width:26%"></i></div><small>26%</small></div>
         <div class="bar-row"><span>TOK3</span><div class="bar"><i style="width:21%"></i></div><small>21%</small></div>
@@ -66,71 +143,104 @@
         <div class="bar-row"><span>TOK4</span><div class="bar"><i style="width:4%"></i></div><small>4%</small></div>
       </div>
       <div class="arrow"><svg viewBox="0 0 24 24"><path d="M4 12h16M14 6l6 6-6 6"/></svg></div>
-      <div class="basket"><div class="kicker">Your index</div><div class="nav-big">1.00 SOL<small>funded</small></div>
+      <div class="basket"><div class="dg-label">Your index</div><div class="nav-big">1.00 SOL<small>funded</small></div>
         <div class="chips"><span class="chip"><i></i>SOL <b>39%</b></span><span class="chip"><i></i>TOK1 <b>26%</b></span><span class="chip"><i></i>TOK3 <b>21%</b></span><span class="chip"><i></i>TOK2 <b>10%</b></span><span class="chip"><i></i>TOK4 <b>4%</b></span></div>
         <p class="note" style="margin-top:14px">When Trader A sells TOK1, your TOK1 weight drops and the index sells to match. When Trader C buys something new, the index buys it next round.</p>
       </div>
     </div>
   </section>
 
-  <section class="block" id="traders">
-    <div class="sec-head"><div class="kicker">The leaderboard</div><h2>Traders you can put in an index.</h2><p>Live from fomo. Each card shows what the trader holds right now, read straight from the chain.</p></div>
-    <div class="traders-grid" id="tradersPreview"></div>
-    <div class="cta" style="justify-content:center;margin-top:26px"><a class="btn ghost" href="/app">See everyone in the app →</a></div>
-  </section>
-
-  <section class="block" id="safety">
-    <div class="sec-head"><div class="kicker">Safety</div><h2>Rules the index never breaks.</h2></div>
-    <div class="rules">
-      <div class="rule"><b>Liquidity floor</b><p>A token needs at least $50k of liquidity before the index will touch it. Thin tokens are skipped even if a trader holds them.</p></div>
-      <div class="rule"><b>Dust is ignored</b><p>Anything under 2% of a trader's wallet is treated as noise: airdrops, leftovers, lottery tickets.</p></div>
-      <div class="rule"><b>At most 12 tokens</b><p>The index keeps its largest positions and leaves the long tail, so fees and slippage stay small.</p></div>
-      <div class="rule"><b>Threshold rebalancing</b><p>It only trades when a position is more than 2.5% off target. No churn, no death by a thousand swaps.</p></div>
-      <div class="rule"><b>Your money, your exit</b><p>Pause any time. Withdraw any time: everything is sold to SOL and sent to the wallet you signed in with.</p></div>
-      <div class="rule"><b>Encrypted keys</b><p>Each index has its own wallet. Its key is encrypted at rest with AES-256 and only ever used to swap through Jupiter.</p></div>
+  <!-- ========== TEMPO ========== -->
+  <section class="block" id="tempo">
+    <div class="sec-head reveal"><div class="kicker">Tempo &amp; fees</div><h2>You set the pace. The fee follows.</h2><p>Choose how often the index checks your traders and trades toward them. Faster means tighter tracking but more swaps, so the fee per trade goes up. Slower is cheaper and calmer.</p></div>
+    <div class="tempo reveal">
+      <div class="tempo-pick" id="tempoPick"></div>
+      <div class="tempo-body">
+        <div class="tempo-stats">
+          <div class="tstat"><small>Mirrors</small><b id="tEvery">every 2 h</b></div>
+          <div class="tstat"><small>Fee per trade</small><b id="tFee">0.5%</b></div>
+          <div class="tstat"><small>Checks per day</small><b id="tChecks">12</b></div>
+          <div class="tstat"><small>Best for</small><b id="tFor">Most people</b></div>
+        </div>
+        <div class="ladder" id="ladder"></div>
+        <p class="note" id="tNote">The fee is taken only when the index actually trades, as a share of that trade. Quiet rounds cost nothing. Solana network fees and slippage come on top and are paid by the index.</p>
+      </div>
+    </div>
+    <div class="grid3 tempo-notes">
+      <div class="mini reveal"><b>Charged per swap, not per cycle</b><p>A cycle with no trades costs nothing. The fee is a percentage of each buy or sell the index executes.</p></div>
+      <div class="mini reveal" style="--d:.1s"><b>Threshold keeps it calm</b><p>The index only trades when a position drifts more than 2.5% from target, so even one-minute indexes don't churn in a flat market.</p></div>
+      <div class="mini reveal" style="--d:.2s"><b>Change your mind later</b><p>Pause and withdraw whenever you like. Editing the interval on a live index is coming next.</p></div>
     </div>
   </section>
 
-  <section class="block faq" id="faq">
-    <div class="sec-head"><div class="kicker">FAQ</div><h2>Questions people ask.</h2></div>
-    <details open><summary>Is this copy trading?</summary><p>It is the calmer cousin. Copy trading chases every entry a trader makes. An index mirrors positions: what your traders hold, blended by weight, checked as often as you choose. You get their conviction without racing their fills.</p></details>
-    <details><summary>Who holds the funds?</summary><p>Every index has its own Solana wallet. Its private key is generated on the server, encrypted with a master key and only decrypted for a swap or a withdrawal. You can see the wallet on Solscan at all times, and only the wallet you signed in with can withdraw.</p></details>
-    <details><summary>What if a trader I picked rugs or goes quiet?</summary><p>The liquidity floor and the dust rule keep the worst tokens out. If a trader stops trading, their weight simply sits in SOL. You can pause the index, remove it or withdraw at any time.</p></details>
-    <details><summary>How much does it cost?</summary><p>You choose how often the index mirrors your traders, and the fee follows: 0.3% of each trade at once a day, 0.5% at every 2 hours, 1% at every 30 minutes, up to 2.5% at every minute. Faster costs more because it trades more. Solana network fees and slippage come on top, paid by the index.</p></details>
-    <details><summary>Minimum deposit?</summary><p>0.2 SOL works. Below that, fees eat the rebalancing. 1 SOL and up is where it gets interesting.</p></details>
-    <details><summary>Can I change the traders later?</summary><p>Not yet. Withdraw, build a new index and fund it. Editing a live index is next on the list.</p></details>
+  <!-- ========== TRADERS ========== -->
+  <section class="block" id="traders">
+    <div class="sec-head reveal"><div class="kicker">The leaderboard</div><h2>Traders you can put in an index.</h2><p>Live from fomo. Each card shows what the trader holds right now, read straight from the chain.</p></div>
+    <div class="traders-grid reveal" id="tradersPreview">
+      <div class="tcard skel-card"><div class="top"><div class="ava skel"></div><div><b class="skel">loading name</b><small class="skel">handle</small></div></div><div class="pnl skel">+$00,000</div><div class="holds"><span class="skel">TOKEN 00%</span><span class="skel">TOKEN 00%</span></div></div>
+      <div class="tcard skel-card"><div class="top"><div class="ava skel"></div><div><b class="skel">loading name</b><small class="skel">handle</small></div></div><div class="pnl skel">+$00,000</div><div class="holds"><span class="skel">TOKEN 00%</span><span class="skel">TOKEN 00%</span></div></div>
+      <div class="tcard skel-card"><div class="top"><div class="ava skel"></div><div><b class="skel">loading name</b><small class="skel">handle</small></div></div><div class="pnl skel">+$00,000</div><div class="holds"><span class="skel">TOKEN 00%</span><span class="skel">TOKEN 00%</span></div></div>
+      <div class="tcard skel-card"><div class="top"><div class="ava skel"></div><div><b class="skel">loading name</b><small class="skel">handle</small></div></div><div class="pnl skel">+$00,000</div><div class="holds"><span class="skel">TOKEN 00%</span><span class="skel">TOKEN 00%</span></div></div>
+    </div>
+    <div class="cta" style="justify-content:center;margin-top:26px"><a class="btn ghost" href="/app">See everyone in the app →</a></div>
   </section>
 
-  <section class="cta-band">
+  <!-- ========== SAFETY ========== -->
+  <section class="block" id="safety">
+    <div class="sec-head reveal"><div class="kicker">Safety</div><h2>Rules the index never breaks.</h2><p>Hard limits in the engine, not settings you have to remember. They are the same for every index.</p></div>
+    <div class="rules">
+      <div class="rule reveal"><div class="ico"><svg viewBox="0 0 24 24"><path d="M3 17c3-6 6-9 9-9s6 3 9 9"/><path d="M3 21h18"/><circle cx="12" cy="5" r="1.5"/></svg></div><b>Liquidity floor</b><p>A token needs at least $50k of liquidity before the index will touch it. Thin tokens are skipped even if a trader holds them.</p></div>
+      <div class="rule reveal" style="--d:.05s"><div class="ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12h8"/></svg></div><b>Dust is ignored</b><p>Anything under 2% of a trader's wallet is treated as noise: airdrops, leftovers, lottery tickets.</p></div>
+      <div class="rule reveal" style="--d:.1s"><div class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M8 10h8M8 14h5"/></svg></div><b>At most 12 tokens</b><p>The index keeps its largest positions and leaves the long tail, so fees and slippage stay small.</p></div>
+      <div class="rule reveal" style="--d:.15s"><div class="ico"><svg viewBox="0 0 24 24"><path d="M4 14l5-5 4 4 7-7"/><path d="M20 6v5h-5"/></svg></div><b>Threshold rebalancing</b><p>It only trades when a position is more than 2.5% off target. No churn, no death by a thousand swaps.</p></div>
+      <div class="rule reveal" style="--d:.2s"><div class="ico"><svg viewBox="0 0 24 24"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/><path d="M9 12l2 2 4-4"/></svg></div><b>Your money, your exit</b><p>Pause any time. Withdraw any time: everything is sold to SOL and sent to the wallet you signed in with.</p></div>
+      <div class="rule reveal" style="--d:.25s"><div class="ico"><svg viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="11" rx="2.5"/><path d="M8 10V7a4 4 0 018 0v3"/></svg></div><b>Encrypted keys</b><p>Each index has its own wallet. Its key is encrypted at rest with AES-256-GCM and only ever used to swap through Jupiter.</p></div>
+    </div>
+  </section>
+
+  <!-- ========== FAQ ========== -->
+  <section class="block faq" id="faq">
+    <div class="sec-head reveal"><div class="kicker">FAQ</div><h2>Questions people ask.</h2></div>
+    <div class="faq-list reveal">
+      <details open><summary>Is this copy trading?</summary><p>It is the calmer cousin. Copy trading chases every entry a trader makes. An index mirrors positions: what your traders hold, blended by weight, checked as often as you choose. You get their conviction without racing their fills.</p></details>
+      <details><summary>Who holds the funds?</summary><p>Every index has its own Solana wallet. Its private key is generated on the server, encrypted with a master key and only decrypted for a swap or a withdrawal. You can see the wallet on Solscan at all times, and only the wallet you signed in with can withdraw.</p></details>
+      <details><summary>How often does it trade?</summary><p>On the interval you pick, from every minute to once a day. Each cycle it reads your traders' wallets, works out the target basket and trades only the positions that are more than 2.5% off. In a flat market most cycles do nothing.</p></details>
+      <details><summary>How much does it cost?</summary><p>You choose how often the index mirrors your traders, and the fee follows: 0.3% of each trade at once a day, 0.5% at every 2 hours, 1% at every 30 minutes, up to 2.5% at every minute. Faster costs more because it trades more. Solana network fees and slippage come on top, paid by the index.</p></details>
+      <details><summary>What if a trader I picked rugs or goes quiet?</summary><p>The liquidity floor and the dust rule keep the worst tokens out. If a trader stops trading, their weight simply sits in SOL. You can pause the index, remove it or withdraw at any time.</p></details>
+      <details><summary>Minimum deposit?</summary><p>0.2 SOL works. Below that, fees eat the rebalancing. 1 SOL and up is where it gets interesting.</p></details>
+      <details><summary>Which wallets work?</summary><p>Phantom, Solflare and Backpack in the browser, and any mobile wallet that opens the page in its in-app browser. You sign a message to log in; nothing is approved or spent by signing.</p></details>
+      <details><summary>Can I change the traders later?</summary><p>Not yet. Withdraw, build a new index and fund it. Editing a live index is next on the list.</p></details>
+    </div>
+  </section>
+
+  <!-- ========== CTA ========== -->
+  <section class="cta-band reveal">
+    <img class="cta-logo" src="assets/logo3d.png" alt="" width="220" height="220">
     <div class="kicker">Ready</div>
     <h2>Build your first index in two minutes.</h2>
-    <div class="cta" style="justify-content:center"><a class="btn primary lg" href="/app">Open the app</a></div>
+    <p>Pick your traders, set the pace, fund it. Withdraw whenever you want.</p>
+    <div class="cta" style="justify-content:center"><a class="btn primary lg" href="/app">Open the app</a><a class="btn ghost lg" href="#traders">Browse traders</a></div>
   </section>
 
+  <!-- ========== FOOTER ========== -->
   <footer class="foot">
-    <div>© 2026 FOMOINDEX · a community project, not affiliated with FOMO Labs Inc. · Not financial advice. Memecoins can go to zero.</div>
-    <div class="links"><a href="https://fomo.family" target="_blank" rel="noopener">fomo.family</a><a href="https://fomohub.family" target="_blank" rel="noopener">FOMOHUB</a><a href="https://x.com/fomo" target="_blank" rel="noopener">@fomo</a></div>
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <a class="lockup" href="/"><img src="assets/logo-tile.svg" alt="" width="34" height="34"><span><b>fomo</b><i>index</i></span></a>
+        <p>Index funds for the fomo leaderboard. Pick traders, set the pace, let it run.</p>
+        <div class="status" id="status"><i></i><span>Checking status…</span></div>
+      </div>
+      <div class="foot-col"><b>Product</b><a href="/app">Open app</a><a href="#how">How it works</a><a href="#tempo">Tempo &amp; fees</a><a href="#safety">Safety rules</a><a href="#faq">FAQ</a></div>
+      <div class="foot-col"><b>Ecosystem</b><a href="https://fomo.family" target="_blank" rel="noopener">fomo.family</a><a href="https://fomohub.family" target="_blank" rel="noopener">FOMOHUB</a><a href="https://fomofantasy.xyz" target="_blank" rel="noopener">fomofantasy</a><a href="https://x.com/fomo" target="_blank" rel="noopener">@fomo on X</a></div>
+      <div class="foot-col"><b>On-chain</b><a href="https://jup.ag" target="_blank" rel="noopener">Jupiter routing</a><a href="https://solscan.io" target="_blank" rel="noopener">Solscan</a><a href="https://dexscreener.com/solana" target="_blank" rel="noopener">DexScreener data</a></div>
+    </div>
+    <div class="foot-bottom">
+      <div>© 2026 FOMOINDEX · a community project, not affiliated with FOMO Labs Inc. · Not financial advice. Memecoins can go to zero.</div>
+      <div class="credit">Astronaut photo: NASA, public domain.</div>
+    </div>
   </footer>
 </main>
 <script src="space.js"></script>
-<script>
-(async () => {
-  const el = document.getElementById('tradersPreview');
-  const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-  const fmt = (n) => (n < 0 ? '-' : '+') + '$' + Math.abs(n).toLocaleString('en-US', { maximumFractionDigits: 0 });
-  try {
-    const r = await fetch('/api/traders'); const j = await r.json();
-    const list = (j.traders || []).filter((t) => t.has_wallet).slice(0, 8);
-    if (!list.length) throw new Error('none');
-    el.innerHTML = list.map((t) => `<a class="tcard" href="/app#build">
-      <span class="rank">#${t.rank || '–'}</span>
-      <div class="top"><div class="ava">${t.avatar ? `<img src="${esc(t.avatar)}" alt="">` : esc((t.name || t.handle).slice(0, 1).toUpperCase())}</div><div><b>${esc(t.name || t.handle)}</b><small>@${esc(t.handle)}</small></div></div>
-      <div class="pnl ${Number(t.pnl_7d) < 0 ? 'neg' : 'pos'}">${t.pnl_7d != null ? fmt(Number(t.pnl_7d)) : '—'}<small>7 day pnl</small></div>
-      <div class="holds">${(t.top || []).map((x) => `<span>${esc(x.symbol)} ${Math.round(x.weight * 100)}%</span>`).join('') || '<span>no open positions</span>'}</div></a>`).join('');
-  } catch (e) {
-    el.innerHTML = '<div class="empty" style="grid-column:1/-1">The leaderboard is syncing. Open the app to see the full list.</div>';
-  }
-})();
-</script>
+<script src="landing.js" defer></script>
 </body>
 </html>
