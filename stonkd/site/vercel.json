@@ -1,0 +1,16 @@
+{
+  "cleanUrls": true,
+  "rewrites": [
+    { "source": "/api/:path*", "destination": "https://stonked.app/api/:path*" },
+    { "source": "/assets/:path*", "destination": "https://stonked.app/assets/:path*" }
+  ],
+  "redirects": [
+    { "source": "/create", "destination": "https://stonked.app/create", "permanent": false },
+    { "source": "/coin", "destination": "https://stonked.app/coin", "permanent": false },
+    { "source": "/claim", "destination": "https://stonked.app/claim", "permanent": false },
+    { "source": "/how", "destination": "/#how", "permanent": false }
+  ],
+  "headers": [
+    { "source": "/img/(.*)", "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }] }
+  ]
+}
