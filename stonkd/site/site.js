@@ -336,10 +336,6 @@ function drawPairs() {
 /* ------------------------------------------------------------- tall */
 async function nums() {
   const s = await api('/api/stats');
-  $('strip').innerHTML = `
-    <div><dt>Coins launched</dt><dd>${s.coins}</dd></div>
-    <div><dt>Fees collected</dt><dd>${usd(s.feesUsd, 0)}</dd></div>
-    <div><dt>Recipients</dt><dd>${s.recipients}</dd></div>`;
   $('nums').innerHTML = `
     <div><p class="k">Coins launched</p><p class="v">${s.coins}</p><p class="s">on StonkFun through STONKD</p></div>
     <div><p class="k">Fees collected</p><p class="v">${usd(s.feesUsd, 0)}</p><p class="s">${sol(s.feesSol, 2)}</p></div>
@@ -448,8 +444,8 @@ headline();
 boot();
 /* stonked.app svarer tregt eller ikke i det hele tatt paa tallene. Da skjules de i
    stedet for at plassholderne blinker for alltid; neste runde proever igjen. */
-const numsOr = () => nums().then(() => { $('strip').hidden = false; $('nums').closest('.sect').hidden = false; })
-  .catch(() => { if ($('strip').querySelector('.sk')) { $('strip').hidden = true; $('nums').closest('.sect').hidden = true; } });
+const numsOr = () => nums().then(() => { $('nums').closest('.sect').hidden = false; })
+  .catch(() => { if ($('nums').querySelector('.sk')) $('nums').closest('.sect').hidden = true; });
 numsOr();
 loadCoins();
 setInterval(() => { loadCoins(); numsOr(); }, 30000);

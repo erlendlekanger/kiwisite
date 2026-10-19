@@ -405,8 +405,9 @@ const loops = [];
 function pageStage() {
   const canvas = document.getElementById('stage');
   const heroEl = document.querySelector('.hero');
+  const bandEl = document.getElementById('herocoins');
   const list = document.getElementById('hsteps');
-  if (!canvas || !heroEl || !list) return;
+  if (!canvas || !heroEl || !bandEl || !list) return;
   /* Uten bloom: den loeftet bakgrunnen saa glorien fikk synlige kanter. */
   const st = stage(canvas, { opaque: 0x050c10, envSize: 512, budget: 5.5e6 });
   const { scene } = st;
@@ -468,24 +469,20 @@ function pageStage() {
     const tiltY = fine ? pointer.sx * 0.42 : Math.sin(time * 0.3) * 0.18;
     const tiltX = fine ? -pointer.sy * 0.22 : 0;
 
-    /* ---- toppen: scroller med siden, og beveger seg rolig av seg selv (ikke etter musen) */
-    hero.position.y = px2y(innerHeight * 0.5 + hr.top);
+    /* ---- toppen: myntene staar paa rad i baandet under ordmerket (#herocoins), scroller
+       med siden og beveger seg rolig av seg selv (ikke etter musen). Stoerrelsen foelger
+       baandets hoeyde, saa alt i toppen faar plass paa skjermen. */
+    const band = bandEl.getBoundingClientRect();
+    const toW = 2 * Y / innerHeight;                                   // piksler -> verdensenheter i z = 0
+    const R = Math.min(band.height * toW * 0.47, X * (mob ? 0.34 : 0.2));
+    hero.position.set(((band.left + band.width / 2) / innerWidth - 0.5) * 2 * X, px2y(band.top + band.height / 2), 0);
     hero.rotation.set(Math.sin(time * 0.23) * 0.05, Math.sin(time * 0.17) * 0.12, 0);
-    if (mob) {
-      const k = Math.min(1, X / 1.35), cy = Y * 0.5;
-      heroGlow.position.set(0, cy, -3.5); heroGlow.scale.setScalar(0.7);
-      M.want(hMain, -0.12 * k, cy + bob(0), 0, 0.92 * k, 0, 0.32 + sway(0), 0);
-      M.want(hPair, 0.82 * k, cy + 0.55 + bob(1), -1.8, 0.62 * k, 0, -0.45 + sway(1), 0);
-      M.want(hSol, -0.52 * k, cy - 0.82 + bob(2), 1.0, 0.38 * k, -0.9, 0.2, 0.3);
-      M.want(hWho, 0, cy, -3, 0, 0, 0, 0);
-    } else {
-      const k = Math.min(1.1, X / 4.2);
-      heroGlow.position.set(0.5 * X, 0.05, -3.5); heroGlow.scale.setScalar(k);
-      M.want(hMain, 0.4 * X, 0.05 + bob(0), 0, 1.55 * k, 0.02, 0.3 + sway(0), 0);
-      M.want(hPair, 0.8 * X, 0.62 + bob(1), -1.7, 1.05 * k, 0, -0.5 + sway(1), 0.02);
-      M.want(hSol, 0.14 * X, -1.35 + bob(2), 1.3, 0.62 * k, -1.05, 0.15 + sway(2, 0.15), 0.35);
-      M.want(hWho, 0.88 * X, -1.05 + bob(3), -0.8, 0.62 * k, 0, -0.65 + sway(3), 0);
-    }
+    heroGlow.position.set(0, 0, -3.5);
+    heroGlow.scale.setScalar(R * 2.4 / 4.6);
+    M.want(hMain, 0, bob(0, 0.05 * R), 0, R, 0.02, 0.3 + sway(0), 0);
+    M.want(hPair, 1.85 * R, 0.18 * R + bob(1, 0.05 * R), -1.4, 0.74 * R, 0, -0.55 + sway(1), 0.02);
+    M.want(hWho, -1.85 * R, 0.12 * R + bob(3, 0.05 * R), -1.4, 0.66 * R, 0, 0.55 + sway(3), 0);
+    M.want(hSol, -1.05 * R, -0.62 * R + bob(2, 0.04 * R), 1.3, 0.42 * R, -1.0, 0.15 + sway(2, 0.15), 0.35);
 
     /* ---- How it works: staar fast midt paa skjermen mens stegene scroller forbi */
     const p = THREE.MathUtils.clamp((innerHeight * 0.5 - lr.top) / lr.height, 0, 0.999);
