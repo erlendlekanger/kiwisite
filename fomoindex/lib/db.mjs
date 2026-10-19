@@ -51,8 +51,14 @@ CREATE TABLE IF NOT EXISTS indexes (
   deposited_sol NUMERIC DEFAULT 0,
   withdrawn_sol NUMERIC DEFAULT 0,
   last_rebalance TIMESTAMPTZ,
+  interval_min INT DEFAULT 120,
+  fee_bps INT DEFAULT 50,
+  fees_paid_sol NUMERIC DEFAULT 0,
   created_at TIMESTAMPTZ DEFAULT now()
 );
+ALTER TABLE indexes ADD COLUMN IF NOT EXISTS interval_min INT DEFAULT 120;
+ALTER TABLE indexes ADD COLUMN IF NOT EXISTS fee_bps INT DEFAULT 50;
+ALTER TABLE indexes ADD COLUMN IF NOT EXISTS fees_paid_sol NUMERIC DEFAULT 0;
 CREATE TABLE IF NOT EXISTS snapshots (
   id BIGSERIAL PRIMARY KEY,
   index_id TEXT REFERENCES indexes(id),

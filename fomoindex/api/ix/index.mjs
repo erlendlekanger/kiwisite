@@ -1,9 +1,9 @@
 // GET: my indexes. POST: create one { name, traders:[{handle, weight}] } -> deposit address.
 import crypto from 'node:crypto';
-import { wrap, json, body, fail } from '../../lib/http.mjs';
+import { wrap, json, body, fail, query } from '../../lib/http.mjs';
 import { requireUser } from '../../lib/auth.mjs';
 import { q, log } from '../../lib/db.mjs';
-import { newIndexWallet } from '../../lib/solana.mjs';
+import { newIndexWallet, FEE_LADDER, feeBpsFor } from '../../lib/solana.mjs';
 export default wrap(async (req, res) => {
   const owner = requireUser(req);
   if (req.method === 'POST') {
@@ -16,13 +16,17 @@ export default wrap(async (req, res) => {
     if (known.length !== traders.length) throw fail(400, 'one of the traders is not available for mirroring yet');
     const sum = traders.reduce((s, t) => s + t.weight, 0);
     traders = traders.map((t) => ({ ...t, weight: t.weight / sum }));
+    const interval = Number(b.interval_min);
+    if (!FEE_LADDER.some((f) => f.minutes === interval)) throw fail(400, 'pick a rebalance interval from the ladder');
+    const fee_bps = feeBpsFor(interval);
     const id = crypto.randomBytes(6).toString('base64url');
     const w = newIndexWallet();
-    await q('INSERT INTO indexes(id, owner, name, traders, deposit_pubkey, secret_enc) VALUES ($1,$2,$3,$4,$5,$6)', [id, owner, name, JSON.stringify(traders), w.pubkey, w.secret_enc]);
-    await log(id, 'info', 'index created', { traders });
-    return json(res, 200, { id, name, traders, deposit: w.pubkey });
+    await q('INSERT INTO indexes(id, owner, name, traders, deposit_pubkey, secret_enc, interval_min, fee_bps) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)', [id, owner, name, JSON.stringify(traders), w.pubkey, w.secret_enc, interval, fee_bps]);
+    await log(id, 'info', 'index created', { traders, interval, fee_bps });
+    return json(res, 200, { id, name, traders, deposit: w.pubkey, interval_min: interval, fee_bps });
   }
-  const rows = await q(`SELECT i.id, i.name, i.traders, i.deposit_pubkey AS deposit, i.status, i.deposited_sol, i.withdrawn_sol, i.last_rebalance, i.created_at,
+  if (req.method === 'OPTIONS' || query(req).ladder) return json(res, 200, { ladder: FEE_LADDER });
+  const rows = await q(`SELECT i.id, i.name, i.traders, i.deposit_pubkey AS deposit, i.status, i.deposited_sol, i.withdrawn_sol, i.last_rebalance, i.created_at, i.interval_min, i.fee_bps, i.fees_paid_sol,
       s.nav_sol, s.nav_usd, s.ts AS nav_at
     FROM indexes i LEFT JOIN LATERAL (SELECT nav_sol, nav_usd, ts FROM snapshots WHERE index_id=i.id ORDER BY ts DESC LIMIT 1) s ON true
     WHERE i.owner=$1 ORDER BY i.created_at DESC`, [owner]);

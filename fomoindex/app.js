@@ -10,6 +10,9 @@
   const ago = (ts) => { if (!ts) return 'never'; const m = Math.round((Date.now() - new Date(ts)) / 60000); return m < 1 ? 'just now' : m < 60 ? m + ' min ago' : m < 1440 ? Math.round(m / 60) + ' h ago' : Math.round(m / 1440) + ' d ago'; };
   const SOL_MINT = 'So11111111111111111111111111111111111111112';
   const RULES = { minWeight: 2, minLiquidity: 50000, maxTokens: 12 };
+  const LADDER = [{ m: 1, bps: 250 }, { m: 5, bps: 200 }, { m: 15, bps: 150 }, { m: 30, bps: 100 }, { m: 60, bps: 75 }, { m: 120, bps: 50 }, { m: 360, bps: 40 }, { m: 1440, bps: 30 }];
+  const every = (m) => m < 60 ? `${m} min` : m < 1440 ? `${m / 60} h` : '24 h';
+  const feeOf = (m) => (LADDER.find((l) => l.m === m) || LADDER[5]).bps / 100;
   let toastT; const toast = (m) => { toastEl.textContent = m; toastEl.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(() => toastEl.classList.remove('show'), 2200); };
 
   /* ---------- api ---------- */
@@ -21,7 +24,7 @@
   }
 
   /* ---------- wallet ---------- */
-  const S = { wallet: null, token: sessionStorage.getItem('fi_token') || null, provider: null, traders: [], selected: new Map(), name: '', amount: 1, preview: null };
+  const S = { wallet: null, token: sessionStorage.getItem('fi_token') || null, provider: null, traders: [], selected: new Map(), name: '', amount: 1, interval: 120, preview: null };
   const B58 = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
   function b58(bytes) { const d = [0]; for (const b of bytes) { let c = b; for (let j = 0; j < d.length; j++) { c += d[j] << 8; d[j] = c % 58; c = (c / 58) | 0; } while (c) { d.push(c % 58); c = (c / 58) | 0; } } let s = ''; for (const b of bytes) { if (b) break; s += '1'; } for (let j = d.length - 1; j >= 0; j--) s += B58[d[j]]; return s; }
   function providers() {
@@ -148,15 +151,19 @@
       <div class="card">
         <div class="kicker">Name &amp; fund</div>
         <div class="field"><label>Index name</label><input class="input" id="name" maxlength="40" placeholder="e.g. Legends only" value="${esc(S.name)}"></div>
+        <div class="field" style="margin-top:12px"><label>How often it mirrors your traders</label>
+          <div class="amounts" id="ivl">${LADDER.map((l) => `<button data-m="${l.m}" class="${S.interval === l.m ? 'on' : ''}" title="${feeOf(l.m)}% fee per trade">${every(l.m)}</button>`).join('')}</div>
+          <p class="note" id="feeNote">Every <b>${every(S.interval)}</b> · fee <b>${feeOf(S.interval)}%</b> of each trade. Faster mirroring costs more; 2 h is the sweet spot for most.</p></div>
         <div class="field" style="margin-top:12px"><label>Amount to fund</label><div class="amounts">${[0.25, 0.5, 1, 2, 5].map((a) => `<button data-a="${a}" class="${S.amount === a ? 'on' : ''}">${a} SOL</button>`).join('')}</div></div>
         <input class="input" id="amount" type="number" min="0.1" step="0.05" style="margin-top:10px" value="${S.amount}">
         <button class="btn accent lg" id="create" style="width:100%;margin-top:14px">${S.wallet ? 'Create index' : 'Connect wallet to create'}</button>
-        <p class="note" style="margin-top:10px">You will get a deposit address next. The index starts trading within 30 minutes of the SOL arriving.</p>
+        <p class="note" style="margin-top:10px">You will get a deposit address next. The index starts trading on its first cycle after the SOL arrives.</p>
       </div>`;
     donut(ws);
     panel.querySelectorAll('.wrow input').forEach((r) => r.addEventListener('input', () => { S.selected.get(r.closest('.wrow').dataset.h).weight = +r.value; const ws2 = weights(); panel.querySelectorAll('.wrow').forEach((row) => { row.querySelector('.pct').textContent = pct(ws2.find((w) => w.handle === row.dataset.h).weight); }); donut(ws2); schedulePreview(); }));
     panel.querySelectorAll('.wrow .x').forEach((b) => b.addEventListener('click', () => toggle(b.closest('.wrow').dataset.h)));
     panel.querySelector('#equal').addEventListener('click', () => { for (const v of S.selected.values()) v.weight = 1; paintPanel(); schedulePreview(); });
+    panel.querySelectorAll('#ivl button').forEach((b) => b.addEventListener('click', () => { S.interval = +b.dataset.m; panel.querySelectorAll('#ivl button').forEach((o) => o.classList.toggle('on', o === b)); panel.querySelector('#feeNote').innerHTML = `Every <b>${every(S.interval)}</b> · fee <b>${feeOf(S.interval)}%</b> of each trade. Faster mirroring costs more; 2 h is the sweet spot for most.`; }));
     panel.querySelector('#name').addEventListener('input', (e) => { S.name = e.target.value; const step = !S.selected.size ? 0 : S.name ? 2 : 1; document.querySelectorAll('#steps div').forEach((d, i) => { d.classList.toggle('on', i === step); d.classList.toggle('done', i < step); }); });
     panel.querySelectorAll('.amounts button').forEach((b) => b.addEventListener('click', () => { S.amount = +b.dataset.a; panel.querySelector('#amount').value = S.amount; panel.querySelectorAll('.amounts button').forEach((o) => o.classList.toggle('on', o === b)); }));
     panel.querySelector('#amount').addEventListener('input', (e) => { S.amount = +e.target.value || 0; panel.querySelectorAll('.amounts button').forEach((o) => o.classList.toggle('on', +o.dataset.a === S.amount)); });
@@ -205,7 +212,7 @@
     if (!S.selected.size) return toast('Pick at least one trader');
     const btn = document.getElementById('create'); btn.disabled = true; btn.textContent = 'Creating…';
     try {
-      const r = await api('/api/ix', { method: 'POST', body: { name: S.name || 'My index', traders: weights() } });
+      const r = await api('/api/ix', { method: 'POST', body: { name: S.name || 'My index', traders: weights(), interval_min: S.interval } });
       S.selected.clear(); S.name = ''; S.preview = null;
       location.hash = 'ix/' + r.id;
       setTimeout(() => depositModal(r.id, r.deposit, S.amount), 300);
@@ -289,13 +296,14 @@
               <div class="stat"><b class="${chg == null ? '' : chg >= 0 ? 'pos' : 'neg'}">${chg == null ? '—' : (chg >= 0 ? '+' : '') + (chg * 100).toFixed(1) + '%'}</b><small>Since deposit</small></div>
               <div class="stat"><b style="font-size:15px">${ago(d.last_rebalance)}</b><small>Last rebalance</small></div>
             </div>
+            <p class="note" style="margin-top:12px">Mirrors every <b>${every(d.interval_min || 120)}</b> · fee ${(d.fee_bps || 0) / 100}% per trade · ${sol(d.fees_paid_sol || 0, 4)} paid in fees so far.</p>
             <canvas class="chart" id="chart" width="800" height="220"></canvas>
           </div>
           <div class="card" style="margin-top:16px"><div class="kicker">Holdings</div>
             ${rows.length ? `<table><thead><tr><th>Token</th><th class="r">Now</th><th class="r">Target</th><th class="r">Value</th></tr></thead><tbody>
             ${rows.map((r) => `<tr><td><div class="tok"><i>${r.icon ? `<img src="${esc(r.icon)}" alt="">` : ''}</i><b>${esc(r.symbol || r.mint.slice(0, 4))}</b><small>${r.mint === SOL_MINT ? 'cash' : short(r.mint)}</small></div></td><td class="r">${pct(r.weight)}</td><td class="r" style="color:var(--muted)">${r.mint === SOL_MINT ? pct(Math.max(0, 1 - d.target.reduce((s, t) => s + t.weight, 0))) : pct(targetOf(r.mint))}</td><td class="r">${usd(r.usd)}</td></tr>`).join('')}
             </tbody></table>` : `<div class="empty">Waiting for the first deposit.</div>`}
-            <p class="note" style="margin-top:12px">Target is what your traders hold right now, blended by weight. The index trades toward it every 30 minutes when a position is more than 2.5% off.</p>
+            <p class="note" style="margin-top:12px">Target is what your traders hold right now, blended by weight. The index trades toward it every ${every(d.interval_min || 120)} when a position is more than 2.5% off.</p>
           </div>
         </div>
         <div>
@@ -308,7 +316,7 @@
             <a class="note" href="https://solscan.io/account/${esc(d.deposit)}" target="_blank" rel="noopener" style="color:var(--accent-hi)">View on Solscan ↗</a>
           </div>
           <div class="card" style="margin-top:16px"><div class="kicker">Activity</div>
-            <div class="log">${[...d.trades.map((t) => ({ ts: t.ts, text: t.side === 'deposit' ? `Deposit ${sol(t.amount_sol)}` : `${t.side === 'buy' ? 'Bought' : 'Sold'} ${esc(t.symbol || short(t.mint))} for ${sol(t.amount_sol)}${t.note === 'withdraw' ? ' (withdraw)' : ''}`, sig: t.sig })), ...d.events.filter((e) => e.level !== 'info' || /created|withdrew|paused|active/.test(e.message)).map((e) => ({ ts: e.ts, text: esc(e.message) }))].sort((a, b) => new Date(b.ts) - new Date(a.ts)).slice(0, 30).map((x) => `<div><time>${ago(x.ts)}</time><span>${x.text}</span>${x.sig ? `<a href="https://solscan.io/tx/${esc(x.sig)}" target="_blank" rel="noopener">tx ↗</a>` : '<span></span>'}</div>`).join('') || '<div class="note">Nothing yet.</div>'}</div>
+            <div class="log">${[...d.trades.map((t) => ({ ts: t.ts, text: t.side === 'deposit' ? `Deposit ${sol(t.amount_sol)}` : t.side === 'fee' ? `Fee ${sol(t.amount_sol, 4)}` : `${t.side === 'buy' ? 'Bought' : 'Sold'} ${esc(t.symbol || short(t.mint))} for ${sol(t.amount_sol)}${t.note === 'withdraw' ? ' (withdraw)' : ''}`, sig: t.sig })), ...d.events.filter((e) => e.level !== 'info' || /created|withdrew|paused|active/.test(e.message)).map((e) => ({ ts: e.ts, text: esc(e.message) }))].sort((a, b) => new Date(b.ts) - new Date(a.ts)).slice(0, 30).map((x) => `<div><time>${ago(x.ts)}</time><span>${x.text}</span>${x.sig ? `<a href="https://solscan.io/tx/${esc(x.sig)}" target="_blank" rel="noopener">tx ↗</a>` : '<span></span>'}</div>`).join('') || '<div class="note">Nothing yet.</div>'}</div>
           </div>
         </div>
       </div>`;

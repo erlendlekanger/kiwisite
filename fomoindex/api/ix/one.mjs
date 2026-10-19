@@ -20,7 +20,7 @@ export default wrap(async (req, res) => {
   ]);
   json(res, 200, {
     id: ix.id, name: ix.name, status: ix.status, deposit: ix.deposit_pubkey, created_at: ix.created_at, last_rebalance: ix.last_rebalance,
-    deposited_sol: Number(ix.deposited_sol), withdrawn_sol: Number(ix.withdrawn_sol),
+    deposited_sol: Number(ix.deposited_sol), withdrawn_sol: Number(ix.withdrawn_sol), interval_min: ix.interval_min, fee_bps: ix.fee_bps, fees_paid_sol: Number(ix.fees_paid_sol || 0),
     traders: ix.traders.map((t) => ({ ...t, ...(traders.find((x) => x.handle === t.handle) || {}) })),
     nav_sol: st.nav_sol, nav_usd: st.nav_usd, sol_usd: st.sol_usd,
     holdings: st.portfolio.rows.map((r) => ({ mint: r.mint, symbol: r.symbol, name: r.name, icon: r.icon, amount: r.amount, usd: r.usd, weight: r.weight, price_usd: r.price_usd })),

@@ -15,33 +15,29 @@
 <link rel="icon" href="assets/logo-tile.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <link rel="preload" href="assets/astronaut.png" as="image">
+<link rel="preload" href="assets/space.webp" as="image">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 <canvas id="space" aria-hidden="true"></canvas>
-<div class="nebula" aria-hidden="true"><i></i><i></i><i></i></div>
 
 <nav class="nav"><div class="nav-in">
   <a class="lockup" href="/"><img src="assets/logo-tile.svg" alt=""><span><b>fomo</b><i>index</i></span></a>
   <div class="nav-links"><a href="#how">How it works</a><a href="#traders">Traders</a><a href="#safety">Safety</a><a href="#faq">FAQ</a></div>
   <div class="sp"></div>
   <a class="btn ghost sm" href="https://fomo.family" target="_blank" rel="noopener">fomo.family ↗</a>
-  <a class="btn primary" href="/app">Open app</a>
+  <a class="btn accent" href="/app">Open app</a>
 </div></nav>
 
 <main class="page">
   <section class="hero">
-    <div class="horizon-wrap" aria-hidden="true"><div class="horizon"></div></div>
-    <div>
-      <div class="eyebrow"><img src="assets/logo-tile.svg" alt="">Built on the fomo leaderboard</div>
-      <h1>Own the moves of <em>fomo's best traders.</em></h1>
-      <p class="lead">Pick the traders you believe in, set the weights, fund it with SOL. Your index mirrors what they hold on-chain and rebalances itself every 30 minutes. One basket, many legends.</p>
-      <div class="cta"><a class="btn primary lg" href="/app">Build your index</a><a class="btn ghost lg" href="#how">See how it works</a></div>
-      <div class="trust"><span><i></i>Withdraw to your wallet any time</span><span><i></i>Routed through Jupiter</span><span><i></i>Rebalanced every 30 min</span></div>
-    </div>
-    <div class="hero-art"><div class="pulse"></div><img src="assets/astronaut.png" alt="An astronaut holding a phone with the FOMOINDEX app" width="1600" height="1282"></div>
+    <div class="hero-lockup"><img src="assets/logo-tile.svg" alt="FOMOINDEX"><span>Index</span></div>
+    <p class="lead">Pick traders from the fomo leaderboard, set the weights, fund it with SOL. Your index mirrors what they hold on-chain, as often as you choose.</p>
+    <div class="hero-art"><img src="assets/astronaut.png" alt="An astronaut floating in space holding a phone with the FOMOINDEX app" width="1800" height="1511"></div>
+    <div class="cta"><a class="btn accent lg" href="/app">Build your index →</a><a class="btn ghost lg" href="#how">How it works</a></div>
+    <div class="trust"><span><i></i>Withdraw to your wallet any time</span><span><i></i>Routed through Jupiter</span><span><i></i>Mirrors every 1 min to 24 h, you choose</span></div>
   </section>
 
   <section class="block" id="how">
@@ -54,7 +50,7 @@
   </section>
 
   <section class="block" id="mechanics">
-    <div class="sec-head"><div class="kicker">Under the hood</div><h2>Positions, not tips.</h2><p>Every 30 minutes the index reads each trader's wallet on-chain, blends their holdings by your weights, and trades your basket to match. Dust, airdrops and illiquid tokens are left out automatically.</p></div>
+    <div class="sec-head"><div class="kicker">Under the hood</div><h2>Positions, not tips.</h2><p>On every cycle the index reads each trader's wallet on-chain, blends their holdings by your weights, and trades your basket to match. Dust, airdrops and illiquid tokens are left out automatically.</p></div>
     <div class="diagram">
       <div class="col">
         <div class="trader-chip"><div class="ava eyes"><img src="assets/mark-navy.svg" alt="" style="filter:invert(1)"></div><div><b>Trader A</b><small>SOL 40% · TOK1 40% · TOK2 20%</small></div><span class="w">50%</span></div>
@@ -97,10 +93,10 @@
 
   <section class="block faq" id="faq">
     <div class="sec-head"><div class="kicker">FAQ</div><h2>Questions people ask.</h2></div>
-    <details open><summary>Is this copy trading?</summary><p>It is the calmer cousin. Copy trading chases every entry a trader makes. An index mirrors positions: what your traders hold, blended by weight, checked every 30 minutes. You get their conviction without racing their fills.</p></details>
+    <details open><summary>Is this copy trading?</summary><p>It is the calmer cousin. Copy trading chases every entry a trader makes. An index mirrors positions: what your traders hold, blended by weight, checked as often as you choose. You get their conviction without racing their fills.</p></details>
     <details><summary>Who holds the funds?</summary><p>Every index has its own Solana wallet. Its private key is generated on the server, encrypted with a master key and only decrypted for a swap or a withdrawal. You can see the wallet on Solscan at all times, and only the wallet you signed in with can withdraw.</p></details>
     <details><summary>What if a trader I picked rugs or goes quiet?</summary><p>The liquidity floor and the dust rule keep the worst tokens out. If a trader stops trading, their weight simply sits in SOL. You can pause the index, remove it or withdraw at any time.</p></details>
-    <details><summary>How much does it cost?</summary><p>Swap fees and slippage on Solana are paid by the index, nothing else is charged during the beta. Fees, if any, will be shown here before they apply.</p></details>
+    <details><summary>How much does it cost?</summary><p>You choose how often the index mirrors your traders, and the fee follows: 0.3% of each trade at once a day, 0.5% at every 2 hours, 1% at every 30 minutes, up to 2.5% at every minute. Faster costs more because it trades more. Solana network fees and slippage come on top, paid by the index.</p></details>
     <details><summary>Minimum deposit?</summary><p>0.2 SOL works. Below that, fees eat the rebalancing. 1 SOL and up is where it gets interesting.</p></details>
     <details><summary>Can I change the traders later?</summary><p>Not yet. Withdraw, build a new index and fund it. Editing a live index is next on the list.</p></details>
   </section>

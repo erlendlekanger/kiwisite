@@ -9,7 +9,7 @@
   function size() {
     const dpr = Math.min(2, devicePixelRatio || 1);
     W = innerWidth; H = innerHeight; c.width = W * dpr; c.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    const n = Math.round((W * H) / 6500);
+    const n = Math.round((W * H) / 14000);
     stars = Array.from({ length: n }, () => {
       const z = Math.random();
       return { x: Math.random() * W, y: Math.random() * H, z, r: z > 0.92 ? 1.6 : z > 0.6 ? 1 : 0.65, a: 0.25 + Math.random() * 0.65, w: Math.random() * 6.28, v: 0.4 + Math.random() * 0.9, col: Math.random() < 0.12 ? '#b9c2ff' : Math.random() < 0.06 ? '#ffe9c4' : '#e8ebff' };

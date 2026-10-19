@@ -7,11 +7,12 @@ import { rebalance } from '../../lib/index.mjs';
 export default wrap(async (req, res) => {
   requireKey(req, 'CRON_SECRET');
   const n = query(req).all ? 3 : 1;
-  const list = await q(`SELECT * FROM indexes WHERE status='active' AND (last_rebalance IS NULL OR last_rebalance < now() - interval '20 minutes') ORDER BY last_rebalance NULLS FIRST LIMIT $1`, [n]);
+  const due = `status='active' AND (last_rebalance IS NULL OR last_rebalance < now() - (COALESCE(interval_min, 120) * interval '1 minute'))`;
+  const list = await q(`SELECT * FROM indexes WHERE ${due} ORDER BY last_rebalance NULLS FIRST LIMIT $1`, [n]);
   const out = [];
   for (const ix of list) {
     try { out.push({ id: ix.id, ...(await rebalance(ix)) }); }
     catch (e) { await log(ix.id, 'error', 'rebalance failed: ' + e.message); out.push({ id: ix.id, error: e.message }); await q('UPDATE indexes SET last_rebalance=now() WHERE id=$1', [ix.id]); }
   }
-  json(res, 200, { processed: out, remaining: (await q(`SELECT count(*)::int AS c FROM indexes WHERE status='active' AND (last_rebalance IS NULL OR last_rebalance < now() - interval '20 minutes')`))[0].c });
+  json(res, 200, { processed: out, remaining: (await q(`SELECT count(*)::int AS c FROM indexes WHERE ${due}`))[0].c });
 });

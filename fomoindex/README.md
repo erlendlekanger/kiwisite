@@ -1,7 +1,7 @@
 # FOMOINDEX
 
 Build an index of fomo traders and fund it with SOL. The index mirrors what the traders hold on-chain,
-blended by the weights you chose, and rebalances every 30 minutes through Jupiter.
+blended by the weights you chose, and rebalances through Jupiter as often as the owner chose (1 minute to 24 hours); the fee per trade follows the interval (2.5% at 1 min down to 0.3% at 24 h) and is sent to FEE_WALLET.
 
 - `index.html` landing, `app.html` + `app.js` the app, `styles.css`, `space.js` the starfield.
 - `api/` Vercel Node functions (ESM), `lib/` the engine. `render/` the Blender scripts for the logo and the astronaut.

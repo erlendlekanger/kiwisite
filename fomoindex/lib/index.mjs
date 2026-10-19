@@ -1,10 +1,23 @@
 // What an index holds, what it should hold, and the rebalance that closes the gap.
 import { q, log } from './db.mjs';
-import { SOL, STABLES, RULES, portfolio, targetWeights, openIndexWallet, quote, swap, decimalsOf, toRaw, solPrice, LAMPORTS_PER_SOL } from './solana.mjs';
+import { SOL, STABLES, RULES, portfolio, targetWeights, openIndexWallet, quote, swap, decimalsOf, toRaw, solPrice, sendSol, LAMPORTS_PER_SOL } from './solana.mjs';
 import { traderPortfolio } from '../api/traders/positions.mjs';
 
 const KEEP_SOL = 0.01;       // never swap away the last bit, it pays fees and rent
 const MIN_TRADE_USD = 2;     // tiny orders cost more in fees than they fix
+
+// The platform fee: a share of every trade's value, in SOL, sent to FEE_WALLET. Skipped when no wallet is set.
+async function chargeFee(ix, kp, tradeSol) {
+  const bps = Number(ix.fee_bps || 0); const to = process.env.FEE_WALLET;
+  const feeSol = tradeSol * bps / 10000;
+  if (!bps || !to || feeSol < 0.00005) return 0;
+  try {
+    const sig = await sendSol(kp, to, Math.floor(feeSol * LAMPORTS_PER_SOL));
+    await q('UPDATE indexes SET fees_paid_sol = fees_paid_sol + $2 WHERE id=$1', [ix.id, feeSol]);
+    await q('INSERT INTO trades(index_id, side, mint, symbol, amount_sol, sig, note) VALUES ($1,$2,$3,$4,$5,$6,$7)', [ix.id, 'fee', SOL, 'SOL', feeSol, sig, `${bps / 100}% fee`]);
+    return feeSol;
+  } catch (err) { await log(ix.id, 'warn', 'fee transfer failed: ' + err.message); return 0; }
+}
 
 export async function indexState(ix) {
   const p = await portfolio(ix.deposit_pubkey);
@@ -43,6 +56,7 @@ export async function rebalance(ix) {
       const sig = await swap(kp, qt);
       const outSol = Number(qt.outAmount) / LAMPORTS_PER_SOL;
       await q('INSERT INTO trades(index_id, side, mint, symbol, amount_sol, amount_token, price_usd, sig) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)', [ix.id, 'sell', r.mint, r.symbol, outSol, amountUi, r.price_usd, sig]);
+      await chargeFee(ix, kp, outSol);
       done.push({ side: 'sell', symbol: r.symbol, usd: diffUsd, sig });
     } catch (e) { await log(ix.id, 'warn', `sell ${r.symbol} failed: ${e.message}`); }
   }
@@ -50,8 +64,9 @@ export async function rebalance(ix) {
   let solLeft = (await portfolio(ix.deposit_pubkey)).rows.find((r) => r.mint === SOL)?.amount ?? solRow.amount;
   const buys = [...target.entries()].map(([mint, w]) => ({ mint, want: w * total, have: cur.get(mint)?.usd || 0 })).map((b) => ({ ...b, diff: b.want - b.have }))
     .filter((b) => b.diff / total * 100 >= rules.threshold && b.diff >= MIN_TRADE_USD).sort((a, b) => b.diff - a.diff);
+  const feeRate = Number(ix.fee_bps || 0) / 10000;
   for (const b of buys) {
-    const spendSol = Math.min(b.diff / solUsd, Math.max(0, solLeft - KEEP_SOL));
+    const spendSol = Math.min(b.diff / solUsd, Math.max(0, (solLeft - KEEP_SOL) / (1 + feeRate)));
     if (spendSol * solUsd < MIN_TRADE_USD) continue;
     try {
       const qt = await quote(SOL, b.mint, toRaw(spendSol, 9), rules.slippageBps);
@@ -61,7 +76,7 @@ export async function rebalance(ix) {
       const sym = cur.get(b.mint)?.symbol || (await (await import('./solana.mjs')).tokenInfo([b.mint])).get(b.mint)?.symbol;
       await q('INSERT INTO trades(index_id, side, mint, symbol, amount_sol, amount_token, price_usd, sig) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)', [ix.id, 'buy', b.mint, sym, spendSol, gotUi, gotUi ? (spendSol * solUsd) / gotUi : null, sig]);
       done.push({ side: 'buy', symbol: sym, usd: spendSol * solUsd, sig });
-      solLeft -= spendSol;
+      solLeft -= spendSol + (await chargeFee(ix, kp, spendSol));
     } catch (e) { await log(ix.id, 'warn', `buy ${b.mint.slice(0, 6)} failed: ${e.message}`); }
   }
   const after = await indexState(ix);

@@ -18,6 +18,12 @@ const JUP = 'https://lite-api.jup.ag';
 export const conn = () => new Connection(process.env.RPC_URL || 'https://api.mainnet-beta.solana.com', 'confirmed');
 const num = (v, d = 0) => { const n = Number(v); return Number.isFinite(n) ? n : d; };
 const env = (k, d) => (process.env[k] !== undefined && process.env[k] !== '' ? Number(process.env[k]) : d);
+// Rebalance interval -> fee per trade (bps of the traded value). Faster mirroring costs more.
+export const FEE_LADDER = [
+  { minutes: 1, bps: 250 }, { minutes: 5, bps: 200 }, { minutes: 15, bps: 150 }, { minutes: 30, bps: 100 },
+  { minutes: 60, bps: 75 }, { minutes: 120, bps: 50 }, { minutes: 360, bps: 40 }, { minutes: 1440, bps: 30 },
+];
+export const feeBpsFor = (minutes) => (FEE_LADDER.find((f) => f.minutes === Number(minutes)) || FEE_LADDER[5]).bps;
 export const RULES = () => ({
   minLiquidity: env('MIN_LIQUIDITY_USD', 50000), minWeight: env('MIN_WEIGHT_PCT', 2), threshold: env('REBALANCE_THRESHOLD_PCT', 2.5),
   slippageBps: env('MAX_SLIPPAGE_BPS', 150), maxTokens: env('MAX_TOKENS_PER_INDEX', 12),
