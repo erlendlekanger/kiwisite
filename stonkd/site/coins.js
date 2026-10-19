@@ -474,7 +474,7 @@ function pageStage() {
        baandets hoeyde, saa alt i toppen faar plass paa skjermen. */
     const band = bandEl.getBoundingClientRect();
     const toW = 2 * Y / innerHeight;                                   // piksler -> verdensenheter i z = 0
-    const R = Math.min(band.height * toW * 0.47, X * (mob ? 0.34 : 0.2));
+    const R = Math.min(band.height * toW * 0.47, X * (mob ? 0.38 : 0.24));
     hero.position.set(((band.left + band.width / 2) / innerWidth - 0.5) * 2 * X, px2y(band.top + band.height / 2), 0);
     hero.rotation.set(Math.sin(time * 0.23) * 0.05, Math.sin(time * 0.17) * 0.12, 0);
     heroGlow.position.set(0, 0, -3.5);
