@@ -1,4 +1,5 @@
-"""Render the official fomo mark as a glossy 3D mascot: body (the mark, with its cut-outs) + two pupils.
+"""Render the official fomo mark as a glossy 3D object: the mark with its two cut-outs, exactly as the logo.
+Set PUPILS = True to also render separate pupils (for the eyes-follow-the-pointer variant).
 usage: python3 -I render_mascot.py mark.json outdir [samples] [res_scale]"""
 import sys, os, json, math
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -22,6 +23,7 @@ quad = cv2.approxPolyDP(hc, 12, True).reshape(-1, 2).tolist()
 quad = [q for q in quad if not (abs(q[0] - 455) < 8 and abs(q[1] - 513) < 8)]  # drop the tiny kink on the left side
 qc = [sum(q[0] for q in quad) / len(quad), sum(q[1] for q in quad) / len(quad)]
 CENTERS = [[233.8, 508.9], [579.9, 509.5]]   # centroids of the two dark sockets (left, right), image px
+PUPILS = False
 PUPIL_SCALE = 0.66
 def pupil_pts(c):
     return [[c[0] + (q[0] - qc[0]) * PUPIL_SCALE, c[1] + (q[1] - qc[1]) * PUPIL_SCALE] for q in quad]
@@ -55,7 +57,7 @@ def curve_obj(name, loops, extrude, bevel, res=8, z=0.0, round_corners=0):
     ob = bpy.data.objects.new(name, cu); F.link(ob); ob.location.z = z
     return ob
 
-BODY_T = 0.27; BODY_BEV = 0.13
+BODY_T = 0.30; BODY_BEV = 0.13
 body = curve_obj('body', [outer_px, hole_px], BODY_T - BODY_BEV, BODY_BEV, res=10, z=BODY_T)
 mb = F.mat('ivory', F.PAL['ivory'], rough=0.17, coat=0.6, sss=0.1)
 F.speckle(mb, 0.01, 170)
@@ -64,7 +66,7 @@ F.set_mat(body, mb)
 TOP = BODY_T * 2
 PUP_T = 0.14; PUP_BEV = 0.05
 pupils = []
-for i, c in enumerate(CENTERS):
+for i, c in (enumerate(CENTERS) if PUPILS else []):
     # corners rounded a little: insert midpoints so the auto bezier keeps the straight sides
     pts = pupil_pts(c)
     dense = []
@@ -89,6 +91,8 @@ def vis(objs, on):
 
 vis([p for p, _ in pupils], False)
 F.render(os.path.join(outdir, 'body.png'), RW, RH, SAMPLES)
+if not PUPILS:
+    json.dump(meta, open(os.path.join(outdir, 'mascot.json'), 'w')); print('meta', json.dumps({k: v for k, v in meta.items() if k not in ('outline', 'hull')})); raise SystemExit
 vis([p for p, _ in pupils], True); body.hide_render = True
 F.render(os.path.join(outdir, 'pupils_all.png'), RW, RH, SAMPLES)
 

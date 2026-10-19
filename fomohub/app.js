@@ -82,7 +82,7 @@
                ['FOMORADAR', 'What the degens are aping right now, with one tap into fomo.']]
               .map(([t, d]) => `<div class="card"><h2>${t}</h2><p>${d}</p></div>`).join('')}
           </div>
-          <div class="card"><h2>The mark</h2><p>The two eyes in the middle are the official fomo mark, rendered in 3D and path traced. The pupils are rendered on their own and follow your pointer, so wherever you go on the page, fomo is watching.</p>
+          <div class="card"><h2>The mark</h2><p>The two eyes in the middle are the official fomo mark, rendered in 3D and path traced. The whole mark leans toward your pointer, so wherever you go on the page, fomo is looking your way.</p>
           <p>FOMOHUB is a community project and is not affiliated with FOMO Labs Inc.</p></div>
         </div>
       </section>` },
@@ -237,7 +237,7 @@
     // the whole mark leans a little toward the pointer
     const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
     const nx = clamp((tx - cx) / innerWidth, -0.5, 0.5), ny = clamp((ty - cy) / innerHeight, -0.5, 0.5);
-    if (!reduced) mascot.tilt.style.transform = `rotateY(${(nx * 14).toFixed(2)}deg) rotateX(${(-ny * 10).toFixed(2)}deg)`;
+    if (!reduced) mascot.tilt.style.transform = `rotateY(${(nx * 18).toFixed(2)}deg) rotateX(${(-ny * 12).toFixed(2)}deg)`;
     // blink: the pupils squash for a moment
     if (now > mascot.blinkAt) {
       mascot.pupils.forEach((p) => { p.s = 0.12; });

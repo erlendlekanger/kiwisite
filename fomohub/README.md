@@ -7,9 +7,10 @@ or as its own Vercel project with this directory as the root.
 ## The mascot
 
 The mark in the middle is the official fomo mark, traced from the fomo favicon and rendered in 3D with
-Blender (Cycles, path traced) by `render/render_mascot.py`. The body and the two pupils are rendered
-separately; `mascot.js` holds where the pupils sit in the frame, and `app.js` moves them toward the
-pointer, blinks them and leans the whole mark a little. The six icons come from `render/render_icons.py`.
+Blender (Cycles, path traced) by `render/render_mascot.py`, with its two cut-outs as part of the shape,
+exactly like the logo. `app.js` leans the whole mark toward the pointer. The script can also render
+separate pupils (`PUPILS = True`) for an eyes-follow-the-pointer variant; `mascot.js` then holds where
+they sit in the frame. The six icons come from `render/render_icons.py`.
 
 To render again: `pip install bpy opencv-python-headless`, then
 
