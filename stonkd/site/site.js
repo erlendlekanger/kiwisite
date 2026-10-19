@@ -128,10 +128,11 @@ function basketWords() {
 }
 
 function headline() {
-  $('h1stock').textContent = pick.symbol === 'SOL' ? 'SOL' : pick.name;
+  const set = (ids, text) => ids.forEach((id) => { $(id).textContent = text; });
+  set(['h1stock', 'rstock'], pick.symbol === 'SOL' ? 'SOL' : pick.name);
   const who = pick.kind === 'holders' ? KIND_WORD.holders : pick.found ? routeLabel(pick.found) : KIND_WORD[pick.kind];
-  $('h1who').textContent = who;
-  $('h1basket').textContent = basketWords();
+  set(['h1who', 'rwhoname'], who);
+  set(['h1basket', 'rbasket'], basketWords());
   $('bcount').textContent = pick.basket.length
     ? pick.basket.length + ' of ' + MAX_BASKET + ' · ' + (Math.round(1000 / pick.basket.length) / 10) + '% each'
     : pick.kind === 'holders' ? 'SOL' : 'SOL · pick Holders for other tokens';

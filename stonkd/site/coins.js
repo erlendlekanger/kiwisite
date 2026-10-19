@@ -420,8 +420,7 @@ function pageStage() {
   const hPair = coin(pairKey(pick.pair));
   const hSol = coin('SOL');
   const hWho = coin(whoKey());
-  const hFees = Array.from({ length: 3 }, () => coin(pairKey(pick.pair)));
-  hero.add(heroGlow, hMain, hPair, hSol, hWho, ...hFees);
+  hero.add(heroGlow, hMain, hPair, hSol, hWho);
 
   /* ---- How it works */
   const how = new THREE.Group();
@@ -438,7 +437,7 @@ function pageStage() {
 
   addEventListener('pick', () => {
     [hPair, pair].forEach((c) => setFace(c, pairKey(pick.pair)));
-    [...hFees, ...fees].forEach((c) => setFace(c, pairKey(pick.pair), false));
+    fees.forEach((c) => setFace(c, pairKey(pick.pair), false));
     [hWho, who].forEach((c) => setFace(c, whoKey()));
     pays.forEach((c, i) => setFace(c, payKeys()[i] || DEFAULT_PAY[i]));
   });
@@ -469,9 +468,9 @@ function pageStage() {
     const tiltY = fine ? pointer.sx * 0.42 : Math.sin(time * 0.3) * 0.18;
     const tiltX = fine ? -pointer.sy * 0.22 : 0;
 
-    /* ---- toppen: scroller med siden */
+    /* ---- toppen: scroller med siden, og beveger seg rolig av seg selv (ikke etter musen) */
     hero.position.y = px2y(innerHeight * 0.5 + hr.top);
-    hero.rotation.set(tiltX * 0.8, tiltY * 0.8, 0);
+    hero.rotation.set(Math.sin(time * 0.23) * 0.05, Math.sin(time * 0.17) * 0.12, 0);
     if (mob) {
       const k = Math.min(1, X / 1.35), cy = Y * 0.5;
       heroGlow.position.set(0, cy, -3.5); heroGlow.scale.setScalar(0.7);
@@ -487,13 +486,6 @@ function pageStage() {
       M.want(hSol, 0.14 * X, -1.35 + bob(2), 1.3, 0.62 * k, -1.05, 0.15 + sway(2, 0.15), 0.35);
       M.want(hWho, 0.88 * X, -1.05 + bob(3), -0.8, 0.62 * k, 0, -0.65 + sway(3), 0);
     }
-    hFees.forEach((c, i) => {                       // smaa gebyrmynter i bane mellom paret og STONKD
-      const a = time * 0.45 + i * (Math.PI * 2 / hFees.length);
-      const cx = mob ? 0.35 : 0.6 * X, cy = mob ? Y * 0.5 + 0.25 : 0.35;
-      const rx = mob ? 1.1 : 1.7, ry = mob ? 0.35 : 0.5;
-      M.want(c, cx + Math.cos(a) * rx, cy + Math.sin(a) * ry, -0.8 + Math.sin(a) * 1.4, (mob ? 0.2 : 0.28) * Math.min(1, X / 4.2 + 0.4),
-        0.3, time * 2.2 + i, 0.2);
-    });
 
     /* ---- How it works: staar fast midt paa skjermen mens stegene scroller forbi */
     const p = THREE.MathUtils.clamp((innerHeight * 0.5 - lr.top) / lr.height, 0, 0.999);
@@ -544,7 +536,7 @@ function pageStage() {
     });
 
     M.glide(1 - Math.exp(-dt * 5));
-    [hMain, hPair, hSol, hWho, ...hFees, main, pair, sol, who, ...fees, ...pays].forEach((c) => stepFlip(c, dt));
+    [hMain, hPair, hSol, hWho, main, pair, sol, who, ...fees, ...pays].forEach((c) => stepFlip(c, dt));
     st.draw();
   });
   document.documentElement.classList.add('gl');
