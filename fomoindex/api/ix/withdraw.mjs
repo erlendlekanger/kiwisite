@@ -1,4 +1,4 @@
-// POST /api/index/:id/withdraw -> sells everything to SOL and sends it to the owner's wallet.
+// POST /api/ix/:id/withdraw -> sells everything to SOL and sends it to the owner's wallet.
 import { wrap, json, query, fail } from '../../lib/http.mjs';
 import { requireUser } from '../../lib/auth.mjs';
 import { q } from '../../lib/db.mjs';

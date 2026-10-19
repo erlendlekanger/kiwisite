@@ -1,4 +1,4 @@
-// GET /api/index/:id -> live state: holdings, targets, history, trades, events.
+// GET /api/ix/:id -> live state: holdings, targets, history, trades, events.
 import { wrap, json, query, fail } from '../../lib/http.mjs';
 import { requireUser } from '../../lib/auth.mjs';
 import { q } from '../../lib/db.mjs';

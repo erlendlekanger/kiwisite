@@ -1,4 +1,4 @@
-// POST /api/index/:id/deposit { sig } -> verifies a SOL transfer into the index wallet and records it.
+// POST /api/ix/:id/deposit { sig } -> verifies a SOL transfer into the index wallet and records it.
 import { wrap, json, query, body, fail } from '../../lib/http.mjs';
 import { requireUser } from '../../lib/auth.mjs';
 import { q, log } from '../../lib/db.mjs';

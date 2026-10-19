@@ -1,4 +1,4 @@
-// POST /api/index/:id/status { status: 'active' | 'paused' }
+// POST /api/ix/:id/status { status: 'active' | 'paused' }
 import { wrap, json, query, body, fail } from '../../lib/http.mjs';
 import { requireUser } from '../../lib/auth.mjs';
 import { q, log } from '../../lib/db.mjs';
