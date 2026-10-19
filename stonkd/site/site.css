@@ -168,21 +168,24 @@ p { margin: 0; }
 .receipt { position: sticky; top: 88px; padding: 28px; overflow: hidden; }
 .receipt::before { content: ""; position: absolute; inset: -40% -20% auto auto; width: 70%; aspect-ratio: 1;
   background: radial-gradient(closest-side, rgba(82, 185, 226, .16), transparent); pointer-events: none; }
-.coins { display: flex; align-items: center; gap: 10px; margin-bottom: 26px; }
-.disc { position: relative; width: 76px; height: 76px; flex: none; border-radius: 50%; display: grid; place-items: center;
-  background: radial-gradient(circle at 32% 28%, #e8eef2, #8d979e 55%, #4b545a);
-  box-shadow: 0 10px 26px rgba(0, 0, 0, .55), inset 0 0 0 3px rgba(255, 255, 255, .25), inset 0 -6px 12px rgba(0, 0, 0, .35); }
-.disc > span, .disc > img { width: 56px; height: 56px; border-radius: 50%; object-fit: cover; display: grid; place-items: center;
-  background: var(--panel); box-shadow: inset 0 2px 6px rgba(0, 0, 0, .6); font-family: var(--mono); font-weight: 700;
-  font-size: 13px; color: var(--accent-3); }
-.disc.to { background: radial-gradient(circle at 32% 28%, #e8f7fd, #8fd4f1 50%, #2c7fa3); }
-.flow { flex: 1; display: flex; justify-content: space-between; align-items: center; height: 2px; position: relative;
-  background: repeating-linear-gradient(90deg, var(--line) 0 6px, transparent 6px 12px); }
-.flow i { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); opacity: 0;
-  box-shadow: 0 0 10px var(--accent); animation: drip 2.4s linear infinite; position: absolute; left: 0; }
-.flow i:nth-child(2) { animation-delay: .8s; }
-.flow i:nth-child(3) { animation-delay: 1.6s; }
-@keyframes drip { 0% { left: 0; opacity: 0; } 15% { opacity: 1; } 85% { opacity: 1; } 100% { left: calc(100% - 8px); opacity: 0; } }
+/* 3D-scenen i kvitteringen. Uten WebGL vises de rendrede mynt-skivene i stedet. */
+.rstage { position: relative; height: 170px; margin: -8px -8px 18px; }
+.rstage canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; opacity: 0; transition: opacity .5s ease; }
+.rstage.gl canvas { opacity: 1; }
+.rfallback { position: absolute; inset: 0; display: flex; align-items: center; justify-content: space-between; padding: 0 12px; }
+.rstage.gl .rfallback { display: none; }
+.rfallback .disc { width: 120px; height: 120px; }
+
+/* Mynt-skive: en tom staalmynt rendret i Blender, med logoen lagt i feltet. */
+.disc { position: relative; flex: none; display: grid; place-items: center; border-radius: 50%;
+  background: url(/img/coin-blank.webp) center / contain no-repeat;
+  filter: drop-shadow(0 10px 18px rgba(0, 0, 0, .55)); }
+.disc > img, .disc > span { width: 69%; height: 69%; border-radius: 50%; object-fit: cover; display: grid; place-items: center;
+  background: var(--panel); font-family: var(--mono); font-weight: 700; font-size: 13px; color: var(--accent-3); }
+.disc::after { content: ""; position: absolute; inset: 15.5%; border-radius: 50%; pointer-events: none;
+  background: radial-gradient(circle at 34% 26%, rgba(255, 255, 255, .38), rgba(255, 255, 255, 0) 46%),
+    radial-gradient(circle at 70% 85%, rgba(143, 212, 241, .18), rgba(143, 212, 241, 0) 40%);
+  box-shadow: inset 0 3px 7px rgba(0, 0, 0, .55), inset 0 -1px 2px rgba(255, 255, 255, .3); }
 
 .sentence { font-size: 22px; line-height: 1.35; font-weight: 700; letter-spacing: -0.02em; }
 .sentence em { font-style: normal; color: var(--accent-2); }
@@ -192,14 +195,18 @@ p { margin: 0; }
 .fine { margin-top: 12px; font-size: 12.5px; color: var(--dim); text-align: center; }
 
 /* ---------------------------------------------------------------- how */
-.steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-.steps li { border: 1px solid var(--line-soft); border-radius: var(--r-lg); overflow: hidden; background: var(--bg-2); }
-.steps img { width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; background: var(--panel); }
-.steps li > div { padding: 26px 28px 30px; }
-.steps .n { display: inline-grid; place-items: center; width: 28px; height: 28px; margin-bottom: 14px; border-radius: 50%;
-  border: 1px solid rgba(82, 185, 226, .5); color: var(--accent-2); font-family: var(--mono); font-size: 12.5px; font-weight: 600; }
-.steps h3 { font-size: 22px; line-height: 1.2; }
-.steps p { margin-top: 10px; color: var(--muted); line-height: 1.65; }
+/* Ett steg per rad. Mynten staar fast ved siden av mens stegene scroller forbi. */
+.how-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 48px; align-items: start; }
+.hsteps { list-style: none; margin: 0; padding: 0 0 14vh; }
+.hsteps li { min-height: 78vh; display: flex; flex-direction: column; justify-content: center;
+  padding: 40px 0; border-top: 1px solid var(--line-soft); opacity: .3; transition: opacity .4s ease; }
+.hsteps li:first-child { border-top: 0; }
+.hsteps li.on { opacity: 1; }
+.hsteps .n { font-family: var(--mono); font-size: 13px; letter-spacing: .14em; color: var(--accent-2); margin-bottom: 18px; }
+.hsteps h3 { font-size: clamp(26px, 2.8vw, 38px); line-height: 1.1; max-width: 13em; }
+.hsteps p { margin-top: 16px; max-width: 32em; color: var(--muted); font-size: 16px; line-height: 1.7; }
+.how-stage { position: sticky; top: 64px; height: calc(100vh - 64px); }
+.how-stage canvas { width: 100%; height: 100%; display: block; }
 
 /* ---------------------------------------------------------------- tall */
 .nums { display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid var(--line); border-radius: var(--r-lg);
@@ -217,8 +224,7 @@ p { margin: 0; }
   border: 1px solid var(--line-soft); border-radius: var(--r-lg); background: var(--bg-2); text-align: center;
   transition: border-color .15s ease, transform .15s ease; }
 .pcard:hover { border-color: var(--accent); transform: translateY(-2px); }
-.pcard .disc { width: 72px; height: 72px; margin-bottom: 12px; }
-.pcard .disc img { width: 54px; height: 54px; }
+.pcard .disc { width: 84px; height: 84px; margin-bottom: 10px; }
 .pcard b { font-family: var(--mono); font-size: 14px; }
 .pcard small { color: var(--muted); font-size: 12.5px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .pcard em { margin-top: 6px; font-style: normal; font-family: var(--mono); font-size: 10.5px; letter-spacing: .14em;
@@ -289,7 +295,9 @@ p { margin: 0; }
   .lblrow { flex-direction: column; align-items: stretch; }
   .lblrow .search { width: 100%; }
   .kinds { grid-template-columns: 1fr 1fr; }
-  .steps { grid-template-columns: minmax(0, 1fr); }
+  .how-grid { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .how-stage { order: -1; top: 64px; height: 44vh; z-index: 2; background: var(--bg); }
+  .hsteps li { min-height: 62vh; }
   .grid { grid-template-columns: minmax(0, 1fr); }
   .pgrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .nums .v { font-size: 28px; }
@@ -297,5 +305,5 @@ p { margin: 0; }
 }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .flow i, .eyebrow i, .sk { animation: none; }
+  .eyebrow i, .sk { animation: none; }
 }

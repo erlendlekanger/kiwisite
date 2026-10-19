@@ -18,6 +18,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="preload" as="image" href="/img/hero.webp" imagesrcset="/img/hero-m.webp 1080w, /img/hero.webp 2560w" imagesizes="100vw">
 <link rel="stylesheet" href="/site.css">
+<script type="importmap">
+{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js" } }
+</script>
 </head>
 <body>
 
@@ -99,10 +102,12 @@
         </div>
 
         <aside class="receipt" id="receipt">
-          <div class="coins">
-            <div class="disc pair" id="rpair"><span></span></div>
-            <div class="flow"><i></i><i></i><i></i></div>
-            <div class="disc to" id="rwho"><span>X</span></div>
+          <div class="rstage">
+            <canvas id="rcanvas" aria-hidden="true"></canvas>
+            <div class="rfallback">
+              <div class="disc" id="rpair"><span></span></div>
+              <div class="disc" id="rwho"><span>X</span></div>
+            </div>
           </div>
           <p class="sentence">A coin paired with <em id="h1stock">Apple</em>, its fees sent to
             <em id="h1who">an X profile</em>, paid out in <em id="h1basket">SOL</em>.</p>
@@ -121,32 +126,23 @@
         <p class="eyebrow">02 · How it works</p>
         <h2>From one trade to a payout</h2>
       </div>
-      <ol class="steps">
-        <li>
-          <img src="/img/step1.webp" alt="The STONKD coin standing next to an Apple coin" loading="lazy" width="1200" height="900">
-          <div><span class="n">1</span><h3>The coin launches paired with a stock</h3>
+      <div class="how-grid">
+        <ol class="hsteps" id="hsteps">
+          <li><span class="n">01</span><h3>The coin launches paired with a stock</h3>
             <p>You pick the pair, the recipient and a dev buy, then sign one payment. The pool is created
-              and your coin is bought in the same transaction, and the tokens land in your wallet.</p></div>
-        </li>
-        <li>
-          <img src="/img/step2.webp" alt="Apple coins falling onto a stack" loading="lazy" width="1200" height="900">
-          <div><span class="n">2</span><h3>Every trade leaves a fee behind</h3>
+              and your coin is bought in the same transaction, and the tokens land in your wallet.</p></li>
+          <li><span class="n">02</span><h3>Every trade leaves a fee behind</h3>
             <p>The coin trades against the stock on its own curve. Each trade pays a creator fee in the
-              pair token, so a coin paired with Apple earns Apple.</p></div>
-        </li>
-        <li>
-          <img src="/img/step3.webp" alt="A SOL coin standing among Apple coins" loading="lazy" width="1200" height="900">
-          <div><span class="n">3</span><h3>The fees are collected and turned into SOL</h3>
+              pair token, so a coin paired with Apple earns Apple.</p></li>
+          <li><span class="n">03</span><h3>The fees are collected and turned into SOL</h3>
             <p>Every few minutes the fees are collected from the coin's own creator account and swapped to
-              SOL. Each collection is listed on the coin page with its transaction.</p></div>
-        </li>
-        <li>
-          <img src="/img/step4.webp" alt="Nvidia, Tesla and Amazon coins behind a SOL coin" loading="lazy" width="1200" height="900">
-          <div><span class="n">4</span><h3>The recipient is paid in SOL, or the holders in stocks</h3>
+              SOL. Each collection is listed on the coin page with its transaction.</p></li>
+          <li><span class="n">04</span><h3>The recipient is paid in SOL, or the holders in stocks</h3>
             <p>An X profile, a GitHub account or a wallet is paid in SOL. A coin can instead pay its holders,
-              in SOL or in up to five stocks bought with the fees. The platform keeps a fixed share of every fee.</p></div>
-        </li>
-      </ol>
+              in SOL or in up to five stocks bought with the fees. The platform keeps a fixed share of every fee.</p></li>
+        </ol>
+        <div class="how-stage"><canvas id="hcanvas" aria-hidden="true"></canvas></div>
+      </div>
     </div>
   </section>
 
@@ -203,5 +199,6 @@
 
 <div class="toast" id="toast"></div>
 <script src="/site.js"></script>
+<script type="module" src="/coins.js"></script>
 </body>
 </html>

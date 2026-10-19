@@ -84,7 +84,7 @@ const CAT_ORDER = ['xstock', 'prestock', 'tessera', 'backpack', 'currency', 'lev
 const MAX_BASKET = 5;
 let platformPct = 10;
 let pcat = 'xstock', pq = '', gcat = 'all', gq = '', gshow = 48, bcat = 'xstock', bq = '';
-let pick = { symbol: 'APPLX', name: 'Apple', mint: '', kind: 'x', target: '', found: null, basket: [] };
+let pick = { symbol: 'APPLX', name: 'Apple', mint: '', kind: 'x', target: '', found: null, avatar: null, basket: [] };
 
 const pairBy = (mint) => allPairs.find((p) => p.mint === mint);
 const symOf = (p) => (p.mint === SOL_MINT ? 'SOL' : p.symbol);
@@ -152,10 +152,28 @@ function headline() {
   const to = pick.kind === 'holders' ? 'the holders' : pick.found ? routeLabel(pick.found) : 'the recipient';
   const as = pick.basket.length
     ? `<div><dt>Paid out as</dt><dd>${pick.basket.map((m) => esc(symOf(pairBy(m) || {}))).join(' · ')}</dd></div>` : '';
+  emitPick(cur);
   $('split').innerHTML = `
     <div><dt>Of every 1 SOL in fees</dt><dd>1.0000 SOL</dd></div>
     <div><dt>To ${esc(to)}</dt><dd>${(rest / 100).toFixed(4)} SOL</dd></div>
     <div><dt>Platform</dt><dd>${(platformPct / 100).toFixed(4)} SOL</dd></div>${as}`;
+}
+
+/* 3D-myntene (coins.js) foelger valgene. Bare naar noe faktisk har endret seg. */
+let lastPick = '';
+function emitPick(cur) {
+  const coinOf = (p) => ({ symbol: symOf(p), logo: pairLogo(p) });
+  const detail = {
+    pair: cur ? coinOf(cur) : { symbol: pick.symbol, logo: '' },
+    kind: pick.kind,
+    avatar: pick.found && pick.kind !== 'holders' ? pick.avatar : null,
+    basket: pick.basket.map(pairBy).filter(Boolean).map(coinOf),
+  };
+  const key = JSON.stringify(detail);
+  if (key === lastPick) return;
+  lastPick = key;
+  window.PICK = detail;
+  dispatchEvent(new CustomEvent('pick', { detail }));
 }
 
 /* ------------------------------------------------------------- velgerne */
@@ -230,6 +248,7 @@ function lookup() {
   const box = $('found');
   pick.target = $('target').value.trim();
   pick.found = null;
+  pick.avatar = null;
   box.className = 'found';
   if (pick.kind === 'holders') {
     pick.found = { kind: 'holders', target: 'holders' };
@@ -255,6 +274,7 @@ function lookup() {
       } else {
         pick.found = d.route;
         const p = d.profile || {};
+        pick.avatar = p.avatar ? p.avatar.replace('_normal.', '_400x400.') : null;
         box.innerHTML = `${routeAvatar(d.route, 22)}<span><b>${esc(p.name || routeLabel(d.route))}</b>
           ${pick.kind === 'wallet' ? '' : ' · ' + esc(routeLabel(d.route))}${p.followers != null
             ? ' · ' + Number(p.followers).toLocaleString('en-US') + ' followers' : ''}</span>`;
