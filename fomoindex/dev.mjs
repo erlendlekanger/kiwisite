@@ -3,10 +3,15 @@
 import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
-import { pathToFileURL } from 'node:url';
-const root = path.dirname(new URL(import.meta.url).pathname);
+import { pathToFileURL, fileURLToPath } from 'node:url';
+const root = path.dirname(fileURLToPath(import.meta.url));
+// local secrets (KV, session) live outside the repo in ~/fomoindex.env
+try {
+  const f = path.join(process.env.USERPROFILE || process.env.HOME || '', 'fomoindex.env');
+  for (const l of fs.readFileSync(f, 'utf8').split(/\r?\n/)) { const m = l.match(/^\s*([A-Z0-9_]+)\s*=\s*(.*)$/); if (m && !process.env[m[1]]) process.env[m[1]] = m[2].replace(/^"|"$/g, ''); }
+} catch (e) { /* no local env file */ }
 const cfg = JSON.parse(fs.readFileSync(path.join(root, 'vercel.json'), 'utf8'));
-const port = +(process.argv[2] || 8790);
+const port = +(process.argv[2] || process.env.PORT || 8790);
 const types = { '.html': 'text/html', '.css': 'text/css', '.js': 'text/javascript', '.mjs': 'text/javascript', '.svg': 'image/svg+xml', '.png': 'image/png', '.jpg': 'image/jpeg', '.json': 'application/json', '.webp': 'image/webp' };
 function rewrite(pathname) {
   for (const r of cfg.rewrites || []) {
@@ -33,5 +38,6 @@ http.createServer(async (req, res) => {
   if (!path.extname(file) && fs.existsSync(file + '.html')) file += '.html';
   if (!fs.existsSync(file) || fs.statSync(file).isDirectory()) { res.statusCode = 404; return res.end('not found'); }
   res.setHeader('Content-Type', types[path.extname(file)] || 'application/octet-stream');
+  res.setHeader('Cache-Control', 'no-store');   // lokalt: alltid nyeste fil, ellers viser nettleseren gammel css
   fs.createReadStream(file).pipe(res);
 }).listen(port, () => console.log('dev on http://localhost:' + port));

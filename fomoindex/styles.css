@@ -230,7 +230,7 @@ tr.nowallet{opacity:.45} tr.nowallet .chk{display:none}
 .tbox-h b{display:block;font-weight:750;font-size:1.45rem;letter-spacing:-.035em;line-height:1.05;color:#0f1419;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tbox-h small{display:block;font-family:var(--mono);font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:#7b8590;margin-top:5px}
 .tbox-h .rank{display:inline-flex;align-items:center;gap:6px;margin-top:8px;background:#0a0a0a;color:#fff;border-radius:999px;padding:3px 10px;font-size:.72rem;font-weight:600}
-.tbox-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:12px 18px 4px}
+.tbox-stats{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:6px;padding:12px 18px 4px}
 .tbox-stats div{background:#ffffff8c;border:1px solid #0a0a0a12;border-radius:12px;padding:9px 10px}
 .tbox-stats small{display:block;font-family:var(--mono);font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:#7b8590}
 .tbox-stats b{display:block;font-family:var(--mono);font-size:.95rem;font-weight:600;margin-top:3px;letter-spacing:-.02em;font-variant-numeric:tabular-nums;color:#0f1419}
@@ -238,7 +238,7 @@ tr.nowallet{opacity:.45} tr.nowallet .chk{display:none}
 .tbox-sec{padding:12px 18px 0}
 .tbox-sec .lbl{font-family:var(--mono);font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:#7b8590;margin-bottom:8px}
 .tbox-hold{display:grid;gap:6px}
-.tbox-hold div{display:grid;grid-template-columns:22px 64px 1fr 44px;gap:8px;align-items:center;font-size:.8rem}
+.tbox-hold > div{display:grid;grid-template-columns:22px 64px 1fr 44px;gap:8px;align-items:center;font-size:.8rem}
 .tbox-hold i{width:22px;height:22px;border-radius:50%;background:#0a0a0a14;overflow:hidden;display:block} .tbox-hold i img{width:100%;height:100%;object-fit:cover}
 .tbox-hold b{font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tbox-hold .bar{height:6px;border-radius:99px;background:#0a0a0a14;overflow:hidden} .tbox-hold .bar em{display:block;height:100%;background:linear-gradient(90deg,#2a2d33,#0a0a0a);border-radius:99px}
@@ -257,8 +257,12 @@ tr.nowallet{opacity:.45} tr.nowallet .chk{display:none}
 .actions{display:flex;gap:8px;flex-wrap:wrap}
 .build{display:grid;grid-template-columns:minmax(0,1fr) 400px;gap:22px;align-items:start}
 @media(max-width:1040px){.build{grid-template-columns:1fr}}
-.side{display:grid;gap:16px;position:sticky;top:86px}
-@media(max-width:1040px){.side{position:static}}
+.side{display:grid;gap:16px;position:sticky;top:86px;align-self:start;
+  /* taller than the window: the column scrolls by itself, so all of "Your index" can be reached and the card stays in view */
+  max-height:calc(100vh - 100px);overflow-y:auto;overscroll-behavior:contain;padding:6px 8px 12px 6px;margin:-6px -8px 0 -6px;
+  scrollbar-width:thin;scrollbar-color:#2e2d3d transparent}
+.side::-webkit-scrollbar{width:8px}.side::-webkit-scrollbar-track{background:transparent}.side::-webkit-scrollbar-thumb{border:2px solid transparent;background-clip:padding-box}
+@media(max-width:1040px){.side{position:static;max-height:none;overflow:visible;margin:0;padding:0}}
 .toolbar{display:flex;gap:8px;padding:14px 20px;border-bottom:1px solid var(--line);flex-wrap:wrap}
 .steps{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}
 .steps div{display:flex;align-items:center;gap:8px;padding:7px 13px 7px 7px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font-size:.82rem;color:var(--muted)}

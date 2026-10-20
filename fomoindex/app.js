@@ -7,13 +7,15 @@
   const pnl = (n) => n == null ? '—' : (Number(n) >= 0 ? '+' : '') + usd(Number(n), 0);
   const sol = (n, d = 3) => (Number(n) || 0).toFixed(d) + ' SOL';
   const pct = (w) => Math.round((Number(w) || 0) * 100) + '%';
+  const chg = (x) => x == null ? '–' : (Number(x) >= 0 ? '+' : '') + (Number(x) * 100).toFixed(1) + '%';
+  const MAX_TRADERS = 5;
   const short = (a) => (a ? a.slice(0, 4) + '…' + a.slice(-4) : '');
   const ago = (ts) => { if (!ts) return 'never'; const m = Math.round((Date.now() - new Date(ts)) / 60000); return m < 1 ? 'just now' : m < 60 ? m + ' min ago' : m < 1440 ? Math.round(m / 60) + ' h ago' : Math.round(m / 1440) + ' d ago'; };
   const ini = (t) => esc((t.name || t.handle || '?').slice(0, 2).toUpperCase());
   const avatar = (t, cls = 'ava') => `<div class="${cls}">${t.avatar ? `<img src="${esc(t.avatar)}" alt="">` : (cls === 'tbox-art' ? `<b>${ini(t)}</b>` : ini(t))}</div>`;
   const SOL_MINT = 'So11111111111111111111111111111111111111112';
   const RULES = { minWeight: 2, minLiquidity: 50000, maxTokens: 12 };
-  const LADDER = [{ m: 1, bps: 250 }, { m: 5, bps: 200 }, { m: 15, bps: 150 }, { m: 30, bps: 100 }, { m: 60, bps: 75 }, { m: 120, bps: 50 }, { m: 360, bps: 40 }, { m: 1440, bps: 30 }];
+  const LADDER = [{ m: 1, bps: 100 }, { m: 5, bps: 80 }, { m: 15, bps: 60 }, { m: 30, bps: 50 }, { m: 60, bps: 40 }, { m: 120, bps: 30 }, { m: 360, bps: 25 }, { m: 1440, bps: 20 }];
   const every = (m) => m < 60 ? `${m} min` : m < 1440 ? `${m / 60} h` : '24 h';
   const feeOf = (m) => (LADDER.find((l) => l.m === m) || LADDER[5]).bps / 100;
   const ARROW = '<svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
@@ -28,7 +30,7 @@
   }
 
   /* ---------- wallet ---------- */
-  const S = { wallet: null, token: sessionStorage.getItem('fi_token') || null, provider: null, traders: [], selected: new Map(), name: '', amount: 1, interval: 120, preview: null, focus: null, ports: {} };
+  const S = { wallet: null, token: sessionStorage.getItem('fi_token') || null, provider: null, traders: [], known: new Map(), total: 0, q: '', selected: new Map(), name: '', amount: 1, interval: 120, preview: null, focus: null, ports: {} };
   const B58 = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
   function b58(bytes) { const d = [0]; for (const b of bytes) { let c = b; for (let j = 0; j < d.length; j++) { c += d[j] << 8; d[j] = c % 58; c = (c / 58) | 0; } while (c) { d.push(c % 58); c = (c / 58) | 0; } } let s = ''; for (const b of bytes) { if (b) break; s += '1'; } for (let j = d.length - 1; j >= 0; j--) s += B58[d[j]]; return s; }
   function providers() {
@@ -93,38 +95,54 @@
 
   /* ---------- build ---------- */
   async function renderBuild() {
-    if (!S.traders.length) { view.innerHTML = `<div class="app-h"><div><h1>Build an index</h1><p>Loading the leaderboard…</p></div></div>`; try { S.traders = (await api('/api/traders')).traders || []; } catch (e) { S.traders = []; } }
+    if (!S.traders.length) { view.innerHTML = `<div class="app-h"><div><h1>Build an index</h1><p>Loading fomo traders…</p></div></div>`; await loadTraders('', 0); }
     if (document.getElementById('grid')) { paintGrid(); paintSide(); return; }
     view.innerHTML = `
       <div class="app-h"><div><h1>Build an index</h1><p>Tap a trader to see everything we know about them. Add the ones you want, set the weights, fund it.</p></div>
         <div class="steps" id="steps"><div class="on"><b>1</b>Pick traders</div><div><b>2</b>Set weights</div><div><b>3</b>Name &amp; fund</div></div></div>
       <div class="build">
         <div class="panel">
-          <div class="panel-h"><b>Traders</b><span class="sp"></span><small>${S.traders.length} on the board</small></div>
+          <div class="panel-h"><b>Traders</b><span class="sp"></span><small id="tcount">${(S.total || S.traders.length).toLocaleString('en-US')} fomo traders</small></div>
           <div class="toolbar">
             <div class="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="q" placeholder="Search fomo usernames"></div>
-            <select class="sel" id="sort"><option value="rank">By rank</option><option value="pnl">By 7d PnL</option><option value="recent">Recently active</option></select>
+            <select class="sel" id="sort"><option value="rank">Most popular</option><option value="recent">Recently read</option></select>
           </div>
-          <table class="tbl" id="grid"><thead><tr><th>#</th><th>Trader</th><th class="hide-s">Holds now</th><th class="r">7d PnL</th><th></th></tr></thead><tbody></tbody></table>
+          <table class="tbl" id="grid"><thead><tr><th>#</th><th>Trader</th><th class="hide-s">Holds now</th><th></th></tr></thead><tbody></tbody></table>
+          <div class="panel-b" id="more" style="display:flex;justify-content:center;border-top:1px solid var(--line)"></div>
         </div>
         <aside class="side" id="side"></aside>
       </div>`;
-    document.getElementById('q').addEventListener('input', paintGrid); document.getElementById('sort').addEventListener('change', paintGrid);
+    let qt = null;
+    document.getElementById('q').addEventListener('input', (e) => { clearTimeout(qt); qt = setTimeout(async () => { await loadTraders(e.target.value, 0); paintGrid(); }, 220); });
+    document.getElementById('sort').addEventListener('change', paintGrid);
     paintGrid(); paintSide();
+  }
+  // the whole fomo directory lives on the server: search and page it there, keep what we have seen in S.known
+  async function loadTraders(q, offset) {
+    try {
+      const r = await api(`/api/traders?q=${encodeURIComponent(q || '')}&offset=${offset}&limit=60`);
+      S.total = r.total; S.q = q || '';
+      for (const t of r.traders || []) S.known.set(t.handle, t);
+      S.traders = offset ? [...S.traders, ...(r.traders || [])] : (r.traders || []);
+    } catch (e) { if (!offset) S.traders = []; }
   }
   function paintGrid() {
     const grid = document.querySelector('#grid tbody'); if (!grid) return;
-    const qv = (document.getElementById('q').value || '').toLowerCase();
     const sort = document.getElementById('sort').value;
-    let list = S.traders.filter((t) => !qv || (t.handle + ' ' + (t.name || '')).toLowerCase().includes(qv));
-    list.sort((a, b) => sort === 'pnl' ? (Number(b.pnl_7d) || -1e18) - (Number(a.pnl_7d) || -1e18) : sort === 'recent' ? new Date(b.positions_at || 0) - new Date(a.positions_at || 0) : (a.rank || 1e9) - (b.rank || 1e9));
-    grid.innerHTML = list.length ? list.map((t, i) => `<tr class="row ${S.selected.has(t.handle) ? 'on' : ''} ${t.has_wallet ? '' : 'nowallet'}" data-h="${esc(t.handle)}" title="${t.has_wallet ? '' : 'No wallet on file yet, cannot be mirrored'}">
-        <td class="rk ${t.rank && t.rank <= 3 ? 'p' : ''}">${t.rank && t.rank <= 3 ? `<span>${t.rank}</span>` : (t.rank || '–')}</td>
+    let list = [...S.traders];
+    if (sort === 'recent') list.sort((a, b) => new Date(b.positions_at || 0) - new Date(a.positions_at || 0));
+    const tc = document.getElementById('tcount'); if (tc) tc.textContent = `${(S.total || 0).toLocaleString('en-US')} ${S.q ? 'matching' : 'fomo traders'}`;
+    const more = document.getElementById('more');
+    if (more) {
+      more.innerHTML = S.traders.length < (S.total || 0) ? `<button class="btn" id="moreBtn">Show more traders</button>` : '';
+      document.getElementById('moreBtn')?.addEventListener('click', async () => { await loadTraders(S.q, S.traders.length); paintGrid(); });
+    }
+    grid.innerHTML = list.length ? list.map((t, i) => `<tr class="row ${S.selected.has(t.handle) ? 'on' : ''} ${t.has_wallet ? '' : 'nowallet'}" data-h="${esc(t.handle)}" title="${t.has_wallet ? '' : 'Trading wallet not confirmed yet, cannot be mirrored'}">
+        <td class="rk ${(t.rank || t.pop) <= 3 ? 'p' : ''}">${(t.rank || t.pop) <= 3 ? `<span>${t.rank || t.pop}</span>` : (t.rank || t.pop || '–')}</td>
         <td><div class="tn">${avatar(t)}<div><b>${esc(t.name || t.handle)}</b><small>@${esc(t.handle)}</small></div></div></td>
-        <td class="hide-s"><div class="chips">${(t.top || []).slice(0, 3).map((x) => `<span>${esc(x.symbol)} ${pct(x.weight)}</span>`).join('') || `<span>${t.has_wallet ? 'all in SOL' : 'wallet pending'}</span>`}</div></td>
-        <td class="r ${Number(t.pnl_7d) < 0 ? 'down' : 'up'}">${pnl(t.pnl_7d)}</td>
+        <td class="hide-s"><div class="chips">${(t.top || []).slice(0, 3).map((x) => `<span>${esc(x.symbol)} ${pct(x.weight)}</span>`).join('') || `<span>${!t.has_wallet ? 'not confirmed' : !t.positions_at ? 'tap to read' : t.value_usd ? 'all in SOL' : 'empty wallet'}</span>`}</div></td>
         <td style="width:40px"><div class="chk" title="Add to index"><svg viewBox="0 0 16 16"><path d="M3 8.5l3 3 7-7"/></svg></div></td></tr>`).join('')
-      : `<tr><td colspan="5"><div class="empty">${S.traders.length ? '<b>No trader called that</b>Try part of their fomo username.' : '<b>The leaderboard is syncing</b>Traders appear here as soon as their wallets are confirmed on fomo.'}</div></td></tr>`;
+      : `<tr><td colspan="4"><div class="empty">${S.q ? '<b>No trader called that</b>Try part of their fomo username.' : '<b>Could not load the traders</b>Try again in a moment.'}</div></td></tr>`;
     grid.querySelectorAll('tr.row').forEach((r) => {
       r.addEventListener('click', () => focusTrader(r.dataset.h));
       const c = r.querySelector('.chk'); if (c) c.addEventListener('click', (e) => { e.stopPropagation(); toggle(r.dataset.h); });
@@ -132,18 +150,22 @@
   }
   function focusTrader(handle) {
     S.focus = handle; history.replaceState(null, '', '#build/' + encodeURIComponent(handle));
-    paintSide(); loadPort(handle).then(() => { if (S.focus === handle) paintBox(); });
+    paintSide(); document.getElementById('side')?.scrollTo({ top: 0 }); loadPort(handle).then(() => { if (S.focus === handle) paintBox(); });
     if (innerWidth <= 1040) document.getElementById('side')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
+  // a trader's holdings, read again once they are a minute old, so an open card follows the trader live
   async function loadPort(handle) {
-    if (S.ports[handle]) return S.ports[handle];
-    try { S.ports[handle] = await api(`/api/traders/${encodeURIComponent(handle)}/positions`); } catch (e) { S.ports[handle] = { error: e.message }; }
+    const c = S.ports[handle];
+    if (c && Date.now() - (c._at || 0) < 60000) return c;
+    try { S.ports[handle] = await api(`/api/traders/${encodeURIComponent(handle)}/positions`); } catch (e) { S.ports[handle] = c && !c.error ? c : { error: e.message }; }
+    S.ports[handle]._at = Date.now();
     return S.ports[handle];
   }
+  setInterval(() => { const h = S.focus; if (h && document.visibilityState === 'visible' && document.getElementById('box')) loadPort(h).then(() => { if (S.focus === h) paintBox(); }); }, 60000);
   function toggle(handle) {
-    const t = S.traders.find((x) => x.handle === handle); if (t && !t.has_wallet) return toast('No wallet on file for this trader yet');
+    const t = S.known.get(handle); if (t && !t.has_wallet) return toast('Trading wallet not confirmed yet');
     if (S.selected.has(handle)) S.selected.delete(handle);
-    else { if (S.selected.size >= 10) return toast('Ten traders is the maximum'); S.selected.set(handle, { weight: 1 }); }
+    else { if (S.selected.size >= MAX_TRADERS) return toast('Five traders is the maximum'); S.selected.set(handle, { weight: 1 }); }
     document.querySelectorAll('#grid tr.row').forEach((c) => c.classList.toggle('on', S.selected.has(c.dataset.h)));
     paintPanel(); paintBox(); loadPreview();
   }
@@ -157,26 +179,43 @@
   /* the trader box: everything we know about one fomo account, in the Black Swan finish */
   function paintBox() {
     const el = document.getElementById('box'); if (!el) return;
-    const t = S.traders.find((x) => x.handle === S.focus);
-    if (!t) { el.innerHTML = ''; return; }
+    const t = S.known.get(S.focus);
+    if (!t) {
+      el.innerHTML = '';
+      if (S.focus && !S.looking) {           // a deep link to a trader that is not on the loaded page yet
+        S.looking = S.focus;
+        api(`/api/traders?q=${encodeURIComponent(S.focus)}&limit=5`).then((r) => { for (const x of r.traders || []) S.known.set(x.handle, x); })
+          .catch(() => {}).finally(() => { S.looking = null; if (S.known.get(S.focus)) { paintBox(); loadPort(S.focus).then(paintBox); } });
+      }
+      return;
+    }
     const p = S.ports[t.handle]; const on = S.selected.has(t.handle);
+    const tk = p?.track || null;
+    const c24 = tk?.change_24h ?? t.change_24h;
+    const spark = (() => {
+      const h = (tk?.history || []).map((x) => x.idx).filter((v) => v > 0);
+      if (h.length < 2) return '';
+      const mn = Math.min(...h), mx = Math.max(...h), W = 260, H = 40;
+      const pts = h.map((v, i) => `${(i / (h.length - 1) * W).toFixed(1)},${(H - 3 - ((v - mn) / (mx - mn || 1)) * (H - 6)).toFixed(1)}`).join(' ');
+      return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" style="width:100%;height:40px;display:block;margin-top:8px"><polyline points="${pts}" fill="none" stroke="${h[h.length - 1] >= h[0] ? '#118a4f' : '#c9412f'}" stroke-width="2"/></svg>`;
+    })();
     const rows = p?.rows ? p.rows.filter((r) => r.mint !== SOL_MINT && r.weight > 0).slice(0, 5) : null;
     const solRow = p?.rows?.find((r) => r.mint === SOL_MINT);
     el.innerHTML = `<div class="tbox"><div class="tbox-in">
       <div class="tbox-top"><img src="assets/mark-navy.svg" alt=""><span class="s">${t.rank ? '#' + t.rank : 'fomo'}</span><button class="x" id="boxClose" title="Close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
       <div class="tbox-hero">${avatar(t, 'tbox-art')}<div class="tbox-h"><b>@${esc(t.handle)}</b><small>${esc(t.name && t.name !== t.handle ? t.name : 'fomo trader')}</small>${t.rank ? `<span class="rank">#${t.rank} on fomo</span>` : ''}</div></div>
       <div class="tbox-stats">
-        <div><small>24h PnL</small><b class="${Number(t.pnl_24h) < 0 ? 'down' : Number(t.pnl_24h) > 0 ? 'up' : ''}">${pnl(t.pnl_24h)}</b></div>
-        <div><small>7d PnL</small><b class="${Number(t.pnl_7d) < 0 ? 'down' : Number(t.pnl_7d) > 0 ? 'up' : ''}">${pnl(t.pnl_7d)}</b></div>
-        <div><small>30d PnL</small><b class="${Number(t.pnl_30d) < 0 ? 'down' : Number(t.pnl_30d) > 0 ? 'up' : ''}">${pnl(t.pnl_30d)}</b></div>
+        <div><small>Tracked 24h</small><b class="${Number(c24) < 0 ? 'down' : Number(c24) > 0 ? 'up' : ''}">${chg(c24)}</b></div>
+        <div><small>Since tracked</small><b class="${Number(tk?.change_all) < 0 ? 'down' : Number(tk?.change_all) > 0 ? 'up' : ''}">${chg(tk?.change_all)}</b></div>
       </div>
-      ${!t.has_wallet ? `<div class="tbox-wait">No wallet on file for this account yet, so it cannot be mirrored. It will light up as soon as fomo confirms one.</div>`
+      ${spark ? `<div class="tbox-sec"><div class="lbl">Tracked return${tk?.since ? ' since ' + new Date(tk.since).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) : ''}</div>${spark}</div>` : ''}
+      ${!t.has_wallet ? `<div class="tbox-wait">We have not confirmed the wallet this trader trades from yet, so it cannot be mirrored. It lights up as soon as it is confirmed.</div>`
         : !p ? `<div class="tbox-wait">Reading the wallet on-chain…</div>`
         : p.error ? `<div class="tbox-wait">${esc(p.error)}</div>`
         : `<div class="tbox-stats" style="padding-top:0"><div><small>Portfolio</small><b>${usd(p.total_usd, 0)}</b></div><div><small>In SOL</small><b>${pct(solRow?.weight || 0)}</b></div><div><small>Tokens</small><b>${p.rows.filter((r) => r.mint !== SOL_MINT && r.usd > 1).length}</b></div></div>
           <div class="tbox-sec"><div class="lbl">Holds right now</div>
           ${rows.length ? `<div class="tbox-hold">${rows.map((r) => `<div><i>${r.icon ? `<img src="${esc(r.icon)}" alt="">` : ''}</i><b title="${esc(r.name || '')}">${esc(r.symbol || short(r.mint))}</b><div class="bar"><em style="width:${Math.min(100, r.weight * 100)}%"></em></div><small>${pct(r.weight)}</small></div>`).join('')}</div>`
-            : `<div class="tbox-wait" style="padding:0 0 6px">All in SOL right now. The index buys as soon as they do.</div>`}</div>`}
+            : `<div class="tbox-wait" style="padding:0 0 6px">${p.total_usd ? 'All in SOL right now. The index buys as soon as they do.' : 'This wallet is empty right now. The index buys as soon as they trade again.'}</div>`}</div>`}
       <div class="tbox-foot"><div class="meta">${t.wallet ? `<a href="https://solscan.io/account/${esc(t.wallet)}" target="_blank" rel="noopener">${short(t.wallet)} ↗</a><br>` : ''}${t.positions_at ? 'wallet read ' + ago(t.positions_at) : 'fomo.family'}</div>
         <button class="btn ${on ? 'off' : ''}" id="boxToggle" ${t.has_wallet ? '' : 'disabled'}>${on ? 'Remove from index' : 'Add to index'}</button></div>
     </div></div>`;
@@ -189,12 +228,12 @@
     const n = S.selected.size;
     const step = !n ? 0 : S.name ? 2 : 1;
     document.querySelectorAll('#steps div').forEach((d, i) => { d.classList.toggle('on', i === step); d.classList.toggle('done', i < step); });
-    if (!n) { panel.innerHTML = `<div class="panel-h"><b>Your index</b><span class="sp"></span><small>0 / 10 picked</small></div><div class="panel-b"><p class="note">Tap a trader to open their box, then add the ones you want. Up to ten. You weight them in the next step.</p>
-      <div class="hint-list" style="margin-top:14px"><span><b>1</b>Pick 3 to 6 traders with different styles</span><span><b>2</b>Weight the ones you trust most</span><span><b>3</b>Pick a tempo, 2 h is the sweet spot</span><span><b>4</b>Fund with 0.2 SOL or more</span></div></div>`; return; }
+    if (!n) { panel.innerHTML = `<div class="panel-h"><b>Your index</b><span class="sp"></span><small>0 / 5 picked</small></div><div class="panel-b"><p class="note">Tap a trader to open their box, then add the ones you want. One to five fomo traders. You weight them in the next step.</p>
+      <div class="hint-list" style="margin-top:14px"><span><b>1</b>Pick 1 to 5 fomo traders</span><span><b>2</b>Weight the ones you trust most</span><span><b>3</b>Pick a tempo, 2 h is the sweet spot</span><span><b>4</b>Fund with 0.2 SOL or more</span></div></div>`; return; }
     const ws = weights();
-    const tr = (h) => S.traders.find((t) => t.handle === h) || { handle: h };
+    const tr = (h) => S.known.get(h) || { handle: h };
     panel.innerHTML = `
-      <div class="panel-h"><b>Your index</b><span class="sp"></span><small>${n} / 10 picked</small></div>
+      <div class="panel-h"><b>Your index</b><span class="sp"></span><small>${n} / 5 picked</small></div>
       <div class="panel-b">
         <div style="display:flex;gap:16px;align-items:center"><svg class="donut" id="donut" viewBox="0 0 42 42"></svg><div class="squad">${ws.map((w) => avatar(tr(w.handle))).join('')}</div></div>
         <div class="field" style="margin-top:16px"><label>Weights</label></div>
@@ -299,7 +338,7 @@
     if (!S.provider) { const p = providers()[0]; if (!p) return toast('No wallet in this browser'); try { await p.p.connect(); S.provider = p.p; } catch (e) { return toast('Wallet did not connect'); } }
     btn.disabled = true; btn.textContent = 'Confirm in wallet…';
     try {
-      const w3 = window.solanaWeb3; const conn = new w3.Connection('https://api.mainnet-beta.solana.com', 'confirmed');
+      const w3 = window.solanaWeb3; const conn = new w3.Connection(location.origin + '/api/rpc', 'confirmed');   // Solana's public RPC blocks web pages
       const from = new w3.PublicKey(S.provider.publicKey.toString());
       const tx = new w3.Transaction().add(w3.SystemProgram.transfer({ fromPubkey: from, toPubkey: new w3.PublicKey(addr), lamports: Math.round(amount * w3.LAMPORTS_PER_SOL) }));
       const { blockhash } = await conn.getLatestBlockhash('confirmed'); tx.recentBlockhash = blockhash; tx.feePayer = from;

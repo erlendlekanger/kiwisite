@@ -1,7 +1,7 @@
 // Everything on-chain: balances, prices, token metadata, Jupiter swaps, and the encrypted index wallets.
 import crypto from 'node:crypto';
 import { createRequire } from 'node:module';
-import { q } from './db.mjs';
+import { tokensGet, tokenSet } from './db.mjs';
 // The CJS builds bundle their own dependencies, which keeps the serverless bundle self-contained.
 const require = createRequire(import.meta.url);
 const { Connection, Keypair, PublicKey, LAMPORTS_PER_SOL, SystemProgram, Transaction, VersionedTransaction, sendAndConfirmTransaction } = require('@solana/web3.js');
@@ -20,8 +20,8 @@ const num = (v, d = 0) => { const n = Number(v); return Number.isFinite(n) ? n :
 const env = (k, d) => (process.env[k] !== undefined && process.env[k] !== '' ? Number(process.env[k]) : d);
 // Rebalance interval -> fee per trade (bps of the traded value). Faster mirroring costs more.
 export const FEE_LADDER = [
-  { minutes: 1, bps: 250 }, { minutes: 5, bps: 200 }, { minutes: 15, bps: 150 }, { minutes: 30, bps: 100 },
-  { minutes: 60, bps: 75 }, { minutes: 120, bps: 50 }, { minutes: 360, bps: 40 }, { minutes: 1440, bps: 30 },
+  { minutes: 1, bps: 100 }, { minutes: 5, bps: 80 }, { minutes: 15, bps: 60 }, { minutes: 30, bps: 50 },
+  { minutes: 60, bps: 40 }, { minutes: 120, bps: 30 }, { minutes: 360, bps: 25 }, { minutes: 1440, bps: 20 },
 ];
 export const feeBpsFor = (minutes) => (FEE_LADDER.find((f) => f.minutes === Number(minutes)) || FEE_LADDER[5]).bps;
 export const RULES = () => ({
@@ -70,8 +70,8 @@ export async function tokenInfo(mints) {
   mints = [...new Set(mints)].filter(Boolean);
   const out = new Map();
   if (!mints.length) return out;
-  const fresh = await q(`SELECT * FROM token_cache WHERE mint = ANY($1) AND updated_at > now() - interval '10 minutes'`, [mints]);
-  for (const r of fresh) out.set(r.mint, r);
+  const cached = await tokensGet(mints);
+  for (const [m, r] of cached) if (r.updated_at && Date.now() - new Date(r.updated_at).getTime() < 600000) out.set(m, r);
   const missing = mints.filter((m) => !out.has(m));
   for (let i = 0; i < missing.length; i += 30) {
     const batch = missing.slice(i, i + 30);
@@ -90,9 +90,7 @@ export async function tokenInfo(mints) {
         if (m === SOL) { row.symbol = 'SOL'; row.name = 'Solana'; row.liquidity_usd = 1e12; }
         if (STABLES.has(m)) { row.liquidity_usd = 1e12; row.price_usd = 1; }
         out.set(m, row);
-        await q(`INSERT INTO token_cache(mint,symbol,name,icon,liquidity_usd,price_usd,mcap_usd,updated_at) VALUES ($1,$2,$3,$4,$5,$6,$7,now())
-          ON CONFLICT (mint) DO UPDATE SET symbol=$2,name=$3,icon=$4,liquidity_usd=$5,price_usd=$6,mcap_usd=$7,updated_at=now()`,
-          [m, row.symbol, row.name, row.icon, row.liquidity_usd, row.price_usd, row.mcap_usd]);
+        await tokenSet(m, { symbol: row.symbol, name: row.name, icon: row.icon, liquidity_usd: row.liquidity_usd, price_usd: row.price_usd, mcap_usd: row.mcap_usd, updated_at: new Date().toISOString() });
       }
     } catch (e) { for (const m of batch) if (!out.has(m)) out.set(m, { mint: m, symbol: m.slice(0, 4), price_usd: 0, liquidity_usd: 0 }); }
   }
@@ -160,11 +158,11 @@ export async function swap(keypair, quoteResponse) {
 }
 export async function decimalsOf(mint) {
   if (mint === SOL) return 9;
-  const cached = await q('SELECT decimals FROM token_cache WHERE mint=$1', [mint]);
-  if (cached[0]?.decimals != null) return cached[0].decimals;
+  const cached = (await tokensGet([mint])).get(mint);
+  if (cached?.decimals != null) return cached.decimals;
   const info = await conn().getParsedAccountInfo(new PublicKey(mint));
   const d = info.value?.data?.parsed?.info?.decimals ?? 6;
-  await q('INSERT INTO token_cache(mint, decimals) VALUES ($1,$2) ON CONFLICT (mint) DO UPDATE SET decimals=$2', [mint, d]);
+  await tokenSet(mint, { decimals: d });
   return d;
 }
 export async function sendSol(keypair, to, lamports) {

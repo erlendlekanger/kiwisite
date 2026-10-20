@@ -4,7 +4,7 @@ import { createRequire } from 'node:module';
 const require = createRequire(import.meta.url);
 const nacl = require('tweetnacl');
 const bs58pkg = require('bs58'); const bs58 = bs58pkg.default || bs58pkg;
-import { q } from './db.mjs';
+import { putNonce, takeNonce, touchUser } from './db.mjs';
 import { cookies, bearer, fail } from './http.mjs';
 
 const SECRET = () => { if (!process.env.SESSION_SECRET) throw new Error('SESSION_SECRET is not set'); return process.env.SESSION_SECRET; };
@@ -16,19 +16,17 @@ export function loginMessage(nonce, wallet) {
 
 export async function makeNonce(wallet) {
   const nonce = crypto.randomBytes(16).toString('hex');
-  await q('DELETE FROM nonces WHERE created_at < now() - interval \'15 minutes\'');
-  await q('INSERT INTO nonces(nonce, wallet) VALUES ($1,$2)', [nonce, wallet]);
+  await putNonce(nonce, wallet);
   return nonce;
 }
 
 export async function verifyLogin(wallet, nonce, signatureB58) {
-  const rows = await q('DELETE FROM nonces WHERE nonce=$1 AND wallet=$2 RETURNING nonce', [nonce, wallet]);
-  if (!rows.length) throw fail(400, 'nonce expired, try again');
+  if (!(await takeNonce(nonce, wallet))) throw fail(400, 'nonce expired, try again');
   let pub, sig;
   try { pub = bs58.decode(wallet); sig = bs58.decode(signatureB58); } catch (e) { throw fail(400, 'bad wallet or signature encoding'); }
   const ok = nacl.sign.detached.verify(new TextEncoder().encode(loginMessage(nonce, wallet)), sig, pub);
   if (!ok) throw fail(401, 'signature does not match');
-  await q('INSERT INTO users(wallet) VALUES ($1) ON CONFLICT (wallet) DO UPDATE SET last_seen=now()', [wallet]);
+  await touchUser(wallet);
   return issue(wallet);
 }
 

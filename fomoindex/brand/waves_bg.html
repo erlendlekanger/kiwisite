@@ -1,0 +1,55 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>html,body{margin:0;background:#0a0a26}canvas{display:block}</style></head>
+<body><canvas id="c" width="1254" height="1254"></canvas>
+<script>
+// The FOMOFANTASY background (dark navy, sheets lit from the right) with waves in place of the lightning bolts.
+// The band in the middle stays dark for the logo.
+const c = document.getElementById('c'), x = c.getContext('2d'), W = 1254, H = 1254;
+x.fillStyle = '#0a0a26'; x.fillRect(0, 0, W, H);
+
+// edge of a sheet: a sum of two sines, rising toward the right like the original sheets
+const edge = (base, a1, l1, p1, a2, l2, p2, tilt) => (px) =>
+  base + a1 * Math.sin(px / l1 * Math.PI * 2 + p1) + a2 * Math.sin(px / l2 * Math.PI * 2 + p2) - tilt * (px / W);
+
+// side: 'up' = the sheet fills from its wavy edge upward, 'down' = from the edge downward
+function sheet(f, side, rim, glow, body) {
+  const path = new Path2D(), line = new Path2D();
+  const y0 = side === 'up' ? -20 : H + 20;
+  path.moveTo(-20, y0); for (let px = -20; px <= W + 20; px += 4) path.lineTo(px, f(px)); path.lineTo(W + 20, y0); path.closePath();
+  for (let px = -20; px <= W + 20; px += 4) px === -20 ? line.moveTo(px, f(px)) : line.lineTo(px, f(px));
+  // body: a little lighter than the night, more so on the right
+  const g = x.createLinearGradient(0, 0, W, 0);
+  g.addColorStop(0, `rgba(30,36,90,${body * 0.15})`); g.addColorStop(0.55, `rgba(32,38,95,${body * 0.55})`); g.addColorStop(1, `rgba(40,48,112,${body})`);
+  x.fillStyle = g; x.fill(path);
+  // glow inside the sheet along its edge, strongest on the right
+  x.save(); x.clip(path);
+  const gg = x.createLinearGradient(0, 0, W, 0);
+  gg.addColorStop(0, `rgba(52,62,140,${glow * 0.25})`); gg.addColorStop(0.5, `rgba(56,66,150,${glow * 0.7})`); gg.addColorStop(1, `rgba(66,78,170,${glow})`);
+  x.filter = 'blur(26px)'; x.strokeStyle = gg; x.lineWidth = 70; x.stroke(line);
+  x.filter = 'blur(6px)'; x.lineWidth = 14; x.stroke(line);
+  x.restore();
+  // the lit rim itself
+  const rg = x.createLinearGradient(0, 0, W, 0);
+  rg.addColorStop(0, `rgba(80,92,190,${rim * 0.15})`); rg.addColorStop(0.5, `rgba(90,104,205,${rim * 0.6})`); rg.addColorStop(1, `rgba(110,124,225,${rim})`);
+  x.save(); x.clip(path); x.strokeStyle = rg; x.lineWidth = 3; x.filter = 'blur(0.6px)'; x.stroke(line); x.restore();
+  // a soft shadow just outside the edge so the sheets read as layers
+  x.save(); const out = new Path2D(); out.rect(-50, -50, W + 100, H + 100); out.addPath(path); x.clip(out, 'evenodd');
+  x.filter = 'blur(18px)'; x.strokeStyle = 'rgba(4,4,20,.55)'; x.lineWidth = 34; x.stroke(line); x.restore();
+}
+
+// upper half, from the top down (each one lies over the last)
+sheet(edge(70, 26, 900, 0.6, 9, 380, 1.9, 40), 'up', 0.8, 0.75, 0.9);
+sheet(edge(265, 34, 1100, 2.2, 12, 430, 0.3, 90), 'up', 0.65, 0.6, 0.55);
+sheet(edge(400, 22, 980, 4.1, 8, 360, 2.7, 70), 'up', 0.45, 0.4, 0.28);
+// lower half, from the bottom up
+sheet(edge(1150, 24, 860, 1.4, 10, 400, 0.9, 60), 'down', 0.85, 0.8, 0.95);
+sheet(edge(960, 32, 1050, 3.3, 11, 420, 2.2, 95), 'down', 0.7, 0.65, 0.6);
+sheet(edge(820, 20, 940, 0.2, 7, 350, 4.0, 60), 'down', 0.45, 0.4, 0.3);
+
+// fine grain like the original render
+const id = x.getImageData(0, 0, W, H), d = id.data; let s = 7;
+for (let i = 0; i < d.length; i += 4) { s = (s * 16807) % 2147483647; const n = ((s / 2147483647) - 0.5) * 2.2; d[i] += n; d[i + 1] += n; d[i + 2] += n; }
+x.putImageData(id, 0, 0);
+document.title = 'ready';
+</script></body></html>
